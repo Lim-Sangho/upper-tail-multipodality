@@ -1,0 +1,48 @@
+\section{Concluding remarks}\label{sec:conclusion}
+
+We proved that every minimizer of the upper-tail variational problem is
+multipodal with ordered blocks, for every graph $H$ and all parameters, and
+that the same holds for the maximizers of the entropy with prescribed edge
+density and $H$-density, apart from a null set of values of the $H$-density.
+The main new ingredient is that inserting a small block of vertices with an
+arbitrary row turns global optimality of the graphon into global minimality of
+each of its rows for a single functional.  We conclude with several questions.
+
+\paragraph{The number of blocks.}  Our proof gives no bound on the number of
+blocks.  For the upper-tail problem with a $d$-regular graph $H$, the companion
+paper~\cite{LimImKimNamYangBipodal} shows that the minimizer has exactly two
+blocks near every point of the phase boundary with target density
+$r\ne(d-1)/d$, and along a curve approaching the boundary at $r=(d-1)/d$.
+Lubetzky and Zhao~\cite[Section~7]{lubetzky2015large} asked whether this is
+always the case in the symmetry-breaking phase.  For stars with many leaves,
+the minimizers on the phase boundary include a nonconstant
+one~\cite{LimImKimNamYangBoundary}; Theorem~\ref{thm:upper-tail} shows that it
+is multipodal, and it would be interesting to decide whether it is bipodal.  It would be interesting to bound the number
+of blocks in terms of $H$ and the parameters, even by a bound that deteriorates
+near exceptional parameters.  For edge and star constraints, such a uniform
+bound is known~\cite{KenyonRadinRenSadun2017}.
+
+\paragraph{Degenerate maximizers.}  Corollary~\ref{cor:almost-every-tau}
+leaves open whether the maximizers of~\eqref{eq:entropy-maximization} that
+violate the constraint qualification are multipodal.  By
+Lemma~\ref{lem:degenerate-forms}, such a maximizer either takes the values $0$
+or $1$ on a set of positive measure, or has a constant first variation
+$\mathcal D_W$, so that the first variations of the two constraints are
+linearly dependent.  Handling these cases requires a replacement for the
+two-direction correction used in Lemma~\ref{lem:fixed-insertion}.
+
+\paragraph{Several subgraph constraints.}  The insertion argument extends
+formally to problems with constraints on several subgraph densities.  The main
+difficulty is the ordering step, which requires the multipliers of the
+constraints to have signs for which the combined rooted density is
+supermodular.
+Understanding when this holds could lead to multipodality results for more
+general constrained problems.
+
+\paragraph{Uniqueness and phase structure.}  Theorem~\ref{thm:upper-tail}
+does not address uniqueness of the minimizer or the dependence of the block
+parameters on $(p,r)$.  Numerical experiments for triangles suggest a curve in
+the symmetry-breaking phase along which uniqueness fails and across which some
+of the block parameters change discontinuously~\cite{LimImKimNamYangBipodal}.  A
+description of these curves would complement the finite block structure
+established here.

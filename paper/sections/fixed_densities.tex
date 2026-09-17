@@ -1,0 +1,250 @@
+\section{Prescribed edge and subgraph densities}\label{sec:fixed-densities}
+
+In this section we prove Theorem~\ref{thm:fixed-densities} and
+Corollary~\ref{cor:almost-every-tau}.  Fix a graph $H$ with $\Delta(H)\ge2$
+and $\eps\in(0,1)$, and recall
+$\tau_{\max}(\eps)=\max\{t(H,W):e(W)=\eps\}$.  By~\eqref{eq:entropy-identity},
+the maximizers of~\eqref{eq:entropy-maximization} are exactly the minimizers of
+\begin{equation}\label{eq:fixed-problem}
+  \Psi_\eps(\tau):=\min\bigl\{I_\eps(W):e(W)=\eps,\ t(H,W)=\tau\bigr\},
+  \qquad
+  \eps^m<\tau<\tau_{\max}(\eps),
+\end{equation}
+and we work with this formulation.  The interval of values of $\tau$ is
+nonempty: the graphon $\mathbf 1_{[0,\sqrt\eps]^2}$ has edge density $\eps$ and
+$H$-density $\eps^{N/2}$, and $\eps^{N/2}>\eps^m$ because $2m\ge N+1$ when
+$\Delta(H)\ge2$.  Every value in the interval is attained along the segment
+$\eps+\theta(W_{\max}-\eps)$, $\theta\in[0,1]$, where $W_{\max}$ attains
+$\tau_{\max}(\eps)$, and minimizers exist by compactness.
+
+\subsection{The constraint qualification}
+
+Inserting a block of vertices changes both the edge density and the
+$H$-density, and both must be restored.  This requires two independent
+directions of perturbation.
+
+\begin{defn}[Constraint qualification]\label{def:constraint-qualification}
+Let $W$ be a graphon with $e(W)=\eps$ and $t(H,W)=\tau$.  For $\eta>0$, put
+$\Omega_\eta(W):=\{(x,y):\eta<W(x,y)<1-\eta\}$.  We say that $W$
+\emph{satisfies the constraint qualification} if there are $\eta>0$ and bounded
+symmetric functions $U_1,U_2$ supported in $\Omega_\eta(W)$ such that the matrix
+\begin{equation}\label{eq:cq-matrix}
+  \Gamma_W(U_1,U_2):=
+  \begin{pmatrix}
+    \int U_1 & \int U_2\\[1mm]
+    \int\mathcal D_WU_1 & \int\mathcal D_WU_2
+  \end{pmatrix}
+\end{equation}
+is invertible.  Otherwise we call $W$ \emph{degenerate}.
+\end{defn}
+
+The rows of $\Gamma_W(U_1,U_2)$ are the first variations of $e$ and
+$t(H,\cdot)$ at $W$ in the directions $U_1$ and $U_2$.  Thus the constraint
+qualification says that the derivative of $V\mapsto(e(V),t(H,V))$ at $W$ is
+surjective onto $\RR^2$, as required in Lemma~\ref{lem:lagrange}, even when
+restricted to bounded perturbations supported where $W$ is bounded away from
+$0$ and $1$.  The support condition ensures that small corrections along
+$U_1,U_2$ keep the graphon inside $[0,1]$.
+
+\subsection{Monotonicity and positive multipliers}
+
+\begin{lemma}[Monotonicity]\label{lem:fixed-monotone}
+The function $\tau\mapsto\Psi_\eps(\tau)$ is strictly increasing on
+$(\eps^m,\tau_{\max}(\eps))$.  Moreover, a minimizer of~\eqref{eq:fixed-problem}
+at $\tau$ also minimizes $I_\eps$ over all graphons $U$ with $e(U)=\eps$ and
+$t(H,U)\ge\tau$.
+\end{lemma}
+
+\begin{proof}
+Let $\eps^m<\tau_1<\tau_2<\tau_{\max}(\eps)$, and let $W_2$ be a minimizer at
+$\tau_2$.  The graphons $W_\theta:=\eps+\theta(W_2-\eps)$ have edge density
+$\eps$, and $\theta\mapsto t(H,W_\theta)$ is continuous with values $\eps^m$ and
+$\tau_2$ at $\theta=0,1$; hence $t(H,W_{\theta_0})=\tau_1$ for some
+$\theta_0\in(0,1)$.  By strict convexity of $J_\eps$ and $J_\eps(\eps)=0$,
+$\Psi_\eps(\tau_1)\le I_\eps(W_{\theta_0})<\theta_0I_\eps(W_2)\le\Psi_\eps(\tau_2)$.
+For the second claim, if $e(U)=\eps$ and $t(H,U)>\tau$, the same interpolation
+between $\eps$ and $U$ produces a graphon with $H$-density $\tau$ and cost
+strictly less than $I_\eps(U)$; hence $I_\eps(U)>\Psi_\eps(\tau)$.
+\end{proof}
+
+\begin{lemma}[Interiority]\label{lem:fixed-interior}
+Every minimizer $W$ of~\eqref{eq:fixed-problem} that satisfies the constraint
+qualification satisfies $\gamma\le W\le1-\gamma$ for some $\gamma>0$.
+\end{lemma}
+
+\begin{proof}
+Fix $\eta$, $U_1$, $U_2$ as in Definition~\ref{def:constraint-qualification}, and
+write $\mathbf C(V):=(e(V),t(H,V))$.  Suppose that $W$ is not essentially
+bounded away from $0$.  For large $\Lambda>0$ with $e^{-\Lambda}<\eta$, the symmetric set
+$E:=\{W<e^{-\Lambda}\}$ has positive measure and is disjoint from the supports of
+$U_1,U_2$.  Choose $(c_1,c_2)$ with
+$\Gamma_W(U_1,U_2)(c_1,c_2)^\top=-D\mathbf C(W)[\mathbf 1_E]$.  Since
+$0\le\mathcal D_W\le m$, we have $|c_1|+|c_2|\le C|E|$ with $C$ independent of
+$\Lambda$, and $Z:=\mathbf 1_E+c_1U_1+c_2U_2$ satisfies $D\mathbf C(W)[Z]=0$.  The map
+$(\theta,\xi_1,\xi_2)\mapsto\mathbf C(W+\theta Z+\xi_1U_1+\xi_2U_2)$ is
+polynomial with invertible derivative in $(\xi_1,\xi_2)$ at the origin, so the
+implicit function theorem gives $\xi_i(\theta)=O_\Lambda(\theta^2)$ with
+$\mathbf C(V_\theta)=\mathbf C(W)$ for
+$V_\theta:=W+\theta Z+\xi_1(\theta)U_1+\xi_2(\theta)U_2$.  For small $\theta>0$,
+$V_\theta$ is a graphon.  If $0\le z<e^{-\Lambda}$ and $0<\theta<e^{-\Lambda}$, then
+$J_\eps(z+\theta)-J_\eps(z)\le-\theta(\Lambda-C_\eps)$ for a constant $C_\eps$
+independent of $\Lambda$, while $J_\eps'$ is bounded on $[\eta/2,1-\eta/2]$.
+Therefore
+\[
+  I_\eps(V_\theta)-I_\eps(W)\le-\theta(\Lambda-C_\eps)|E|+C'\theta(|c_1|+|c_2|)+O_\Lambda(\theta^2)
+  \le-\theta(\Lambda-C'')|E|+O_\Lambda(\theta^2),
+\]
+which is negative for $\Lambda$ large and then $\theta>0$ small, contradicting
+minimality.  The case of values near $1$ is analogous, with $E:=\{W>1-e^{-\Lambda}\}$
+and $-\mathbf 1_E$ in place of $\mathbf1_E$.
+\end{proof}
+
+\begin{lemma}[Positive multiplier]\label{lem:fixed-multiplier}
+Let $W$ be a minimizer of~\eqref{eq:fixed-problem} that satisfies the
+constraint qualification.  There are $\alpha\in\RR$ and $\mu>0$ such that
+\begin{equation}\label{eq:fixed-el}
+  J_\eps'\bigl(W(x,y)\bigr)=\alpha+\mu\,\mathcal D_W(x,y)
+  \qquad\text{for almost every }(x,y).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:fixed-interior}, $I_\eps$ is continuously differentiable on a
+small $L^\infty$-ball around $W$ consisting of graphons, and the constraint
+qualification says that $D\mathbf C(W)$ is surjective onto $\RR^2$.
+Lemma~\ref{lem:lagrange} gives $\alpha,\mu\in\RR$ with
+$DI_\eps(W)=\alpha\,De(W)+\mu\,Dt(H,W)$, and~\eqref{eq:fixed-el} follows as in
+the proof of Lemma~\ref{lem:upper-tail-multiplier}.  Since the rows of
+$\Gamma_W(U_1,U_2)$ are linearly independent, some linear combination $V$ of
+$U_1,U_2$ satisfies $\int V=0$ and $\int\mathcal D_WV>0$.  Then $e(W+\theta V)=\eps$
+and $t(H,W+\theta V)>\tau$ for small $\theta>0$, so
+Lemma~\ref{lem:fixed-monotone} gives $DI_\eps(W)[V]\ge0$, that is,
+$\mu\int\mathcal D_WV\ge0$ and $\mu\ge0$.  If $\mu=0$, then $J_\eps'(W)$ is
+constant, so $W$ is constant; the edge constraint forces $W\equiv\eps$, which
+contradicts $\tau>\eps^m$.
+\end{proof}
+
+\subsection{Inserting a block of vertices}
+
+\begin{lemma}[Insertion inequality]\label{lem:fixed-insertion}
+Let $W$ be a minimizer of~\eqref{eq:fixed-problem} that satisfies the
+constraint qualification, and let $\alpha,\mu$ be as in
+Lemma~\ref{lem:fixed-multiplier}.  Let $\mathcal F_W$ be the row
+functional~\eqref{eq:row-functional} with $q=\eps$.  Then
+\[
+  \mathcal F_W(u)\ge c_W:=2I_\eps(W)-2\alpha\eps-\mu N\tau
+  \qquad\text{for every measurable }u:[0,1]\to[0,1],
+\]
+and $\mathcal F_W(W_x)=c_W$ for almost every $x\in[0,1]$.
+\end{lemma}
+
+\begin{proof}
+Fix $u$, and insert a block of measure $\theta$ with row $u$ as in the proof of
+Lemma~\ref{lem:upper-tail-insertion}, with the value $\eps$ on the new block
+and with the old values replaced by $W+\xi_1U_1+\xi_2U_2$, where $U_1,U_2$ are
+as in Definition~\ref{def:constraint-qualification}.  Call the result
+$W_{\theta,\xi}$.  Its edge density and $H$-density are polynomials in
+$(\theta,\xi_1,\xi_2)$, with
+\[
+  \partial_\theta e(W_{\theta,0})\big|_{\theta=0}=2\Bigl(\int_0^1u-\eps\Bigr),
+  \qquad
+  \partial_\theta t(H,W_{\theta,0})\big|_{\theta=0}=\mathcal R_W(u)-N\tau,
+\]
+and their derivative in $(\xi_1,\xi_2)$ at the origin is
+$\Gamma_W(U_1,U_2)$.  The implicit function theorem gives
+$\xi(\theta)$ with $\xi(0)=0$ such that $W_\theta:=W_{\theta,\xi(\theta)}$
+satisfies $e(W_\theta)=\eps$ and $t(H,W_\theta)=\tau$, and
+\[
+  De(W)[\xi_1'(0)U_1+\xi_2'(0)U_2]=-2\Bigl(\int_0^1u-\eps\Bigr),
+  \qquad
+  Dt(H,W)[\xi_1'(0)U_1+\xi_2'(0)U_2]=-\bigl(\mathcal R_W(u)-N\tau\bigr).
+\]
+For small $\theta>0$, $W_\theta$ is a graphon because the $U_i$ are supported
+where $\eta<W<1-\eta$.  As before,
+\[
+  I_\eps(W_\theta)=(1-\theta)^2\int J_\eps\bigl(W+\xi_1(\theta)U_1+\xi_2(\theta)U_2\bigr)
+  +2\theta(1-\theta)\int_0^1J_\eps(u)+\theta^2J_\eps(\eps),
+\]
+and using $DI_\eps(W)=\alpha\,De(W)+\mu\,Dt(H,W)$ we obtain
+\[
+  0\le\frac{\dd}{\dd\theta}\Big|_{\theta=0^+}I_\eps(W_\theta)
+  =2\int_0^1J_\eps(u)-2I_\eps(W)-2\alpha\Bigl(\int_0^1u-\eps\Bigr)
+  -\mu\bigl(\mathcal R_W(u)-N\tau\bigr)
+  =\mathcal F_W(u)-c_W.
+\]
+Finally, $\int_0^1\int_0^1J_\eps(W_x(y))\dd y\dd x=I_\eps(W)$,
+$\int_0^1\int_0^1W_x(y)\dd y\dd x=\eps$, and~\eqref{eq:rooted-average} give
+$\int_0^1\mathcal F_W(W_x)\dd x=c_W$, so equality holds for almost every $x$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:fixed-densities}]
+Let $W$ be a maximizer of~\eqref{eq:entropy-maximization} that satisfies the
+constraint qualification; equivalently, a minimizer of~\eqref{eq:fixed-problem}.
+Apply Theorem~\ref{thm:row-criterion} with $q=\eps$, $\omega=\gamma$ from
+Lemma~\ref{lem:fixed-interior}, and $\alpha,\mu$ from
+Lemma~\ref{lem:fixed-multiplier}; its hypotheses are provided by
+Lemma~\ref{lem:fixed-insertion}.
+\end{proof}
+
+\subsection{Degenerate maximizers occur only for a null set of values}
+
+\begin{lemma}\label{lem:degenerate-forms}
+Let $W$ be a degenerate minimizer of~\eqref{eq:fixed-problem}.  Then either
+the set $\{W=0\}\cup\{W=1\}$ has positive measure, or $0<W<1$ almost everywhere
+and $\mathcal D_W$ is almost everywhere equal to a constant.
+\end{lemma}
+
+\begin{proof}
+Suppose that $0<W<1$ almost everywhere, and let $\eta>0$ be such that
+$A:=\Omega_\eta(W)$ has positive measure.  With $\bar D:=|A|^{-1}\int_A\mathcal D_W$,
+$U_1:=\mathbf 1_A$, and $U_2:=(\mathcal D_W-\bar D)\mathbf 1_A$, we have
+$\det\Gamma_W(U_1,U_2)=|A|\int_A(\mathcal D_W-\bar D)^2$.  Degeneracy forces
+this determinant to vanish, so $\mathcal D_W$ is constant on $\Omega_\eta(W)$.
+Letting $\eta\downarrow0$, $\mathcal D_W$ is constant almost everywhere.
+\end{proof}
+
+\begin{lemma}\label{lem:degenerate-slope}
+If~\eqref{eq:fixed-problem} has a degenerate minimizer at
+$\tau\in(\eps^m,\tau_{\max}(\eps))$, then
+\[
+  \limsup_{\tau'\uparrow\tau}\frac{\Psi_\eps(\tau)-\Psi_\eps(\tau')}{\tau-\tau'}=\infty.
+\]
+\end{lemma}
+
+\begin{proof}
+Let $W$ be a degenerate minimizer at $\tau$ and put $W_\theta:=(1-\theta)W+\theta\eps$
+for $\theta\in[0,1]$.  Then $e(W_\theta)=\eps$ and $I_\eps(W_\theta)<I_\eps(W)$
+for $\theta\in(0,1)$, so the second claim of Lemma~\ref{lem:fixed-monotone} gives
+$\tau_\theta:=t(H,W_\theta)<\tau$.  Since $\tau_\theta\to\tau$ as
+$\theta\downarrow0$,
+\[
+  \frac{\Psi_\eps(\tau)-\Psi_\eps(\tau_\theta)}{\tau-\tau_\theta}
+  \ge\frac{I_\eps(W)-I_\eps(W_\theta)}{\tau-\tau_\theta},
+\]
+and it suffices to show that the right-hand side tends to infinity along
+$\theta\downarrow0$.  By convexity,
+$J_\eps((1-\theta)z+\theta\eps)\le(1-\theta)J_\eps(z)$ for every $z$.
+
+If $\{W=0\}\cup\{W=1\}$ has positive measure, then, since
+$J_\eps(0)-J_\eps(\theta\eps)$ and $J_\eps(1)-J_\eps(1-\theta(1-\eps))$ are both at
+least $c\,\theta\log(1/\theta)$ for small $\theta$ and some $c>0$, we get
+$I_\eps(W)-I_\eps(W_\theta)\ge c'\theta\log(1/\theta)$, while
+$\tau-\tau_\theta\le C\theta$ because $\theta\mapsto\tau_\theta$ is a polynomial.
+Otherwise, by Lemma~\ref{lem:degenerate-forms}, $\mathcal D_W$ is a constant
+$c_0$, so
+$\frac{\dd}{\dd\theta}\tau_\theta\big|_{\theta=0}=\int\mathcal D_W(\eps-W)=c_0(\eps-e(W))=0$,
+and hence $\tau-\tau_\theta\le C\theta^2$, while
+$I_\eps(W)-I_\eps(W_\theta)\ge\theta I_\eps(W)$ with $I_\eps(W)>0$.  In both cases
+the ratio tends to infinity.
+\end{proof}
+
+\begin{proof}[Proof of Corollary~\ref{cor:almost-every-tau}]
+By Lemma~\ref{lem:fixed-monotone}, $\Psi_\eps$ is monotone on
+$(\eps^m,\tau_{\max}(\eps))$, so by Lebesgue's theorem it is differentiable with a
+finite derivative at almost every point.  At such a point, the left difference
+quotients converge to the finite derivative, so by
+Lemma~\ref{lem:degenerate-slope} no degenerate minimizer exists there.  Hence
+the set of values $\tau$ admitting a degenerate maximizer has measure zero, and
+for every other $\tau$ Theorem~\ref{thm:fixed-densities} applies to every
+maximizer.
+\end{proof}

@@ -1,0 +1,196 @@
+\section{The upper-tail problem}\label{sec:upper-tail}
+
+In this section we prove Theorem~\ref{thm:upper-tail}.  Fix $0<p<r<1$.  The
+infimum in~\eqref{eq:graphon-variational-problem} is attained, because the
+feasible set is closed in the compact space $(\widetilde\W_0,\delta_\cut)$ and
+$I_p$ is lower semicontinuous.  If $H$ is a perfect matching, then
+$t(H,W)=e(W)^m$, and feasibility means $e(W)\ge r$; Jensen's inequality and the
+monotonicity of $J_p$ on $[r,1]$ give $I_p(W)\ge J_p(e(W))\ge J_p(r)$, with
+equality only for $W\equiv r$.  Thus $W\equiv r$ is the unique minimizer, and
+it is trivially multipodal.  For the rest of this section we assume
+$\Delta(H)\ge2$, and we verify the hypotheses of
+Theorem~\ref{thm:row-criterion} for an arbitrary minimizer $W$.
+
+\subsection{Basic properties of minimizers}
+
+\begin{lemma}\label{lem:upper-tail-basic}
+Let $W$ be a minimizer of~\eqref{eq:graphon-variational-problem}.  Then
+$W\ge p$ almost everywhere, the constraint is active, $t(H,W)=r^m$, and there is
+$\gamma>0$ such that $W\le1-\gamma$ almost everywhere.
+\end{lemma}
+
+\begin{proof}
+\emph{Lower bound.}  Put $W^+:=\max(W,p)$.  Since the factors in $t(H,\cdot)$ are
+nonnegative, $t(H,W^+)\ge t(H,W)$, so $W^+$ is feasible.  Since $J_p$ is strictly
+decreasing on $[0,p]$, we have $I_p(W^+)\le I_p(W)$, with strict inequality
+unless $W\ge p$ almost everywhere.
+
+\emph{Active constraint.}  Suppose that $t(H,W)>r^m$, and put
+$W_\lambda:=p+\lambda(W-p)$ for $\lambda\in[0,1]$.  The function
+$\lambda\mapsto t(H,W_\lambda)$ is continuous, and it equals $p^m<r^m$ at
+$\lambda=0$ and exceeds $r^m$ at $\lambda=1$.  Hence $t(H,W_{\lambda_0})=r^m$
+for some $\lambda_0\in(0,1)$.  Since $J_p$ is strictly convex with $J_p(p)=0$
+and $W\not\equiv p$, we get $I_p(W_{\lambda_0})<\lambda_0I_p(W)\le I_p(W)$, a
+contradiction.
+
+\emph{Upper bound.}  Since $W\ge p$, the derivative kernel satisfies
+$mp^{m-1}\le\mathcal D_W\le m$.  Because $t(H,W)=r^m<1$, there are $\gamma_0>0$
+and a symmetric set $A$ of positive measure with $W\le1-\gamma_0$ on $A$.
+Suppose that $W$ is not essentially bounded away from $1$.  For large
+$\Lambda>0$, the symmetric set $E_\Lambda:=\{W>1-e^{-\Lambda}\}$ has positive
+measure and is disjoint from $A$.  Put
+\[
+  c_\Lambda:=\frac{\int_{E_\Lambda}\mathcal D_W}{\int_A\mathcal D_W},
+  \qquad
+  U_\Lambda:=-\mathbf 1_{E_\Lambda}+c_\Lambda\mathbf 1_A,
+\]
+so that $Dt(H,W)[U_\Lambda]=0$ by~\eqref{eq:first-variation} and
+$c_\Lambda|A|\le p^{1-m}|E_\Lambda|$.  The function
+$(\theta,\xi)\mapsto t(H,W+\theta U_\Lambda+\xi\mathbf 1_A)$ is a polynomial, and
+its derivative in $\xi$ at the origin is $\int_A\mathcal D_W>0$.  The implicit
+function theorem gives $\xi_\Lambda(\theta)=O_\Lambda(\theta^2)$ such that
+$V_\theta:=W+\theta U_\Lambda+\xi_\Lambda(\theta)\mathbf 1_A$ satisfies
+$t(H,V_\theta)=t(H,W)$ for small $\theta$.  For $0<\theta<e^{-\Lambda}/2$ small
+enough, $V_\theta$ is a graphon: it equals $W-\theta\ge p$ on $E_\Lambda$, and
+on $A$ it equals $W+\theta c_\Lambda+\xi_\Lambda(\theta)$, where
+$0\le\theta c_\Lambda+\xi_\Lambda(\theta)\le\gamma_0/2$ because $c_\Lambda>0$
+and $\xi_\Lambda(\theta)=O_\Lambda(\theta^2)$.  In particular, the values of
+$V_\theta$ on $A$ stay in $[p,1-\gamma_0/2]$, where $|J_p'|$ is bounded by a
+constant $C$.  If $z\in[1-e^{-\Lambda},1]$, every point between $z-\theta$ and
+$z$ is at least $1-\frac32e^{-\Lambda}$, where $J_p'\ge\Lambda-C_p$ for a
+constant $C_p$ independent of $\Lambda$; hence
+$J_p(z-\theta)-J_p(z)\le-\theta(\Lambda-C_p)$.  Therefore
+\[
+  I_p(V_\theta)-I_p(W)
+  \le-\theta(\Lambda-C_p)|E_\Lambda|+C\theta c_\Lambda|A|+O_\Lambda(\theta^2)
+  \le-\theta\bigl(\Lambda-C_p-Cp^{1-m}\bigr)|E_\Lambda|+O_\Lambda(\theta^2).
+\]
+For $\Lambda$ large and then $\theta>0$ small, this is negative, contradicting
+the minimality of $W$.
+\end{proof}
+
+\begin{lemma}[Positive multiplier]\label{lem:upper-tail-multiplier}
+Let $W$ be a minimizer of~\eqref{eq:graphon-variational-problem}.  There is
+$\mu>0$ such that
+\begin{equation}\label{eq:upper-tail-el}
+  J_p'\bigl(W(x,y)\bigr)=\mu\,\mathcal D_W(x,y)\qquad\text{for almost every }(x,y).
+\end{equation}
+In particular, $W$ takes values in a compact subinterval of $(p,1)$.
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:upper-tail-basic}, there is $\gamma\in(0,p]$ with
+$\gamma\le W\le1-\gamma$.  On the open ball of radius $\gamma/2$ around $W$ in
+$L^\infty_{\mathrm{sym}}([0,1]^2)$, every element is a graphon, $I_p$ is
+continuously differentiable, and $t(H,\cdot)$ is polynomial.  Since the
+constraint is active, $W$ minimizes $I_p$ on the intersection of this ball with
+$\{t(H,\cdot)=r^m\}$, and $Dt(H,W)[\mathbf1]=\int\mathcal D_W>0$.  By
+Lemma~\ref{lem:lagrange}, $DI_p(W)=\mu\,Dt(H,W)$ for some $\mu\in\RR$.  The
+bounded symmetric function $g:=J_p'(W)-\mu\mathcal D_W$ then satisfies
+$\int gU=0$ for every bounded symmetric $U$, and taking $U=\operatorname{sign}g$
+shows $g=0$, which is~\eqref{eq:upper-tail-el}.  Since $W+\theta\mathbf 1$ is
+feasible for small $\theta>0$, we have $DI_p(W)[\mathbf 1]\ge0$, and hence
+$\mu\ge0$.  If $\mu=0$, then $J_p'(W)=0$ and $W\equiv p$, which is not feasible.
+So $\mu>0$, and~\eqref{eq:upper-tail-el} with $mp^{m-1}\le\mathcal D_W\le m$
+gives $\sigma(\lo(p)+\mu mp^{m-1})\le W\le\sigma(\lo(p)+\mu m)$.
+\end{proof}
+
+\subsection{Inserting a block of vertices}
+
+The next lemma is the key step.  It upgrades the Euler--Lagrange
+equation~\eqref{eq:upper-tail-el}, which only says that the rows of $W$ are
+critical points of a row functional, to the statement that they are global
+minimizers of it.
+
+\begin{lemma}[Insertion inequality]\label{lem:upper-tail-insertion}
+Let $W$ be a minimizer of~\eqref{eq:graphon-variational-problem} and let
+$\mu>0$ be as in Lemma~\ref{lem:upper-tail-multiplier}.  Let $\mathcal F_W$ be
+the row functional~\eqref{eq:row-functional} with $q=p$ and $\alpha=0$.  Then
+\[
+  \mathcal F_W(u)\ge c_W:=2I_p(W)-\mu N\,t(H,W)
+  \qquad\text{for every measurable }u:[0,1]\to[0,1],
+\]
+and $\mathcal F_W(W_x)=c_W$ for almost every $x\in[0,1]$.
+\end{lemma}
+
+\begin{proof}
+Fix a measurable $u:[0,1]\to[0,1]$ and $\theta\in(0,1)$.  Let
+$\phi_\theta:[\theta,1]\to[0,1]$ be the increasing affine bijection.  For
+$\xi\in\RR$ with $|\xi|$ small, define the symmetric function
+$W_{\theta,\xi}$ on $[0,1]^2$ by
+\[
+  W_{\theta,\xi}(x,y):=
+  \begin{cases}
+    p, & x,y<\theta,\\
+    u(\phi_\theta(y)), & x<\theta\le y,\\
+    u(\phi_\theta(x)), & y<\theta\le x,\\
+    W(\phi_\theta(x),\phi_\theta(y))+\xi, & x,y\ge\theta.
+  \end{cases}
+\]
+In words, we insert a new block of vertices of measure $\theta$ whose row is $u$,
+keep $W$ on the old vertices, and shift the old values by $\xi$.  By
+Lemma~\ref{lem:upper-tail-basic}, $W_{\theta,\xi}$ is a graphon for $|\xi|$ small.
+Splitting the integral defining the homomorphism density according to the set
+$S\subseteq V(H)$ of vertices whose variables lie in the new block gives
+\[
+  P(\theta,\xi):=t(H,W_{\theta,\xi})
+  =\sum_{S\subseteq V(H)}\theta^{|S|}(1-\theta)^{N-|S|}T_S(\xi),
+\]
+where each $T_S$ is a polynomial in $\xi$ that does not depend on $\theta$.
+Here $T_\emptyset(\xi)=t(H,W+\xi)$ and $T_{\{v\}}(0)=\mathcal R_{v,W}(u)$.
+The right-hand side is a polynomial in $(\theta,\xi)$.  We have
+$P(0,0)=t(H,W)$ and $\partial_\xi P(0,0)=Dt(H,W)[\mathbf1]>0$, so the implicit
+function theorem gives a smooth function $\xi(\theta)$ with $\xi(0)=0$
+and $P(\theta,\xi(\theta))=t(H,W)$.  Differentiating at $\theta=0$ gives
+\[
+  \xi'(0)\,Dt(H,W)[\mathbf1]=-\partial_\theta P(0,0)
+  =-\bigl(\mathcal R_W(u)-N\,t(H,W)\bigr).
+\]
+For small $\theta>0$, the graphon $W_\theta:=W_{\theta,\xi(\theta)}$ is feasible, so
+$I_p(W_\theta)\ge I_p(W)$.  The relative entropy has the exact expression
+\[
+  I_p(W_\theta)=(1-\theta)^2\int_{[0,1]^2}J_p\bigl(W+\xi(\theta)\bigr)
+  +2\theta(1-\theta)\int_0^1J_p(u)+\theta^2J_p(p),
+\]
+which is differentiable at $\theta=0$.  Using
+$DI_p(W)[\mathbf1]=\mu\,Dt(H,W)[\mathbf 1]$ from
+Lemma~\ref{lem:upper-tail-multiplier}, we obtain
+\[
+  0\le\frac{\dd}{\dd\theta}\Big|_{\theta=0^+}I_p(W_\theta)
+  =-2I_p(W)+2\int_0^1J_p(u)-\mu\bigl(\mathcal R_W(u)-N\,t(H,W)\bigr)
+  =\mathcal F_W(u)-c_W.
+\]
+This proves the inequality.  For the rows, Fubini's theorem gives
+$\int_0^1\int_0^1J_p(W_x(y))\dd y\dd x=I_p(W)$, and~\eqref{eq:rooted-average}
+gives $\int_0^1\mathcal R_W(W_x)\dd x=N\,t(H,W)$.  Hence
+$\int_0^1\mathcal F_W(W_x)\dd x=c_W$, and since $\mathcal F_W(W_x)\ge c_W$ for
+almost every $x$, equality holds for almost every $x$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:upper-tail}]
+The case of a perfect matching was treated at the beginning of this section.
+If $\Delta(H)\ge2$ and $W$ is a minimizer, apply Theorem~\ref{thm:row-criterion}
+with $q=p$, $\alpha=0$, $\omega=p$, and $\mu>0$ from
+Lemma~\ref{lem:upper-tail-multiplier}.  The lower bound~\eqref{eq:positive-base}
+holds by Lemma~\ref{lem:upper-tail-basic}, and Lemma~\ref{lem:upper-tail-insertion}
+provides~\eqref{eq:row-lower-bound} and~\eqref{eq:rows-attain}.
+\end{proof}
+
+\begin{rmk}[Why global optimality is needed]\label{rmk:why-global}
+The Euler--Lagrange equation~\eqref{eq:upper-tail-el} alone implies only that
+almost every row of $W$ is a critical point of $\mathcal F_W$.  For stars, the
+equation has a special structure: if $H=K_{1,k}$, then
+$\mathcal D_W(x,y)=\frac k2\bigl(d_W(x)^{k-1}+d_W(y)^{k-1}\bigr)$ with
+$d_W(x)=\int_0^1W(x,y)\dd y$, so~\eqref{eq:upper-tail-el} expresses $W(x,y)$
+through a sum of a function of $x$ and a function of $y$, and much of the
+analysis reduces to a one-variable equation for $d_W$.  A separation of this
+kind underlies the results of Kenyon, Radin, Ren, and
+Sadun~\cite{KenyonRadinRenSadun2017} for edge and star constraints.  For general $H$ no such separation is available;
+already for the $4$-cycle, $\mathcal D_W$ is a multiple of the threefold
+operator product $\int W(x,z_1)W(z_1,z_2)W(z_2,y)\dd z_1\dd z_2$.  The insertion
+inequality of Lemma~\ref{lem:upper-tail-insertion} is what makes the argument
+work for all graphs.  It cannot be replaced by second-order conditions at $W$:
+inserting a small block is a small perturbation in $L^1$ but not in
+$L^\infty$, and it changes the value of $I_p$ at first order in the measure of
+the block; see Appendix~\ref{app:arw-second-order}.
+\end{rmk}

@@ -1,0 +1,21 @@
+__pycache__
+.DS_Store
+.vscode
+*.pyc
+*.pyo
+*.pyd
+
+# Lean
+/.lake
+
+# LaTeX
+*.log
+*.aux
+*.out
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.bbl
+*.pdf
+*.toc
+*.blg
