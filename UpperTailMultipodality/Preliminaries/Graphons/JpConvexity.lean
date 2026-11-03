@@ -7,6 +7,7 @@ import UpperTailMultipodality.Preliminaries.Graphons.Basic
   `J_p'' = 1/(u(1-u)) > 0`;
 * `Jp_zero_pos`, `Jp_one_pos`, `Jp_pos_of_ne`, `Jp_eq_zero_imp` — the values of `J_p` at the
   endpoints and its zero set: on `[0,1]`, `J_p(u) = 0` if and only if `u = p`;
+* `Jp_nonneg_of_mem` — `J_p ≥ 0` on `[0,1]`;
 * `Jp_strictMonoOn_right` — `J_p` is strictly increasing on `[p,1]`.
 -/
 
@@ -74,6 +75,13 @@ theorem Jp_eq_zero_imp {p u : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (hu0 : 0 ≤ u) (
     (h : Jp p u = 0) : u = p := by
   by_contra hne
   exact absurd h (ne_of_gt (Jp_pos_of_ne hp0 hp1 hu0 hu1 hne))
+
+/-- `J_p ≥ 0` on `[0,1]`. -/
+theorem Jp_nonneg_of_mem {p u : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (hu0 : 0 ≤ u) (hu1 : u ≤ 1) :
+    0 ≤ Jp p u := by
+  rcases eq_or_ne u p with h | h
+  · rw [h, Jp_self hp0 hp1]
+  · exact (Jp_pos_of_ne hp0 hp1 hu0 hu1 h).le
 
 /-- **`J_p` is strictly increasing on `[p,1]`.** -/
 theorem Jp_strictMonoOn_right {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :

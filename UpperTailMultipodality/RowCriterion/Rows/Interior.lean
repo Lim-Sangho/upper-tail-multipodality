@@ -81,70 +81,70 @@ theorem lt_Jp_sub_of_lt_deriv {q a b c : ℝ} (hq0 : 0 < q) (hq1 : q < 1) (ha : 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-- **Comparison of `ℱ_W` at two rows.**  If the pointwise integrand
-`2(J_q(v) - J_q(u)) - 2α(v - u) + 2mμ|v - u|` is nonpositive, and negative on a set of positive
-measure, then `ℱ_W(v) < ℱ_W(u)`.  This combines `eq:rooted-lipschitz` with `μ ≥ 0`. -/
-theorem rowFunctional_lt_of_pointwise (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon)
-    {q α μ : ℝ} (hq0 : 0 < q) (hq1 : q < 1) (hμ : 0 ≤ μ) {u v : ℝ → ℝ} (hu : IsRow u)
+`2(J_q(v) - J_q(u)) - 2α(v - u) + 2M_*|v - u|` is nonpositive, and negative on a set of positive
+measure, then `ℱ_W(v) < ℱ_W(u)`.  This combines `eq:combined-lipschitz` with `μ_j ≥ 0`. -/
+theorem rowFunctional_lt_of_pointwise {ι : Type*} [Fintype ι] (Hs : ι → SimpleGraph V)
+    [∀ j, DecidableRel (Hs j).Adj] (W : Graphon) {q α : ℝ} {μ : ι → ℝ} (hq0 : 0 < q)
+    (hq1 : q < 1) (hμ : ∀ j, 0 ≤ μ j) {u v : ℝ → ℝ} (hu : IsRow u)
     (hv : IsRow v) {s : Set ℝ} (hs : 0 < unitμ s)
     (hle : ∀ y, 2 * (Jp q (v y) - Jp q (u y)) - 2 * α * (v y - u y)
-      + 2 * H.edgeFinset.card * μ * |v y - u y| ≤ 0)
+      + 2 * combinedEdgeCard Hs μ * |v y - u y| ≤ 0)
     (hlt : ∀ y ∈ s, 2 * (Jp q (v y) - Jp q (u y)) - 2 * α * (v y - u y)
-      + 2 * H.edgeFinset.card * μ * |v y - u y| < 0) :
-    rowFunctional H W q α μ v < rowFunctional H W q α μ u := by
+      + 2 * combinedEdgeCard Hs μ * |v y - u y| < 0) :
+    combinedRowFunctional Hs W q α μ v < combinedRowFunctional Hs W q α μ u := by
   have iJu := integrable_Jp_row hq0 hq1 hu
   have iJv := integrable_Jp_row hq0 hq1 hv
   have iu := integrable_of_isRow hu
   have iv := integrable_of_isRow hv
   have iabs : Integrable (fun y => |v y - u y|) unitμ := (iv.sub iu).abs
   have hΦint : Integrable (fun y => 2 * (Jp q (v y) - Jp q (u y)) - 2 * α * (v y - u y)
-      + 2 * H.edgeFinset.card * μ * |v y - u y|) unitμ :=
+      + 2 * combinedEdgeCard Hs μ * |v y - u y|) unitμ :=
     (((iJv.sub iJu).const_mul 2).sub ((iv.sub iu).const_mul (2 * α))).add
       (iabs.const_mul _)
   have hΦ : ∫ y, (2 * (Jp q (v y) - Jp q (u y)) - 2 * α * (v y - u y)
-      + 2 * H.edgeFinset.card * μ * |v y - u y|) ∂unitμ
+      + 2 * combinedEdgeCard Hs μ * |v y - u y|) ∂unitμ
       = 2 * ((∫ y, Jp q (v y) ∂unitμ) - ∫ y, Jp q (u y) ∂unitμ)
         - 2 * α * ((∫ y, v y ∂unitμ) - ∫ y, u y ∂unitμ)
-        + 2 * H.edgeFinset.card * μ * ∫ y, |v y - u y| ∂unitμ := by
+        + 2 * combinedEdgeCard Hs μ * ∫ y, |v y - u y| ∂unitμ := by
     have i₁ : Integrable (fun y => 2 * (Jp q (v y) - Jp q (u y))) unitμ :=
       (iJv.sub iJu).const_mul 2
     have i₂ : Integrable (fun y => 2 * α * (v y - u y)) unitμ := (iv.sub iu).const_mul (2 * α)
-    have i₃ : Integrable (fun y => 2 * H.edgeFinset.card * μ * |v y - u y|) unitμ :=
+    have i₃ : Integrable (fun y => 2 * combinedEdgeCard Hs μ * |v y - u y|) unitμ :=
       iabs.const_mul _
     have i₁₂ : Integrable (fun y => 2 * (Jp q (v y) - Jp q (u y)) - 2 * α * (v y - u y))
         unitμ := i₁.sub i₂
     rw [integral_add i₁₂ i₃, integral_sub i₁ i₂, integral_const_mul, integral_const_mul,
       integral_const_mul, integral_sub iJv iJu, integral_sub iv iu]
   have hneg : ∫ y, (2 * (Jp q (v y) - Jp q (u y)) - 2 * α * (v y - u y)
-      + 2 * H.edgeFinset.card * μ * |v y - u y|) ∂unitμ < 0 := by
+      + 2 * combinedEdgeCard Hs μ * |v y - u y|) ∂unitμ < 0 := by
     have hpos : 0 < ∫ y, -(2 * (Jp q (v y) - Jp q (u y)) - 2 * α * (v y - u y)
-        + 2 * H.edgeFinset.card * μ * |v y - u y|) ∂unitμ := by
+        + 2 * combinedEdgeCard Hs μ * |v y - u y|) ∂unitμ := by
       have hneg' : Integrable (fun y => -(2 * (Jp q (v y) - Jp q (u y)) - 2 * α * (v y - u y)
-          + 2 * H.edgeFinset.card * μ * |v y - u y|)) unitμ := hΦint.neg
+          + 2 * combinedEdgeCard Hs μ * |v y - u y|)) unitμ := hΦint.neg
       rw [integral_pos_iff_support_of_nonneg (fun y => neg_nonneg.mpr (hle y)) hneg']
       refine hs.trans_le (measure_mono fun y hy => ?_)
       exact Function.mem_support.mpr (neg_ne_zero.mpr (hlt y hy).ne)
     rw [integral_neg] at hpos
     linarith
-  have hlip := rooted_lipschitz H W hv hu
-  have hR : -(μ * (totalRootedDensity H W v - totalRootedDensity H W u))
-      ≤ μ * (2 * H.edgeFinset.card * ∫ y, |v y - u y| ∂unitμ) := by
-    rw [← mul_neg]
-    exact mul_le_mul_of_nonneg_left ((neg_le_abs _).trans hlip) hμ
-  unfold rowFunctional
+  have hlip := combined_lipschitz Hs W hμ hv hu
+  have hR : -(combinedRooted Hs W μ v - combinedRooted Hs W μ u)
+      ≤ 2 * combinedEdgeCard Hs μ * ∫ y, |v y - u y| ∂unitμ := (neg_le_abs _).trans hlip
+  unfold combinedRowFunctional
   nlinarith [hΦ, hneg, hR]
 
 /-- **The first variation of `ℱ_W`.**  Under the hypotheses of
 `hasDerivAt_integral_Jp_line`, `t ↦ ℱ_W(u + t h)` has derivative
-`2∫J_q'(u) h - 2α∫h - μ∫∇ℛ_W(u) h` at `0`. -/
-theorem hasDerivAt_rowFunctional_line (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon)
-    {q α μ δ : ℝ} (hq0 : 0 < q) (hq1 : q < 1) (hδ : 0 < δ) {u h : ℝ → ℝ} (hu : IsRow u)
+`2∫J_q'(u) h - 2α∫h - ∑_j μ_j ∫∇ℛ_{H_j,W}(u) h` at `0`. -/
+theorem hasDerivAt_rowFunctional_line {ι : Type*} [Fintype ι] (Hs : ι → SimpleGraph V)
+    [∀ j, DecidableRel (Hs j).Adj] (W : Graphon) {q α δ : ℝ} {μ : ι → ℝ} (hq0 : 0 < q)
+    (hq1 : q < 1) (hδ : 0 < δ) {u h : ℝ → ℝ} (hu : IsRow u)
     (hh : Measurable h) (hhb : ∀ y, |h y| ≤ 1)
     (hsupp : ∀ y, h y ≠ 0 → δ ≤ u y ∧ u y ≤ 1 - δ) :
-    HasDerivAt (fun t : ℝ => rowFunctional H W q α μ (fun y => u y + t * h y))
+    HasDerivAt (fun t : ℝ => combinedRowFunctional Hs W q α μ (fun y => u y + t * h y))
       (2 * ∫ y, Jp' q (u y) * h y ∂unitμ - 2 * α * ∫ y, h y ∂unitμ
-        - μ * ∫ y, rootedGradient H W u y * h y ∂unitμ) 0 := by
+        - ∑ j, μ j * ∫ y, rootedGradient (Hs j) W u y * h y ∂unitμ) 0 := by
   have hJ := hasDerivAt_integral_Jp_line hq0 hq1 hδ hu hh hhb hsupp
-  have hR := hasDerivAt_totalRootedDensity_line H W hu hh hhb
+  have hR := hasDerivAt_combinedRooted_line Hs W μ hu hh hhb
   have ih : Integrable h unitμ := integrable_of_abs_le hh 1 hhb
   have hfun : (fun t : ℝ => ∫ y, (u y + t * h y) ∂unitμ)
       = fun t => (∫ y, u y ∂unitμ) + t * ∫ y, h y ∂unitμ := by
@@ -154,6 +154,6 @@ theorem hasDerivAt_rowFunctional_line (H : SimpleGraph V) [DecidableRel H.Adj] (
     rw [hfun]
     simpa using ((hasDerivAt_id (0:ℝ)).mul_const (∫ y, h y ∂unitμ)).const_add
       (∫ y, u y ∂unitμ)
-  exact ((hJ.const_mul 2).sub (hlin.const_mul (2 * α))).sub (hR.const_mul μ)
+  exact ((hJ.const_mul 2).sub (hlin.const_mul (2 * α))).sub hR
 
 end UpperTailMultipodality.Rows

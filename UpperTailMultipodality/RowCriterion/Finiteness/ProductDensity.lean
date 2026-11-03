@@ -6,8 +6,9 @@ import UpperTailMultipodality.Preliminaries.Graphons.Basic
 A bounded measurable function on a product `X × ℝ` of two finite measure spaces is approximated
 in `L²` by finite sums `∑ᵢ aᵢ(x) bᵢ(y)` of products of bounded measurable functions
 (`exists_isProdSimple_approx`).  This is the finite-rank approximation behind the compactness of
-the integral operators of `lem:row-compact`: it is proved by a π-λ argument on rectangles,
-followed by the approximation of a bounded measurable function by simple functions.
+the integral operators of `isCompactOperator_kernelOp`, the Hilbert–Schmidt compactness used for
+`lem:bordered`: it is proved by a π-λ argument on rectangles, followed by the approximation of a
+bounded measurable function by simple functions.
 -/
 
 namespace UpperTailMultipodality

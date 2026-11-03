@@ -6,10 +6,10 @@ import UpperTailMultipodality.RowCriterion.Finiteness.Scalar
 
 `rowFunctionalE` is the row functional `ℱ_W` of `eq:row-functional` restricted to `BddMeas`.  At a
 function with values in a compact subinterval of `(0,1)` it is Fréchet differentiable, with
-derivative `k ↦ ∫ (2J_q'(u) - 2α - μ∇ℛ_W(u)) k` (`hasFDerivAt_rowFunctionalE`).  At a global
+derivative `k ↦ ∫ (2J_q'(u) - 2α - ∇𝒫_W(u)) k` (`hasFDerivAt_rowFunctionalE`).  At a global
 minimizer satisfying the Euler–Lagrange equation `eq:row-euler`, the second variation
-`Q_u(h) = 2∫J_q''(u)h² - μ∫D∇ℛ_W(u)[h] h` is nonnegative (`secondVariation_nonneg`), the
-second-order necessary condition used in the proof of `lem:coercive`.
+`Q_u(h) = 2∫J_q''(u)h² - ∫D∇𝒫_W(u)[h] h` is nonnegative (`secondVariation_nonneg`), the
+second-order necessary condition used in the proof of `lem:row-lower-bound`.
 -/
 
 namespace UpperTailMultipodality
@@ -54,21 +54,24 @@ theorem nonneg_of_isLocalMin_deriv {φ ψ : ℝ → ℝ} {t₀ a : ℝ} (ht₀ :
   have hge := hmin t₁ (by rw [abs_of_pos ht₁pos]; exact (min_le_right _ _).trans_lt (by linarith))
   linarith
 
-variable (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon) (q α μ : ℝ)
+variable {ι : Type*} [Fintype ι]
+variable (Hs : ι → SimpleGraph V) [∀ j, DecidableRel (Hs j).Adj] (W : Graphon) (q α : ℝ)
+variable (μ : ι → ℝ)
 
 /-- **The row functional `ℱ_W` on `BddMeas`.** -/
-noncomputable def rowFunctionalE (u : BddMeas) : ℝ := rowFunctional H W q α μ u
+noncomputable def rowFunctionalE (u : BddMeas) : ℝ := combinedRowFunctional Hs W q α μ u
 
 /-- The entropy term `u ↦ ∫ J_q(u)`. -/
 noncomputable def entropyE (u : BddMeas) : ℝ := ∫ y, Jp q (u y) ∂unitμ
 
-variable {H W q α μ}
+variable {Hs W q α μ}
 
 /-- The row functional in terms of its three terms. -/
 theorem rowFunctionalE_eq (u : BddMeas) :
-    rowFunctionalE H W q α μ u
-      = 2 * entropyE q u - 2 * α * BddMeas.integ u - μ * rootedE H W u := by
-  rw [rowFunctionalE, rowFunctional, entropyE, BddMeas.integ_apply, rootedE_eq]
+    rowFunctionalE Hs W q α μ u
+      = 2 * entropyE q u - 2 * α * BddMeas.integ u - combinedRootedE Hs W μ u := by
+  rw [rowFunctionalE, combinedRowFunctional, entropyE, BddMeas.integ_apply,
+    combinedRootedE_eq]
 
 /-- `J_q ∘ u` is integrable for bounded measurable `u`. -/
 theorem integrable_Jp_comp {q : ℝ} (hq0 : 0 < q) (hq1 : q < 1) (u : BddMeas) :
@@ -144,24 +147,25 @@ theorem hasFDerivAt_entropyE (hq0 : 0 < q) (hq1 : q < 1) {c d : ℝ} (hc : 0 < c
     _ = L * ‖k‖ ^ 2 := by simp
 
 /-- **The first variation of `ℱ_W`** at a function with values in `[c,d] ⊆ (0,1)`:
-`Dℱ_W(u)[k] = ∫ g k` with `g = 2J_q'(u) - 2α - μ∇ℛ_W(u)`. -/
+`Dℱ_W(u)[k] = ∫ g k` with `g = 2J_q'(u) - 2α - ∇𝒫_W(u)`. -/
 theorem hasFDerivAt_rowFunctionalE (hq0 : 0 < q) (hq1 : q < 1) {c d : ℝ} (hc : 0 < c)
     (hd : d < 1) {u : BddMeas} (hu : ∀ y, u y ∈ Set.Icc c d) {g : BddMeas}
-    (hg : ∀ y, g y = 2 * Jp' q (u y) - 2 * α - μ * gradE H W u y) :
-    HasFDerivAt (rowFunctionalE H W q α μ) (BddMeas.integ.comp (BddMeas.mulLeftCLM g)) u := by
-  set gJ : BddMeas := (1 / 2 : ℝ) • (g + algebraMap ℝ BddMeas (2 * α) + μ • gradE H W u)
-    with hgJ
+    (hg : ∀ y, g y = 2 * Jp' q (u y) - 2 * α - combinedGradE Hs W μ u y) :
+    HasFDerivAt (rowFunctionalE Hs W q α μ) (BddMeas.integ.comp (BddMeas.mulLeftCLM g)) u := by
+  set gJ : BddMeas :=
+    (1 / 2 : ℝ) • (g + algebraMap ℝ BddMeas (2 * α) + combinedGradE Hs W μ u) with hgJ
   have hgJ' : ∀ y, gJ y = Jp' q (u y) := by
     intro y
-    rw [hgJ, BddMeas.smul_apply, BddMeas.add_apply, BddMeas.add_apply, hg, BddMeas.smul_apply,
+    rw [hgJ, BddMeas.smul_apply, BddMeas.add_apply, BddMeas.add_apply, hg,
       BddMeas.coe_algebraMap]
     ring
   have h1 := hasFDerivAt_entropyE hq0 hq1 hc hd hu hgJ'
   have h2 := BddMeas.integ.hasFDerivAt (x := u)
-  have h3 := hasFDerivAt_rootedE (H := H) (W := W) u
-  have h := ((h1.const_smul (2:ℝ)).sub (h2.const_smul (2 * α))).sub (h3.const_smul μ)
-  have hfun : rowFunctionalE H W q α μ
-      = fun u => (2:ℝ) • entropyE q u - (2 * α) • BddMeas.integ u - μ • rootedE H W u := by
+  have h3 := hasFDerivAt_combinedRootedE (Hs := Hs) (W := W) (μ := μ) u
+  have h := ((h1.const_smul (2:ℝ)).sub (h2.const_smul (2 * α))).sub h3
+  have hfun : rowFunctionalE Hs W q α μ
+      = fun u => (2:ℝ) • entropyE q u - (2 * α) • BddMeas.integ u
+        - combinedRootedE Hs W μ u := by
     funext u; rw [rowFunctionalE_eq]; simp only [smul_eq_mul]
   rw [hfun]
   refine h.congr_fderiv ?_
@@ -169,13 +173,12 @@ theorem hasFDerivAt_rowFunctionalE (hq0 : 0 < q) (hq1 : q < 1) {c d : ℝ} (hc :
   simp only [_root_.sub_apply, _root_.smul_apply,
     ContinuousLinearMap.comp_apply, BddMeas.mulLeftCLM_apply, smul_eq_mul]
   rw [BddMeas.integ_apply, BddMeas.integ_apply, BddMeas.integ_apply, BddMeas.integ_apply,
-    ← integral_const_mul, ← integral_const_mul, ← integral_const_mul,
-    ← integral_sub, ← integral_sub]
+    ← integral_const_mul, ← integral_const_mul, ← integral_sub, ← integral_sub]
   · refine integral_congr_ae (Eventually.of_forall fun y => ?_)
     simp only [BddMeas.mul_apply, hgJ', hg]
     ring
   · exact ((gJ * k).integrable.const_mul 2).sub (k.integrable.const_mul _)
-  · exact (gradE H W u * k).integrable.const_mul _
+  · exact (combinedGradE Hs W μ u * k).integrable
   · exact (gJ * k).integrable.const_mul 2
   · exact k.integrable.const_mul _
 
@@ -275,10 +278,10 @@ theorem hasDerivAt_integral_Jp'_line (hq0 : 0 < q) (hq1 : q < 1) {c d : ℝ} (hc
         integral_mono ((hint1.sub hint2).sub (hint3.const_mul t)).abs (integrable_const _) hpt
     _ = L * ‖k‖ ^ 3 * t ^ 2 := by simp
 
-variable (H W μ) in
-/-- **The second variation** `Q_u(h) = 2∫J_q''(u)h² - μ∫D∇ℛ_W(u)[h] h`. -/
+variable (Hs W μ) in
+/-- **The second variation** `Q_u(h) = 2∫J_q''(u)h² - ∫D∇𝒫_W(u)[h] h`. -/
 noncomputable def secondVariation (u h : BddMeas) : ℝ :=
-  2 * ∫ y, Jp'' (u y) * h y ^ 2 ∂unitμ - μ * BddMeas.integ (gradDeriv H W u h * h)
+  2 * ∫ y, Jp'' (u y) * h y ^ 2 ∂unitμ - BddMeas.integ (combinedGradDeriv Hs W μ u h * h)
 
 /-- **Second-order necessary condition**: at a global minimizer of `ℱ_W` over rows, with values
 in `[c,d] ⊆ (0,1)` and satisfying `eq:row-euler` everywhere, `Q_u(h) ≥ 0` for every bounded
@@ -286,9 +289,9 @@ measurable `h`. -/
 theorem secondVariation_nonneg (hq0 : 0 < q) (hq1 : q < 1) {c d : ℝ} (hc : 0 < c) (hd : d < 1)
     {u : BddMeas} (hu : ∀ y, u y ∈ Set.Icc c d)
     (hmin : ∀ v : BddMeas, (∀ y, v y ∈ Set.Icc (0:ℝ) 1) →
-      rowFunctionalE H W q α μ u ≤ rowFunctionalE H W q α μ v)
-    (hEL : ∀ y, 2 * Jp' q (u y) - 2 * α = μ * gradE H W u y) (h : BddMeas) :
-    0 ≤ secondVariation H W μ u h := by
+      rowFunctionalE Hs W q α μ u ≤ rowFunctionalE Hs W q α μ v)
+    (hEL : ∀ y, 2 * Jp' q (u y) - 2 * α = combinedGradE Hs W μ u y) (h : BddMeas) :
+    0 ≤ secondVariation Hs W μ u h := by
   set r := min c (1 - d) / 2 with hr
   have hr0 : 0 < r := by rw [hr]; exact half_pos (lt_min hc (by linarith))
   have hc' : 0 < c - r := by
@@ -319,15 +322,16 @@ theorem secondVariation_nonneg (hq0 : 0 < q) (hq1 : q < 1) {c d : ℝ} (hc : 0 <
     have := hC₁ _ (hmemt t ht y); rwa [Real.norm_eq_abs] at this
   choose! G hG using hJex
   set g : ℝ → BddMeas := fun t =>
-    (2:ℝ) • G t - algebraMap ℝ BddMeas (2 * α) - μ • gradE H W (u + t • h) with hgdef
+    (2:ℝ) • G t - algebraMap ℝ BddMeas (2 * α) - combinedGradE Hs W μ (u + t • h) with hgdef
   have hg : ∀ t, |t| < t₀ → ∀ y,
-      g t y = 2 * Jp' q ((u + t • h) y) - 2 * α - μ * gradE H W (u + t • h) y := by
+      g t y = 2 * Jp' q ((u + t • h) y) - 2 * α - combinedGradE Hs W μ (u + t • h) y := by
     intro t ht y
     rw [hgdef]
     simp only [BddMeas.sub_apply, BddMeas.smul_apply, BddMeas.coe_algebraMap, hG t ht y]
-  set φ : ℝ → ℝ := fun t => rowFunctionalE H W q α μ (u + t • h) with hφ
+  set φ : ℝ → ℝ := fun t => rowFunctionalE Hs W q α μ (u + t • h) with hφ
   set ψ : ℝ → ℝ := fun t => 2 * (∫ y, Jp' q (u y + t * h y) * h y ∂unitμ)
-    - 2 * α * BddMeas.integ h - μ * BddMeas.integ (gradE H W (u + t • h) * h) with hψ
+    - 2 * α * BddMeas.integ h
+    - BddMeas.integ (combinedGradE Hs W μ (u + t • h) * h) with hψ
   have hψeq : ∀ t, |t| < t₀ → BddMeas.integ (g t * h) = ψ t := by
     intro t ht
     have hGh : BddMeas.integ (G t * h) = ∫ y, Jp' q (u y + t * h y) * h y ∂unitμ := by
@@ -336,13 +340,13 @@ theorem secondVariation_nonneg (hq0 : 0 < q) (hq1 : q < 1) {c d : ℝ} (hc : 0 <
       rw [BddMeas.mul_apply, hG t ht y]
       rfl
     have hsplit : g t * h
-        = (2:ℝ) • (G t * h) - (2 * α) • h - μ • (gradE H W (u + t • h) * h) := by
+        = (2:ℝ) • (G t * h) - (2 * α) • h - combinedGradE Hs W μ (u + t • h) * h := by
       rw [hgdef]
       ext y
       simp only [BddMeas.mul_apply, BddMeas.sub_apply, BddMeas.smul_apply,
         BddMeas.coe_algebraMap]
       ring
-    rw [hsplit, map_sub, map_sub, map_smul, map_smul, map_smul, hGh, hψ]
+    rw [hsplit, map_sub, map_sub, map_smul, map_smul, hGh, hψ]
     simp only [smul_eq_mul]
   have hline : ∀ t : ℝ, HasDerivAt (fun t : ℝ => u + t • h) h t := by
     intro t
@@ -350,7 +354,7 @@ theorem secondVariation_nonneg (hq0 : 0 < q) (hq1 : q < 1) {c d : ℝ} (hc : 0 <
     simpa using this
   have hφderiv : ∀ t, |t| < t₀ → HasDerivAt φ (ψ t) t := by
     intro t ht
-    have hF := hasFDerivAt_rowFunctionalE (H := H) (W := W) (α := α) (μ := μ) hq0 hq1 hc' hd'
+    have hF := hasFDerivAt_rowFunctionalE (Hs := Hs) (W := W) (α := α) (μ := μ) hq0 hq1 hc' hd'
       (hmemt t ht) (hg t ht)
     have hcomp := hF.comp_hasDerivAt t (hline t)
     rw [← hψeq t ht]
@@ -364,31 +368,32 @@ theorem secondVariation_nonneg (hq0 : 0 < q) (hq1 : q < 1) {c d : ℝ} (hc : 0 <
       rw [hg 0 (by rwa [abs_zero]) y, BddMeas.zero_apply, hu0, hEL y]
       ring
     rw [hg0, zero_mul, map_zero]
-  have hψderiv : HasDerivAt ψ (secondVariation H W μ u h) 0 := by
+  have hψderiv : HasDerivAt ψ (secondVariation Hs W μ u h) 0 := by
     have h1 := (hasDerivAt_integral_Jp'_line hq0 hq1 hc hd hu h).const_mul 2
-    have h2 : HasDerivAt (fun t : ℝ => BddMeas.integ (gradE H W (u + t • h) * h))
-        (BddMeas.integ (gradDeriv H W u h * h)) 0 := by
-      have hgrad : HasFDerivAt (gradE H W) (gradDeriv H W u) (u + (0:ℝ) • h) := by
-        rw [hu0]; exact hasFDerivAt_gradE u
+    have h2 : HasDerivAt (fun t : ℝ => BddMeas.integ (combinedGradE Hs W μ (u + t • h) * h))
+        (BddMeas.integ (combinedGradDeriv Hs W μ u h * h)) 0 := by
+      have hgrad : HasFDerivAt (combinedGradE Hs W μ) (combinedGradDeriv Hs W μ u)
+          (u + (0:ℝ) • h) := by
+        rw [hu0]; exact hasFDerivAt_combinedGradE u
       have hchain := hgrad.comp_hasDerivAt (0:ℝ) (hline 0)
       have hclm : HasFDerivAt (fun w : BddMeas => BddMeas.integ (h * w))
           (BddMeas.integ.comp (BddMeas.mulLeftCLM h))
-          (gradE H W (u + (0:ℝ) • h)) :=
+          (combinedGradE Hs W μ (u + (0:ℝ) • h)) :=
         (BddMeas.integ.comp (BddMeas.mulLeftCLM h)).hasFDerivAt
       have hres := hclm.comp_hasDerivAt (0:ℝ) hchain
-      have hfun : (fun t : ℝ => BddMeas.integ (h * gradE H W (u + t • h)))
-          = fun t : ℝ => BddMeas.integ (gradE H W (u + t • h) * h) := by
+      have hfun : (fun t : ℝ => BddMeas.integ (h * combinedGradE Hs W μ (u + t • h)))
+          = fun t : ℝ => BddMeas.integ (combinedGradE Hs W μ (u + t • h) * h) := by
         funext t; rw [mul_comm]
       simp only [Function.comp_def, ContinuousLinearMap.comp_apply,
         BddMeas.mulLeftCLM_apply] at hres
       rw [hfun] at hres
       rw [mul_comm]
       exact hres
-    have h3 := (h1.sub_const (2 * α * BddMeas.integ h)).sub (h2.const_mul μ)
+    have h3 := (h1.sub_const (2 * α * BddMeas.integ h)).sub h2
     rw [secondVariation]
     exact h3
   refine nonneg_of_isLocalMin_deriv ht₀pos (fun t ht => ?_) hφderiv hψ0 hψderiv
-  have h0 : φ 0 = rowFunctionalE H W q α μ u := by
+  have h0 : φ 0 = rowFunctionalE Hs W q α μ u := by
     rw [hφ]; simp only [hu0]
   rw [h0]
   exact hmin _ fun y => by

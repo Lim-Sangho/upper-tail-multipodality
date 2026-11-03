@@ -3,7 +3,7 @@ import UpperTailMultipodality.Insertion.Construction
 /-!
 # Rows attain the lower bound almost everywhere
 
-The last step of `lem:upper-tail-insertion` and `lem:fixed-insertion`: by Fubini's theorem and
+The last step of `lem:global-row-minimality` and `lem:fixed-insertion`: by Fubini's theorem and
 `eq:rooted-average`, `∫₀¹ ℱ_W(W_x) dx = 2I_q(W) - 2α e(W) - μN t(H,W)`.  Hence, if `ℱ_W` is
 bounded below on all rows by this value, almost every row of `W` attains it.
 -/
@@ -113,5 +113,71 @@ theorem ae_rowFunctional_row_eq (H : SimpleGraph V) [DecidableRel H.Adj] (W : Gr
   have hae := (integral_eq_zero_iff_of_nonneg_ae hnn (hint.sub (integrable_const c))).1 hzero
   filter_upwards [hae] with x hx
   exact sub_eq_zero.1 hx
+
+/-! ### A finite family of graphs -/
+
+section Family
+
+variable {ι : Type*} [Fintype ι]
+
+/-- `x ↦ 𝒫_W(W_x)` is integrable. -/
+theorem integrable_combinedRooted_row (Hs : ι → SimpleGraph V)
+    [∀ j, DecidableRel (Hs j).Adj] (W : Graphon) (μ : ι → ℝ) :
+    Integrable (fun x => combinedRooted Hs W μ (W.row x)) unitμ := by
+  unfold combinedRooted
+  exact integrable_finsetSum _ fun j _ =>
+    (integrable_totalRootedDensity_row (Hs j) W).const_mul _
+
+/-- **`∫₀¹ ℱ_W(W_x) dx = 2I_q(W) - 2α e(W) - ∑_j μ_j N t(H_j,W)`**, and the integrand is
+integrable. -/
+theorem integral_combinedRowFunctional_row (Hs : ι → SimpleGraph V)
+    [∀ j, DecidableRel (Hs j).Adj] (W : Graphon) {q : ℝ} (hq0 : 0 < q) (hq1 : q < 1)
+    (α : ℝ) (μ : ι → ℝ) :
+    Integrable (fun x => combinedRowFunctional Hs W q α μ (W.row x)) unitμ ∧
+      ∫ x, combinedRowFunctional Hs W q α μ (W.row x) ∂unitμ
+        = 2 * W.Ip q - 2 * α * W.edgeDensity
+          - ∑ j, μ j * (Fintype.card V * W.tDensity (Hs j)) := by
+  have hJint : Integrable (fun z : ℝ × ℝ => Jp q (W.toFun z.1 z.2)) (unitμ.prod unitμ) :=
+    W.integrable_comp (measurable_Jp q) (continuousOn_Jp_Icc hq0 hq1)
+  have hWint : Integrable (fun z : ℝ × ℝ => W.toFun z.1 z.2) (unitμ.prod unitμ) :=
+    W.integrable_self
+  have h1 : Integrable (fun x => ∫ y, Jp q (W.row x y) ∂unitμ) unitμ :=
+    hJint.integral_prod_left
+  have h2 : Integrable (fun x => ∫ y, W.row x y ∂unitμ) unitμ := hWint.integral_prod_left
+  have h3 := integrable_combinedRooted_row Hs W μ
+  have hint : Integrable (fun x => combinedRowFunctional Hs W q α μ (W.row x)) unitμ :=
+    ((h1.const_mul 2).sub (h2.const_mul (2 * α))).sub h3
+  refine ⟨hint, ?_⟩
+  have e1 : ∫ x, ∫ y, Jp q (W.row x y) ∂unitμ ∂unitμ = W.Ip q :=
+    (integral_prod _ hJint).symm
+  have e2 : ∫ x, ∫ y, W.row x y ∂unitμ ∂unitμ = W.edgeDensity :=
+    (integral_prod _ hWint).symm
+  have hA : Integrable (fun x => 2 * ∫ y, Jp q (W.row x y) ∂unitμ
+      - 2 * α * ∫ y, W.row x y ∂unitμ) unitμ := (h1.const_mul 2).sub (h2.const_mul (2 * α))
+  have hA1 : Integrable (fun x => 2 * ∫ y, Jp q (W.row x y) ∂unitμ) unitμ := h1.const_mul 2
+  have hA2 : Integrable (fun x => 2 * α * ∫ y, W.row x y ∂unitμ) unitμ := h2.const_mul (2 * α)
+  unfold combinedRowFunctional
+  rw [integral_sub hA h3, integral_sub hA1 hA2, integral_const_mul, integral_const_mul, e1, e2,
+    combined_average Hs W μ]
+
+/-- **Almost every row attains the lower bound.**  If `c ≤ ℱ_W(u)` for every row `u` and
+`c = 2I_q(W) - 2α e(W) - ∑_j μ_j N t(H_j,W)`, then `ℱ_W(W_x) = c` for almost every `x`. -/
+theorem ae_combinedRowFunctional_row_eq (Hs : ι → SimpleGraph V)
+    [∀ j, DecidableRel (Hs j).Adj] (W : Graphon) {q : ℝ} (hq0 : 0 < q) (hq1 : q < 1)
+    {α c : ℝ} {μ : ι → ℝ} (hle : ∀ u, IsRow u → c ≤ combinedRowFunctional Hs W q α μ u)
+    (hc : 2 * W.Ip q - 2 * α * W.edgeDensity
+      - ∑ j, μ j * (Fintype.card V * W.tDensity (Hs j)) = c) :
+    ∀ᵐ x ∂unitμ, combinedRowFunctional Hs W q α μ (W.row x) = c := by
+  obtain ⟨hint, hval⟩ := integral_combinedRowFunctional_row Hs W hq0 hq1 α μ
+  have hnn : 0 ≤ᵐ[unitμ] fun x => combinedRowFunctional Hs W q α μ (W.row x) - c :=
+    ae_of_all _ fun x => sub_nonneg.2 (hle _ (isRow_row W x))
+  have hzero : ∫ x, (combinedRowFunctional Hs W q α μ (W.row x) - c) ∂unitμ = 0 := by
+    rw [integral_sub hint (integrable_const c), hval, hc]
+    simp
+  have hae := (integral_eq_zero_iff_of_nonneg_ae hnn (hint.sub (integrable_const c))).1 hzero
+  filter_upwards [hae] with x hx
+  exact sub_eq_zero.1 hx
+
+end Family
 
 end UpperTailMultipodality.Insertion

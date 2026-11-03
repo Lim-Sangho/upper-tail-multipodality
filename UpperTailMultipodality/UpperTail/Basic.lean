@@ -3,9 +3,13 @@ import UpperTailMultipodality.Preliminaries.Perturbation
 import UpperTailMultipodality.UpperTail.Support.Multiplier
 
 /-!
-# Basic properties of upper-tail minimizers (`sec:upper-tail`)
+# Basic properties of upper-tail minimizers (`sec:upper-tail-interiority`)
 
-`lem:upper-tail-basic` and `lem:upper-tail-multiplier`.
+`lem:upper-tail-basic`, and the multiplier part of `lem:upper-tail-multiplier`.
+The paper states both for a finite family of upper-tail constraints; here they
+are specialized to one constraint.  The family
+versions are `joint_ae_ge`, `joint_exists_active`, `joint_exists_ae_le_one_sub`
+and `joint_multiplier`, in `UpperTail/Joint/`.
 -/
 
 namespace UpperTailMultipodality
@@ -26,8 +30,10 @@ theorem upper_tail_basic (H : SimpleGraph V) [DecidableRel H.Adj] (hm : 1 ≤ H.
   exact ⟨hlow, hact,
     UpperTailSupport.exists_ae_le_one_sub_of_minimizer H hm hp0 hpr hr1 hmin hlow hact⟩
 
-/-- **`lem:upper-tail-multiplier`.**  A minimizer satisfies `J_p'(W) = μ𝒟_W` almost everywhere,
-`eq:upper-tail-el`, for some `μ > 0`, and takes values in a compact subinterval of `(p,1)`. -/
+/-- **The multiplier part of `lem:upper-tail-multiplier`, for a single constraint.**  A minimizer
+satisfies `J_p'(W) = μ𝒟_W` almost everywhere, `lem:upper-tail-multiplier`(i), for some `μ > 0`,
+and takes
+values in a compact subinterval of `(p,1)`. -/
 theorem upper_tail_multiplier (H : SimpleGraph V) [DecidableRel H.Adj]
     (hm : 1 ≤ H.edgeFinset.card) {p r : ℝ} (hp0 : 0 < p) (hpr : p < r) (hr1 : r < 1)
     {W : Graphon} (hW : Feasible H r W) (hmin : W.Ip p = phiVar H p r) :

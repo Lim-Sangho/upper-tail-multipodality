@@ -10,7 +10,7 @@ provides:
 * `Kernel.lincomb K U s = K + ∑ᵢ sᵢ Uᵢ`;
 * `analyticOnNhd_tDensity_lincomb` — `s ↦ t(H, K + ∑ᵢ sᵢUᵢ)` is a polynomial, hence analytic;
 * `hasFDerivAt_tDensity_lincomb` — its derivative at `s = 0` for a graphon `K = W` is
-  `s ↦ ∑ᵢ sᵢ ∫∫ 𝒟_W Uᵢ` (`eq:first-variation`);
+  `s ↦ ∑ᵢ sᵢ ∫∫ 𝒟_W Uᵢ` (`eq:density-derivative`);
 * `Kernel.Ip`, `Kernel.edgeDensity` and `hasDerivAt_Ip_line` — the first variation of `I_p` at a
   graphon with values in a compact subinterval of `(0,1)`;
 * `Kernel.toGraphon` and `Graphon.clamp` — kernels with values in `[0,1]` are graphons, and a

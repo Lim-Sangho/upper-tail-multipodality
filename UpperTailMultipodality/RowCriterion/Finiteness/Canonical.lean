@@ -6,9 +6,9 @@ import UpperTailMultipodality.RowCriterion.Basic
 
 Every `u ∈ 𝓜_W` satisfies the Euler–Lagrange equation `eq:row-euler` almost everywhere, hence
 agrees almost everywhere with the *canonical representative*
-`σ(ℓ(q) + α + (μ/2)∇ℛ_W(u))`, which satisfies it everywhere and takes values in a fixed compact
+`σ(ℓ(q) + α + (1/2)∇𝒫_W(u))`, which satisfies it everywhere and takes values in a fixed compact
 subinterval of `(0,1)`.  Canonical representatives are Lipschitz in the mean
-(`dist_canonical_le`), because two minimizers are ordered (`prop:row-chain`), so that their
+(`dist_canonical_le`), because two minimizers are ordered (`prop:row-ordering`), so that their
 `L¹`-distance is the difference of their means, and `eq:gradient-lipschitz` applies.
 
 The file also contains the topological endgame of `lem:row-finite`: a bounded closed subset of
@@ -20,7 +20,8 @@ namespace UpperTailMultipodality
 open MeasureTheory Filter Topology
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
-variable {H : SimpleGraph V} [DecidableRel H.Adj] {W : Graphon} {q α μ : ℝ}
+variable {ι : Type*} [Fintype ι] {Hs : ι → SimpleGraph V} [∀ j, DecidableRel (Hs j).Adj]
+variable {W : Graphon} {q α : ℝ} {μ : ι → ℝ}
 
 /-- **The topological endgame of `lem:row-finite`.**  A bounded closed subset of `ℝ` each of
 whose accumulation points has a neighbourhood inside the set is finite. -/
@@ -51,27 +52,32 @@ theorem finite_of_accPt_interior {A : Set ℝ} (hbdd : A ⊆ Set.Icc 0 1) (hclos
   linarith
 
 /-- The row functional depends only on the almost everywhere class. -/
-theorem rowFunctional_congr_ae (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon)
-    (q α μ : ℝ) {u v : ℝ → ℝ} (hu : IsRow u) (hv : IsRow v) (huv : u =ᵐ[unitμ] v) :
-    rowFunctional H W q α μ u = rowFunctional H W q α μ v := by
+theorem rowFunctional_congr_ae (Hs : ι → SimpleGraph V) [∀ j, DecidableRel (Hs j).Adj]
+    (W : Graphon) (q α : ℝ) (μ : ι → ℝ) {u v : ℝ → ℝ} (hu : IsRow u) (hv : IsRow v)
+    (huv : u =ᵐ[unitμ] v) :
+    combinedRowFunctional Hs W q α μ u = combinedRowFunctional Hs W q α μ v := by
   have h1 : ∫ y, Jp q (u y) ∂unitμ = ∫ y, Jp q (v y) ∂unitμ :=
     integral_congr_ae (huv.mono fun y hy => by
       show Jp q (u y) = Jp q (v y)
       rw [hy])
   have h2 : ∫ y, u y ∂unitμ = ∫ y, v y ∂unitμ := integral_congr_ae huv
-  have h3 : totalRootedDensity H W u = totalRootedDensity H W v := by
-    have hz : ∫ y, |u y - v y| ∂unitμ = 0 := by
-      rw [← integral_zero ℝ ℝ (μ := unitμ)]
-      refine integral_congr_ae (huv.mono fun y hy => ?_)
-      show |u y - v y| = 0
-      rw [hy, sub_self, abs_zero]
-    have := rooted_lipschitz H W hu hv
-    rw [hz, mul_zero] at this
-    have habs := abs_nonneg (totalRootedDensity H W u - totalRootedDensity H W v)
-    have : |totalRootedDensity H W u - totalRootedDensity H W v| = 0 := le_antisymm this habs
-    have := abs_eq_zero.mp this
-    linarith
-  rw [rowFunctional, rowFunctional, h1, h2, h3]
+  have hz : ∫ y, |u y - v y| ∂unitμ = 0 := by
+    rw [← integral_zero ℝ ℝ (μ := unitμ)]
+    refine integral_congr_ae (huv.mono fun y hy => ?_)
+    show |u y - v y| = 0
+    rw [hy, sub_self, abs_zero]
+  have h3 : combinedRooted Hs W μ u = combinedRooted Hs W μ v := by
+    unfold combinedRooted
+    refine Finset.sum_congr rfl fun j _ => ?_
+    have hlip := rooted_lipschitz (Hs j) W hu hv
+    rw [hz, mul_zero] at hlip
+    have habs := abs_nonneg (totalRootedDensity (Hs j) W u - totalRootedDensity (Hs j) W v)
+    have heq : |totalRootedDensity (Hs j) W u - totalRootedDensity (Hs j) W v| = 0 :=
+      le_antisymm hlip habs
+    have := abs_eq_zero.mp heq
+    have : totalRootedDensity (Hs j) W u = totalRootedDensity (Hs j) W v := by linarith
+    rw [this]
+  rw [combinedRowFunctional, combinedRowFunctional, h1, h2, h3]
 
 /-- A row as an element of `BddMeas`. -/
 noncomputable def rowToBdd {u : ℝ → ℝ} (hu : IsRow u) : BddMeas :=
@@ -82,83 +88,87 @@ noncomputable def rowToBdd {u : ℝ → ℝ} (hu : IsRow u) : BddMeas :=
 /-- A row has values in `[0,1]`. -/
 theorem unitValued_rowToBdd {u : ℝ → ℝ} (hu : IsRow u) : UnitValued (rowToBdd hu) := hu.2
 
-variable (H W q α μ) in
-/-- **The canonical representative** `σ(ℓ(q) + α + (μ/2)∇ℛ_W(u))` of a row. -/
+variable (Hs W q α μ) in
+/-- **The canonical representative** `σ(ℓ(q) + α + (1/2)∇𝒫_W(u))` of a row. -/
 noncomputable def canonical (u : BddMeas) : BddMeas :=
-  BddMeas.sigma (elArg H W q α μ (u, 0))
+  BddMeas.sigma (elArg Hs W q α μ (u, 0))
 
 /-- The value of the canonical representative at a point. -/
 theorem canonical_apply (u : BddMeas) (y : ℝ) :
-    canonical H W q α μ u y = BddMeas.logistic (α + logit q + μ / 2 * gradE H W u y) := by
+    canonical Hs W q α μ u y
+      = BddMeas.logistic (α + logit q + 1 / 2 * combinedGradE Hs W μ u y) := by
   rw [canonical, BddMeas.sigma_apply, elArg_apply]
   simp only
   ring_nf
 
 /-- The canonical representative takes values in a fixed compact subinterval of `(0,1)`. -/
-theorem canonical_mem_Icc (hμ : 0 < μ) {u : BddMeas} (hu : UnitValued u) (y : ℝ) :
-    canonical H W q α μ u y ∈ Set.Icc (BddMeas.logistic (α + logit q))
-      (BddMeas.logistic (α + logit q + μ / 2 * lipConst H)) := by
+theorem canonical_mem_Icc (hμ : ∀ j, 0 ≤ μ j) {u : BddMeas} (hu : UnitValued u) (y : ℝ) :
+    canonical Hs W q α μ u y ∈ Set.Icc (BddMeas.logistic (α + logit q))
+      (BddMeas.logistic (α + logit q + 1 / 2 * combinedLipConst Hs μ)) := by
   rw [canonical_apply]
-  have hg := gradE_mem_Icc (H := H) (W := W) hu y
+  have hg := combinedGradE_mem_Icc (Hs := Hs) (W := W) hμ hu y
   constructor
   · refine logistic_monotone ?_
     have := hg.1
-    nlinarith
+    linarith
   · refine logistic_monotone ?_
     have := hg.2
-    nlinarith
+    linarith
 
 /-- The canonical representative of a minimizer agrees with it almost everywhere. -/
 theorem canonical_ae_eq (hq0 : 0 < q) (hq1 : q < 1) {δ : ℝ} (hδ0 : 0 < δ) (_hδ1 : δ < 1 / 2)
     {u : ℝ → ℝ} (hu : IsRow u) (hbounds : ∀ᵐ y ∂unitμ, δ ≤ u y ∧ u y ≤ 1 - δ)
-    (hEL : ∀ᵐ y ∂unitμ, 2 * Jp' q (u y) - 2 * α = μ * rootedGradient H W u y) :
-    ⇑(canonical H W q α μ (rowToBdd hu)) =ᵐ[unitμ] u := by
+    (hEL : ∀ᵐ y ∂unitμ, 2 * Jp' q (u y) - 2 * α = combinedRootedGradient Hs W μ u y) :
+    ⇑(canonical Hs W q α μ (rowToBdd hu)) =ᵐ[unitμ] u := by
   filter_upwards [hbounds, hEL] with y hy hELy
   rw [canonical_apply]
   have hu0 : 0 < u y := lt_of_lt_of_le hδ0 hy.1
   have hu1 : u y < 1 := lt_of_le_of_lt hy.2 (by linarith)
-  have hgrad : gradE H W (rowToBdd hu) y = rootedGradient H W u y := gradE_apply _ y
+  have hgrad : combinedGradE Hs W μ (rowToBdd hu) y = combinedRootedGradient Hs W μ u y :=
+    combinedGradE_apply _ y
   rw [hgrad]
-  have hJ : Jp' q (u y) = α + μ / 2 * rootedGradient H W u y := by linarith
+  have hJ : Jp' q (u y) = α + 1 / 2 * combinedRootedGradient Hs W μ u y := by linarith
   have := logistic_Jp' hq0 hq1 hu0 hu1
   rw [hJ] at this
-  rw [show α + logit q + μ / 2 * rootedGradient H W u y
-      = α + μ / 2 * rootedGradient H W u y + logit q by ring]
+  rw [show α + logit q + 1 / 2 * combinedRootedGradient Hs W μ u y
+      = α + 1 / 2 * combinedRootedGradient Hs W μ u y + logit q by ring]
   exact this
 
 /-- The canonical representative is a fixed point of the Euler–Lagrange map. -/
-theorem canonical_fix (hq0 : 0 < q) (hq1 : q < 1) {δ : ℝ} (hδ0 : 0 < δ) (hδ1 : δ < 1 / 2)
-    {u : ℝ → ℝ} (hu : IsRow u) (hbounds : ∀ᵐ y ∂unitμ, δ ≤ u y ∧ u y ≤ 1 - δ)
-    (hEL : ∀ᵐ y ∂unitμ, 2 * Jp' q (u y) - 2 * α = μ * rootedGradient H W u y) :
-    canonical H W q α μ (rowToBdd hu)
-      = BddMeas.sigma (elArg H W q α μ (canonical H W q α μ (rowToBdd hu), 0)) := by
-  have hae := canonical_ae_eq (H := H) (W := W) (μ := μ) hq0 hq1 hδ0 hδ1 hu hbounds hEL
-  have hgrad : gradE H W (canonical H W q α μ (rowToBdd hu)) = gradE H W (rowToBdd hu) := by
-    have hUV1 : UnitValued (canonical H W q α μ (rowToBdd hu)) := by
+theorem canonical_fix (hμ : ∀ j, 0 ≤ μ j) (hq0 : 0 < q) (hq1 : q < 1) {δ : ℝ} (hδ0 : 0 < δ)
+    (hδ1 : δ < 1 / 2) {u : ℝ → ℝ} (hu : IsRow u)
+    (hbounds : ∀ᵐ y ∂unitμ, δ ≤ u y ∧ u y ≤ 1 - δ)
+    (hEL : ∀ᵐ y ∂unitμ, 2 * Jp' q (u y) - 2 * α = combinedRootedGradient Hs W μ u y) :
+    canonical Hs W q α μ (rowToBdd hu)
+      = BddMeas.sigma (elArg Hs W q α μ (canonical Hs W q α μ (rowToBdd hu), 0)) := by
+  have hae := canonical_ae_eq (Hs := Hs) (W := W) (μ := μ) hq0 hq1 hδ0 hδ1 hu hbounds hEL
+  have hgrad : combinedGradE Hs W μ (canonical Hs W q α μ (rowToBdd hu))
+      = combinedGradE Hs W μ (rowToBdd hu) := by
+    have hUV1 : UnitValued (canonical Hs W q α μ (rowToBdd hu)) := by
       intro y
       rw [canonical_apply]
       exact ⟨(BddMeas.logistic_pos _).le, (BddMeas.logistic_lt_one _).le⟩
     have hUV2 : UnitValued (rowToBdd hu) := unitValued_rowToBdd hu
-    have hzero : ∫ t, |canonical H W q α μ (rowToBdd hu) t - (rowToBdd hu) t| ∂unitμ = 0 := by
+    have hzero : ∫ t, |canonical Hs W q α μ (rowToBdd hu) t - (rowToBdd hu) t| ∂unitμ = 0 := by
       rw [← integral_zero ℝ ℝ (μ := unitμ)]
       refine integral_congr_ae ?_
       filter_upwards [hae] with t ht
-      show |canonical H W q α μ (rowToBdd hu) t - (rowToBdd hu) t| = 0
+      show |canonical Hs W q α μ (rowToBdd hu) t - (rowToBdd hu) t| = 0
       have hru : (rowToBdd hu) t = u t := rfl
       rw [hru, ht, sub_self, abs_zero]
     refine BddMeas.ext fun y => ?_
-    have hb := abs_gradE_sub_le (H := H) (W := W) hUV1 hUV2 y
+    have hb := abs_combinedGradE_sub_le (Hs := Hs) (W := W) hμ hUV1 hUV2 y
     rw [hzero, mul_zero] at hb
     have := abs_eq_zero.mp (le_antisymm hb (abs_nonneg _))
     linarith
-  have key : ∀ x y : BddMeas, gradE H W x = gradE H W y →
-      canonical H W q α μ x = canonical H W q α μ y := by
+  have key : ∀ x y : BddMeas, combinedGradE Hs W μ x = combinedGradE Hs W μ y →
+      canonical Hs W q α μ x = canonical Hs W q α μ y := by
     intro x y hxy
     unfold canonical elArg
     simp only
     rw [hxy]
-  show canonical H W q α μ (rowToBdd hu)
-      = canonical H W q α μ (canonical H W q α μ (rowToBdd hu))
+  show canonical Hs W q α μ (rowToBdd hu)
+      = canonical Hs W q α μ (canonical Hs W q α μ (rowToBdd hu))
   exact key _ _ hgrad.symm
 
 /-- For ordered rows, the `L¹` distance is the difference of the means. -/
@@ -183,10 +193,10 @@ theorem integral_abs_sub_eq {u v : ℝ → ℝ} (hu : IsRow u) (hv : IsRow v) (h
   ring
 
 /-- **Canonical representatives are Lipschitz in the mean.** -/
-theorem dist_canonical_le (hμ : 0 < μ) {u v : ℝ → ℝ} (hu : IsRow u) (hv : IsRow v)
+theorem dist_canonical_le (hμ : ∀ j, 0 ≤ μ j) {u v : ℝ → ℝ} (hu : IsRow u) (hv : IsRow v)
     (hord : u ≤ᵐ[unitμ] v ∨ v ≤ᵐ[unitμ] u) :
-    ‖canonical H W q α μ (rowToBdd hu) - canonical H W q α μ (rowToBdd hv)‖
-      ≤ μ / 8 * lipConst H * |(∫ y, u y ∂unitμ) - ∫ y, v y ∂unitμ| := by
+    ‖canonical Hs W q α μ (rowToBdd hu) - canonical Hs W q α μ (rowToBdd hv)‖
+      ≤ 1 / 8 * combinedLipConst Hs μ * |(∫ y, u y ∂unitμ) - ∫ y, v y ∂unitμ| := by
   have hL1 : ∫ y, |u y - v y| ∂unitμ = |(∫ y, u y ∂unitμ) - ∫ y, v y ∂unitμ| := by
     rcases hord with h | h
     · exact integral_abs_sub_eq hu hv h
@@ -196,37 +206,40 @@ theorem dist_canonical_le (hμ : 0 < μ) {u v : ℝ → ℝ} (hu : IsRow u) (hv 
           show |v y - u y| = |u y - v y|
           rw [abs_sub_comm])] at this
       rw [this, abs_sub_comm]
-  refine BddMeas.norm_le_of_forall (by
-    have : (0:ℝ) ≤ lipConst H := lipConst_nonneg
-    have h2 : (0:ℝ) ≤ |(∫ y, u y ∂unitμ) - ∫ y, v y ∂unitμ| := abs_nonneg _
-    positivity) fun y => ?_
-  have hgrad := abs_gradE_sub_le (H := H) (W := W) (unitValued_rowToBdd hu)
+  refine BddMeas.norm_le_of_forall
+    (mul_nonneg (mul_nonneg (by norm_num) (combinedLipConst_nonneg hμ)) (abs_nonneg _))
+    fun y => ?_
+  have hgrad := abs_combinedGradE_sub_le (Hs := Hs) (W := W) hμ (unitValued_rowToBdd hu)
     (unitValued_rowToBdd hv) y
   have hcoe : ∫ t, |(rowToBdd hu) t - (rowToBdd hv) t| ∂unitμ = ∫ t, |u t - v t| ∂unitμ := rfl
   rw [hcoe, hL1] at hgrad
-  have hlogis := abs_logistic_sub_le (α + logit q + μ / 2 * gradE H W (rowToBdd hu) y)
-    (α + logit q + μ / 2 * gradE H W (rowToBdd hv) y)
-  have harg : |(α + logit q + μ / 2 * gradE H W (rowToBdd hu) y)
-      - (α + logit q + μ / 2 * gradE H W (rowToBdd hv) y)|
-      = μ / 2 * |gradE H W (rowToBdd hu) y - gradE H W (rowToBdd hv) y| := by
-    rw [show (α + logit q + μ / 2 * gradE H W (rowToBdd hu) y)
-        - (α + logit q + μ / 2 * gradE H W (rowToBdd hv) y)
-        = (μ / 2) * (gradE H W (rowToBdd hu) y - gradE H W (rowToBdd hv) y) by ring, abs_mul,
-      abs_of_pos (by positivity : (0:ℝ) < μ / 2)]
+  have hlogis :=
+    abs_logistic_sub_le (α + logit q + 1 / 2 * combinedGradE Hs W μ (rowToBdd hu) y)
+      (α + logit q + 1 / 2 * combinedGradE Hs W μ (rowToBdd hv) y)
+  have harg : |(α + logit q + 1 / 2 * combinedGradE Hs W μ (rowToBdd hu) y)
+      - (α + logit q + 1 / 2 * combinedGradE Hs W μ (rowToBdd hv) y)|
+      = 1 / 2 * |combinedGradE Hs W μ (rowToBdd hu) y
+        - combinedGradE Hs W μ (rowToBdd hv) y| := by
+    rw [show (α + logit q + 1 / 2 * combinedGradE Hs W μ (rowToBdd hu) y)
+        - (α + logit q + 1 / 2 * combinedGradE Hs W μ (rowToBdd hv) y)
+        = (1 / 2 : ℝ) * (combinedGradE Hs W μ (rowToBdd hu) y
+          - combinedGradE Hs W μ (rowToBdd hv) y) by ring, abs_mul,
+      abs_of_pos (by norm_num : (0:ℝ) < 1 / 2)]
   rw [harg] at hlogis
   rw [BddMeas.sub_apply, canonical_apply, canonical_apply]
   refine hlogis.trans ?_
-  have hLip0 : 0 ≤ lipConst H := lipConst_nonneg
+  have hLip0 : 0 ≤ combinedLipConst Hs μ := combinedLipConst_nonneg hμ
   have habs : 0 ≤ |(∫ y, u y ∂unitμ) - ∫ y, v y ∂unitμ| := abs_nonneg _
-  nlinarith [abs_nonneg (gradE H W (rowToBdd hu) y - gradE H W (rowToBdd hv) y)]
+  nlinarith [abs_nonneg (combinedGradE Hs W μ (rowToBdd hu) y
+    - combinedGradE Hs W μ (rowToBdd hv) y)]
 
 /-- **The row functional is Lipschitz** on functions with values in a compact subinterval of
 `(0,1)`. -/
 theorem exists_lipschitz_rowFunctionalE (hq0 : 0 < q) (hq1 : q < 1) {lo hi : ℝ} (hlo : 0 < lo)
-    (hhi : hi < 1) (hμ : 0 ≤ μ) :
+    (hhi : hi < 1) (hμ : ∀ j, 0 ≤ μ j) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ b b' : BddMeas, (∀ y, b y ∈ Set.Icc lo hi) →
       (∀ y, b' y ∈ Set.Icc lo hi) →
-      |rowFunctionalE H W q α μ b - rowFunctionalE H W q α μ b'| ≤ C * ‖b - b'‖ := by
+      |rowFunctionalE Hs W q α μ b - rowFunctionalE Hs W q α μ b'| ≤ C * ‖b - b'‖ := by
   classical
   obtain ⟨K₀, hK₀⟩ := (isCompact_Icc (a := lo) (b := hi)).exists_bound_of_continuousOn
     (f := Jp' q) (fun z hz => (hasDerivAt_Jp' hq0 hq1 (hlo.trans_le hz.1)
@@ -247,7 +260,8 @@ theorem exists_lipschitz_rowFunctionalE (hq0 : 0 < q) (hq1 : q < 1) {lo hi : ℝ
       rw [Real.norm_eq_abs]; exact hK z hz
     have := (convex_Icc lo hi).norm_image_sub_le_of_norm_hasDerivWithin_le hderiv hbound hx' hx
     simpa [Real.norm_eq_abs] using this
-  refine ⟨2 * K + 2 * |α| + μ * (2 * H.edgeFinset.card), by positivity, ?_⟩
+  have hM0 : (0:ℝ) ≤ combinedEdgeCard Hs μ := combinedEdgeCard_nonneg hμ
+  refine ⟨2 * K + 2 * |α| + 2 * combinedEdgeCard Hs μ, by positivity, ?_⟩
   intro b b' hb hb'
   have hrow : ∀ (w : BddMeas), (∀ y, w y ∈ Set.Icc lo hi) → IsRow (⇑w) := by
     intro w hw
@@ -281,18 +295,18 @@ theorem exists_lipschitz_rowFunctionalE (hq0 : 0 < q) (hq1 : q < 1) {lo hi : ℝ
     rw [hsub]
     exact (abs_integral_le_integral_abs).trans hL1
   -- the rooted density term
-  have hrint : |totalRootedDensity H W ⇑b - totalRootedDensity H W ⇑b'|
-      ≤ 2 * H.edgeFinset.card * ‖b - b'‖ := by
-    refine (rooted_lipschitz H W (hrow b hb) (hrow b' hb')).trans ?_
+  have hrint : |combinedRooted Hs W μ ⇑b - combinedRooted Hs W μ ⇑b'|
+      ≤ 2 * combinedEdgeCard Hs μ * ‖b - b'‖ := by
+    refine (combined_lipschitz Hs W hμ (hrow b hb) (hrow b' hb')).trans ?_
     exact mul_le_mul_of_nonneg_left hL1 (by positivity)
-  rw [rowFunctionalE, rowFunctionalE, rowFunctional, rowFunctional]
+  rw [rowFunctionalE, rowFunctionalE, combinedRowFunctional, combinedRowFunctional]
   have hexp : (2 * ∫ y, Jp q (b y) ∂unitμ - 2 * α * ∫ y, b y ∂unitμ
-        - μ * totalRootedDensity H W ⇑b)
+        - combinedRooted Hs W μ ⇑b)
       - (2 * ∫ y, Jp q (b' y) ∂unitμ - 2 * α * ∫ y, b' y ∂unitμ
-        - μ * totalRootedDensity H W ⇑b')
+        - combinedRooted Hs W μ ⇑b')
       = 2 * ((∫ y, Jp q (b y) ∂unitμ) - ∫ y, Jp q (b' y) ∂unitμ)
         - 2 * α * ((∫ y, b y ∂unitμ) - ∫ y, b' y ∂unitμ)
-        - μ * (totalRootedDensity H W ⇑b - totalRootedDensity H W ⇑b') := by ring
+        - (combinedRooted Hs W μ ⇑b - combinedRooted Hs W μ ⇑b') := by ring
   rw [hexp]
   have h1 : |2 * ((∫ y, Jp q (b y) ∂unitμ) - ∫ y, Jp q (b' y) ∂unitμ)| ≤ 2 * (K * ‖b - b'‖) := by
     rw [abs_mul, abs_two]
@@ -300,21 +314,19 @@ theorem exists_lipschitz_rowFunctionalE (hq0 : 0 < q) (hq1 : q < 1) {lo hi : ℝ
   have h2 : |2 * α * ((∫ y, b y ∂unitμ) - ∫ y, b' y ∂unitμ)| ≤ 2 * |α| * ‖b - b'‖ := by
     rw [abs_mul, abs_mul, abs_two]
     exact mul_le_mul_of_nonneg_left hmint (by positivity)
-  have h3 : |μ * (totalRootedDensity H W ⇑b - totalRootedDensity H W ⇑b')|
-      ≤ μ * (2 * H.edgeFinset.card * ‖b - b'‖) := by
-    rw [abs_mul, abs_of_nonneg hμ]
-    exact mul_le_mul_of_nonneg_left hrint hμ
+  have h3 : |combinedRooted Hs W μ ⇑b - combinedRooted Hs W μ ⇑b'|
+      ≤ 2 * combinedEdgeCard Hs μ * ‖b - b'‖ := hrint
   calc |2 * ((∫ y, Jp q (b y) ∂unitμ) - ∫ y, Jp q (b' y) ∂unitμ)
         - 2 * α * ((∫ y, b y ∂unitμ) - ∫ y, b' y ∂unitμ)
-        - μ * (totalRootedDensity H W ⇑b - totalRootedDensity H W ⇑b')|
+        - (combinedRooted Hs W μ ⇑b - combinedRooted Hs W μ ⇑b')|
       ≤ |2 * ((∫ y, Jp q (b y) ∂unitμ) - ∫ y, Jp q (b' y) ∂unitμ)|
         + |2 * α * ((∫ y, b y ∂unitμ) - ∫ y, b' y ∂unitμ)|
-        + |μ * (totalRootedDensity H W ⇑b - totalRootedDensity H W ⇑b')| := by
+        + |combinedRooted Hs W μ ⇑b - combinedRooted Hs W μ ⇑b'| := by
         refine (abs_sub _ _).trans ?_
         have := abs_sub (2 * ((∫ y, Jp q (b y) ∂unitμ) - ∫ y, Jp q (b' y) ∂unitμ))
           (2 * α * ((∫ y, b y ∂unitμ) - ∫ y, b' y ∂unitμ))
         linarith
-    _ ≤ (2 * K + 2 * |α| + μ * (2 * H.edgeFinset.card)) * ‖b - b'‖ := by
+    _ ≤ (2 * K + 2 * |α| + 2 * combinedEdgeCard Hs μ) * ‖b - b'‖ := by
         have := h1
         have := h2
         have := h3
@@ -323,17 +335,17 @@ theorem exists_lipschitz_rowFunctionalE (hq0 : 0 < q) (hq1 : q < 1) {lo hi : ℝ
 
 /-- **The set of means of minimizers is closed**, because the canonical representatives are
 Lipschitz in the mean and the row functional is continuous. -/
-theorem isClosed_of_lipschitz_rep (hq0 : 0 < q) (hq1 : q < 1) (hμ0 : 0 ≤ μ)
+theorem isClosed_of_lipschitz_rep (hq0 : 0 < q) (hq1 : q < 1) (hμ0 : ∀ j, 0 ≤ μ j)
     {lo hi : ℝ} (hlo : 0 < lo) (hhi : hi < 1)
     {cval : ℝ} {A : Set ℝ} {rep : ℝ → BddMeas}
     (hmem : ∀ a ∈ A, ∀ y, rep a y ∈ Set.Icc lo hi)
-    (hval : ∀ a ∈ A, rowFunctionalE H W q α μ (rep a) = cval)
+    (hval : ∀ a ∈ A, rowFunctionalE Hs W q α μ (rep a) = cval)
     (hmeanA : ∀ a ∈ A, BddMeas.integ (rep a) = a)
     {L : ℝ} (hL0 : 0 ≤ L) (hlip : ∀ a ∈ A, ∀ a' ∈ A, ‖rep a - rep a'‖ ≤ L * |a - a'|)
-    (hext : ∀ b : BddMeas, (∀ y, b y ∈ Set.Icc lo hi) → rowFunctionalE H W q α μ b = cval →
+    (hext : ∀ b : BddMeas, (∀ y, b y ∈ Set.Icc lo hi) → rowFunctionalE Hs W q α μ b = cval →
       BddMeas.integ b ∈ A) :
     IsClosed A := by
-  obtain ⟨C, hC0, hCf⟩ := exists_lipschitz_rowFunctionalE (H := H) (W := W) (α := α) (μ := μ)
+  obtain ⟨C, hC0, hCf⟩ := exists_lipschitz_rowFunctionalE (Hs := Hs) (W := W) (α := α) (μ := μ)
     hq0 hq1 hlo hhi hμ0
   rw [← closure_subset_iff_isClosed]
   intro a ha
@@ -375,9 +387,9 @@ theorem isClosed_of_lipschitz_rep (hq0 : 0 < q) (hq1 : q < 1) (hμ0 : 0 ≤ μ)
     · exact ge_of_tendsto (hpt y) (Filter.Eventually.of_forall fun n => (hmem _ (hseq n) y).1)
     · exact le_of_tendsto (hpt y) (Filter.Eventually.of_forall fun n => (hmem _ (hseq n) y).2)
   -- the value of the functional
-  have hbval : rowFunctionalE H W q α μ b = cval := by
-    have hFtend : Filter.Tendsto (fun n => rowFunctionalE H W q α μ (rep (seq n))) Filter.atTop
-        (𝓝 (rowFunctionalE H W q α μ b)) := by
+  have hbval : rowFunctionalE Hs W q α μ b = cval := by
+    have hFtend : Filter.Tendsto (fun n => rowFunctionalE Hs W q α μ (rep (seq n))) Filter.atTop
+        (𝓝 (rowFunctionalE Hs W q α μ b)) := by
       rw [tendsto_iff_dist_tendsto_zero]
       refine squeeze_zero (fun n => dist_nonneg) (fun n => ?_) (?_ : Filter.Tendsto
         (fun n => C * ‖rep (seq n) - b‖) Filter.atTop (𝓝 0))
@@ -385,7 +397,7 @@ theorem isClosed_of_lipschitz_rep (hq0 : 0 < q) (hq1 : q < 1) (hμ0 : 0 ≤ μ)
         exact hCf _ _ (hmem _ (hseq n)) hbmem
       · have := hnormtend.const_mul C
         simpa using this
-    have hconst : Filter.Tendsto (fun n => rowFunctionalE H W q α μ (rep (seq n))) Filter.atTop
+    have hconst : Filter.Tendsto (fun n => rowFunctionalE Hs W q α μ (rep (seq n))) Filter.atTop
         (𝓝 cval) := by
       refine Filter.Tendsto.congr' ?_ tendsto_const_nhds
       filter_upwards with n

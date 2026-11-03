@@ -12,7 +12,7 @@ Let `W` be a minimizer with `γ ≤ W ≤ 1-γ` almost everywhere and let `U₁,
   `∫∫ gZ + ξ₁'(0) ∫∫ gU₁ + ξ₂'(0) ∫∫ gU₂ = 0`.  This is the finite-direction form of the
   Lagrange multiplier rule.
 * `lagrange_nonneg` — if `∫∫ Y = 0` and `∫∫ 𝒟_W Y > 0`, then `W + θY` is admissible for the
-  second claim of `lem:fixed-monotone` for small `θ > 0`, so `∫∫ gY ≥ 0`.
+  comparison in `lem:fixed-monotonicity` for small `θ > 0`, so `∫∫ gY ≥ 0`.
 -/
 
 namespace UpperTailMultipodality
@@ -37,9 +37,9 @@ theorem integral_Jp'_mul_corr (W : Graphon) {ε γ : ℝ} (hε0 : 0 < ε) (hε1 
       = θ * (∫ z, Jp' ε (W.toFun z.1 z.2) * Z.toFun z.1 z.2 ∂gμ)
         + x₁ * (∫ z, Jp' ε (W.toFun z.1 z.2) * U₁.toFun z.1 z.2 ∂gμ)
         + x₂ * (∫ z, Jp' ε (W.toFun z.1 z.2) * U₂.toFun z.1 z.2 ∂gμ) := by
-  have hZ := (integrable_Jp'_mul W hε0 hε1 hγ hγW Z).const_mul θ
-  have h1 := (integrable_Jp'_mul W hε0 hε1 hγ hγW U₁).const_mul x₁
-  have h2 := (integrable_Jp'_mul W hε0 hε1 hγ hγW U₂).const_mul x₂
+  have hZ := (integrable_Jp'_mul W Z hε0 hε1 hγ (by linarith) hγW).const_mul θ
+  have h1 := (integrable_Jp'_mul W U₁ hε0 hε1 hγ (by linarith) hγW).const_mul x₁
+  have h2 := (integrable_Jp'_mul W U₂ hε0 hε1 hγ (by linarith) hγW).const_mul x₂
   have hfun : ∀ z : ℝ × ℝ, Jp' ε (W.toFun z.1 z.2) * ((corrKernel W Z U₁ U₂ θ x₁ x₂).toFun z.1 z.2
         - W.toFun z.1 z.2)
       = θ * (Jp' ε (W.toFun z.1 z.2) * Z.toFun z.1 z.2)

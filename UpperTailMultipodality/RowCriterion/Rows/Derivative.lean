@@ -158,12 +158,18 @@ theorem hasDerivAt_totalRootedDensity_line (H : SimpleGraph V) [DecidableRel H.A
   rw [hval]
   exact hsum
 
-/-! ## The entropy term -/
+/-- **The first variation of `𝒫_W = ∑_j μ_j ℛ_{j,W}`.**  For a row `u` and a measurable `h`
+with `|h| ≤ 1`, `t ↦ 𝒫_W(u + t h)` has derivative `∑_j μ_j ∫ ∇ℛ_{H_j,W}(u) h` at `0`. -/
+theorem hasDerivAt_combinedRooted_line {ι : Type*} [Fintype ι] (Hs : ι → SimpleGraph V)
+    [∀ j, DecidableRel (Hs j).Adj] (W : Graphon) (μ : ι → ℝ) {u h : ℝ → ℝ} (hu : IsRow u)
+    (hh : Measurable h) (hhb : ∀ y, |h y| ≤ 1) :
+    HasDerivAt (fun t : ℝ => combinedRooted Hs W μ (fun y => u y + t * h y))
+      (∑ j, μ j * ∫ y, rootedGradient (Hs j) W u y * h y ∂unitμ) 0 := by
+  unfold combinedRooted
+  exact HasDerivAt.fun_sum fun j _ =>
+    HasDerivAt.const_mul (μ j) (hasDerivAt_totalRootedDensity_line (Hs j) W hu hh hhb)
 
-/-- `J_q'` is measurable. -/
-theorem measurable_Jp' (q : ℝ) : Measurable (Jp' q) := by
-  unfold Jp'
-  fun_prop
+/-! ## The entropy term -/
 
 /-- `J_q` is bounded on `[0,1]`. -/
 theorem exists_abs_Jp_le {q : ℝ} (hq0 : 0 < q) (hq1 : q < 1) :

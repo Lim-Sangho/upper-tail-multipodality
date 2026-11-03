@@ -1,4 +1,4 @@
-import UpperTailMultipodality.UpperTail.Support.DerivKernel
+import UpperTailMultipodality.UpperTail.Support.Analysis
 
 /-!
 # The three parts of `lem:upper-tail-basic`

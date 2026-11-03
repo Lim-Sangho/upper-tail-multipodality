@@ -60,24 +60,12 @@ theorem Ip_Wmix_le (W : Graphon) {ε : ℝ} (hε0 : 0 < ε) (hε1 : ε < 1) {θ 
     ring, show 1 - (1 - θ) = θ by ring] at h
   exact h
 
-/-- If `I_ε(W) = 0` then `W = ε` almost everywhere. -/
-theorem ae_eq_of_Ip_eq_zero (W : Graphon) {ε : ℝ} (hε0 : 0 < ε) (hε1 : ε < 1)
-    (h : W.Ip ε = 0) : ∀ᵐ z ∂gμ, W.toFun z.1 z.2 = ε := by
-  have hint := W.integrable_comp (measurable_Jp ε) (continuousOn_Jp_Icc hε0 hε1)
-  have hnn : 0 ≤ fun z : ℝ × ℝ => Jp ε (W.toFun z.1 z.2) := fun z => by
-    rcases eq_or_ne (W.toFun z.1 z.2) ε with h' | h'
-    · simp only [Pi.zero_apply, h', Jp_self hε0 hε1, le_refl]
-    · exact (Jp_pos_of_ne hε0 hε1 (W.nonneg' _ _) (W.le_one' _ _) h').le
-  have := (integral_eq_zero_iff_of_nonneg hnn hint).mp h
-  filter_upwards [this] with z hz
-  exact Jp_eq_zero_imp hε0 hε1 (W.nonneg' _ _) (W.le_one' _ _) hz
-
 /-- `I_ε(W) > 0` unless `t(H,W) = ε^m`. -/
 theorem Ip_pos_of_tDensity_ne (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon) {ε : ℝ}
     (hε0 : 0 < ε) (hε1 : ε < 1) (h : W.tDensity H ≠ ε ^ H.edgeFinset.card) : 0 < W.Ip ε := by
   rcases (Ip_nonneg W hε0 hε1).lt_or_eq with hlt | heq
   · exact hlt
-  · exact absurd (tDensity_ae_const W H (ae_eq_of_Ip_eq_zero W hε0 hε1 heq.symm)) h
+  · exact absurd (tDensity_ae_const W H (ae_eq_of_Ip_eq_zero hε0 hε1 heq.symm)) h
 
 /-- **Intermediate values along the mixing path.** -/
 theorem exists_mix_tDensity_eq (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon) {ε τ : ℝ}

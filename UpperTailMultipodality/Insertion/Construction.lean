@@ -4,7 +4,7 @@ import UpperTailMultipodality.Insertion.Split
 # The graphon with an inserted block
 
 For `θ ∈ (0,1)`, a value `q ∈ [0,1]`, a row `u` and a graphon `K`, `insertGraphon θ q u K` is the
-graphon of `lem:upper-tail-insertion`: a new block `[0,θ)` with value `q` on itself and row `u`
+graphon of `eq:vertex-insertion`: a new block `[0,θ)` with value `q` on itself and row `u`
 towards the old vertices, and `K`, rescaled from `[0,1]` to `[θ,1]`, on the old vertices.  It is
 `blockKernel q u K` composed with the relabelling `insertMap θ`, where `blockKernel` treats the
 negative reals as the new block.

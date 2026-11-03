@@ -1,496 +1,248 @@
-\section{Remarks on two preprints of Alvarado, Ramon, and Wang}\label{app:arw}
+\section{Comparison with Alvarado, Ramon, and Wang}\label{app:arw}
 
-The preprints~\cite{AlvaradoRamonWang2023} and~\cite{AlvaradoRamonWang2026} study
-entropy maximization for multi-relational hypergraphons under constraints on
-subgraph densities.  Both state that, for almost every value of the
-constraints, the optimizers are step functions whose number of steps is bounded
-in terms of the number of constraints.  In this appendix we show that several
-statements used in these works do not hold as stated, we identify the steps of
-the arguments that fail, and we explain why the arguments of the present paper
-are not affected.  Theorem numbers refer to the versions
-arXiv:2403.09662v1 and arXiv:2607.22383v1.  Both preprints contain graphons,
-that is, a single symmetric relation of arity two, as a special case.  All our
-examples are graphon examples, so each of them is also a counterexample to the
-corresponding general statement.
+Alvarado, Ramon, and Wang (ARW)~\cite{AlvaradoRamonWang2026} develop a
+differential geometric approach to entropy optimization under general
+multi-relational equality constraints. Our results treat joint upper
+tails and entropy optimization with a fixed edge density and one fixed
+subgraph density in the open oversaturated range. We compare ARW's
+assumptions with those of \Cref{thm:joint-upper-tail,thm:fixed-densities}.
+Then we present a construction suggesting that additional assumptions may be needed
+to justify the finite-step conclusion for all global minimizers
+in~\cite[Theorem~5.25]{AlvaradoRamonWang2026}.
 
-\subsection{Setting and the statements in question}\label{app:arw-setting}
+\subsection{Comparison of assumptions}\label{app:arw-setting}
 
-Several statements in~\cite{AlvaradoRamonWang2023,AlvaradoRamonWang2026} are
-formulated for real-valued kernels.  Let $\W_\RR$ be the space of bounded
-symmetric measurable functions $W:[0,1]^2\to\RR$; replacing it by a larger
-class of kernels, such as the integrable ones, does not affect the examples
-below.  For $k\ge1$, a
-\emph{$k$-step function} is a function
+We state ARW's conditions for a single constraint $C(W)=u$, where
 \[
-  W=\sum_{i,j=1}^ka_{ij}\1_{S_i\times S_j},
+  C:L^\infty_{\mathrm{sym}}([0,1]^2)\longrightarrow\RR,
+  \qquad C(W):=\sum_{i=1}^q c_i t(F_i,W).
 \]
-where $(a_{ij})$ is a symmetric real $k\times k$ matrix and
-$S_1,\dots,S_k$ are consecutive intervals of lengths
-$\pi=(\pi_1,\dots,\pi_k)$ in the simplex
-$\Delta_k:=\{\pi\in[0,1]^k:\sum_i\pi_i=1\}$.  Up to measure-preserving
-relabelings of $[0,1]$, the $k$-step functions with values in $[0,1]$ are
-exactly the multipodal graphons with at most $k$ blocks.  For a function
-$f:\RR\to\RR$ we write $F_f(W):=\int_{[0,1]^2}f(W)$.  Let
-$I_0(z):=z\log z+(1-z)\log(1-z)$, so that $F_{I_0}=-2s$ on $\W_0$; the positive
-normalizing factor in front of $I_0$ differs between the two preprints and
-plays no role below.
-
-Let $\Phi=(\Phi_1,\dots,\Phi_L)$ be a vector of constraint functionals and
-$u\in\RR^L$.  The problems in question are to minimize $F_f(W)$ subject to
-$\Phi(W)=u$, over $W\in\W_\RR$ or over graphons.  For $k\ge1$, let
-$T_k\subseteq\RR^L$ be the set of values $\Phi(W)$ of $k$-step functions $W$.
-It is not always specified whether the entries of these step functions are
-real or lie in $[0,1]$; everything below holds for both choices.  A value $u$
-is called \emph{regular and non-extremal} if, for every $k$, it is a regular
-value of the polynomial map $(a,\pi)\mapsto\Phi(W)$ on $k$-step functions, and
-$u\notin\partial T_k$.  Put
+Here $q\ge1$, $F_1,\dots,F_q$ are finite simple graphs, $c_i\in\RR$, and
+$u\in\RR$ is the prescribed constraint value.
+For an integer $k\ge1$, a \emph{$k$-step representation} consists
+of a symmetric real matrix $A=(a_{ij})_{i,j=1}^k$ and a mass vector
+$\pi=(\pi_1,\dots,\pi_k)$ with $\pi_i\ge0$ and $\sum_{i=1}^k\pi_i=1$.
+Partitioning $[0,1]$ into consecutive intervals $S_i$ of length $\pi_i$ gives
 \[
-  k_0:=\min\Bigl\{k:\tfrac{k(k+1)}2>L\Bigr\},
+  W_{A,\pi}:=\sum_{i,j=1}^k a_{ij}\1_{S_i\times S_j}.
+\]
+The map $(A,\pi)\mapsto C(W_{A,\pi})$ is polynomial, and a representation
+is \emph{feasible} when $C(W_{A,\pi})=u$.
+
+With $\pi$ fixed, use the $k(k+1)/2$ independent entries $a_{ij}$, $i\le j$,
+as coordinates on the space of symmetric matrices. The Jacobian is the row vector
+\[
+  D_A\bigl[C(W_{A,\pi})\bigr]:=
+  \left(\frac{\partial C(W_{A,\pi})}{\partial a_{ij}}\right)_{1\le i\le j\le k}
+  \in\RR^{1\times k(k+1)/2}.
+\]
+The value $u$ is \emph{regular}~\cite[Definition~5.5]{AlvaradoRamonWang2026}
+if this row vector is nonzero at every feasible real-valued representation,
+for every $k$.
+
+For non-extremality, let $T_k$ be the set of constraint values attained
+by $k$-step graphons:
+\[
+  T_k:=\left\{C(W_{A,\pi}):
+    A=A^\top,\ 0\le a_{ij}\le1,\ \pi_i\ge0,\
+    \sum_{i=1}^k\pi_i=1\right\}.
+\]
+A regular value $u$ is \emph{non-extremal} if
+$u\in T_k\setminus\bigcup_{\ell\ge1}\partial T_\ell$ for some $k$.
+This excludes boundaries of the attainable density sets at these block
+sizes.
+
+For a real-valued objective $I$, ARW's \emph{independence}
+hypothesis~\cite[Definition~5.4 and Theorem~5.25]{AlvaradoRamonWang2026}
+requires that for every $k\ge2$ there is a representation with $\pi_i>0$
+for all $i$ at which both parameterized functions are analytic and
+\[
+  \operatorname{rank}
+  \begin{pmatrix}
+    D_A\bigl[C(W_{A,\pi})\bigr]\\
+    D_A\bigl[I(W_{A,\pi})\bigr]
+  \end{pmatrix}=2.
+\]
+
+Finally, a global minimizer $W$ of $I$ under $C(W)=u$ is \emph{isolated}
+in cut distance if there is $\rho>0$ such that every feasible graphon $V$ satisfies
+\[
+  0<\delta_\cut(W,V)<\rho\quad\Longrightarrow\quad I(V)>I(W).
+\]
+Equivalently, no other global minimizing class lies within cut distance
+$\rho$ of $W$.
+Under the assumptions above, including isolation of every global minimizing
+class, the result in~\cite[Theorem~5.25]{AlvaradoRamonWang2026} asserts that
+all global entropy minimizers admit finite-step representations.
+
+For the two constraint problems studied in this paper,
+\Cref{thm:joint-upper-tail,thm:fixed-densities} do not assume ARW's analytic
+independence, non-extremal regularity, or isolation.
+For fixed edge and subgraph densities, we use local independence of their
+derivatives at an optimizer $W$, expressed by the constraint
+qualification in \Cref{def:constraint-qualification}:
+\[
+  \det\Gamma_W(U_1,U_2)\ne0
+\]
+for bounded symmetric $U_1,U_2$ supported in $\Omega_\gamma(W)$ for some
+$\gamma>0$. We prove this for every optimizer in the open oversaturated
+range (\Cref{prop:optimizer-nondegeneracy}), without asserting regularity
+at all feasible representations. For joint upper tails,
+\Cref{lem:upper-tail-multiplier} obtains multipliers by separation of convex
+sets. We do not assume isolation of optimizing graphons;
+our results do not exclude a sequence of distinct optimizing classes
+converging to $W$ in cut distance.
+
+\subsection{A construction testing the finite-step conclusion}\label{app:arw-entropy-counterexample}
+
+Let
+$W_{\mathrm h}(x,y):=\1_{\{x+y\le1\}}$ be the \emph{half-graphon}, and set
+\[
+  W_*:=\frac14+\frac12W_{\mathrm h}.
+\]
+Lov\'asz and Szegedy~\cite{LovaszSzegedy2011} show that the half-graphon is
+finitely forcible among bounded real-valued symmetric kernels and that
+affine transformations preserve this property. Thus $W_*$ is
+\emph{finitely forcible} in this class:
+there are finite simple graphs $F_1,\dots,F_\ell$ such that, for every
+bounded symmetric kernel $U$,
+\[
+  t(F_i,U)=t(F_i,W_*)\quad(1\le i\le\ell)
+  \quad\Longleftrightarrow\quad U\sim W_*.
+\]
+Here \emph{weak isomorphism}, denoted by $U\sim W$, means equality of
+$t(F,U)$ and $t(F,W)$ for every finite simple graph $F$.
+For graphons it is equivalent to having zero cut distance; write $[W]$ for
+the equivalence class.
+
+Define
+\[
+  q(W):=\sum_{i=1}^\ell\bigl(t(F_i,W)-t(F_i,W_*)\bigr)^2,
   \qquad
-  k_1(u):=\min\Bigl\{k:\tfrac{k(k+1)}2>L+1\text{ and }u\in\operatorname{int}T_k\Bigr\}.
+  g(W):=\bigl(e(W)-\tfrac14\bigr)q(W).
 \]
-Restricted to graphons, the statements in question are the following.
-
-\begin{enumerate}[label=(S\arabic*),leftmargin=2.6em]
-\item \cite[Theorem~8.7]{AlvaradoRamonWang2023}.  Let $\Phi$ consist of
-densities of quantum graphs that are independent in the sense
-of~\cite[Definition~8.4]{AlvaradoRamonWang2023}, and let $f$ be analytic.  For
-almost every regular and non-extremal $u\in T_{k_0}$, the minimizers of $F_f$
-on $\{W\in\W_\RR:\Phi(W)=u\}$ lie in the set of $k_0$-step functions.
-\cite[Theorem~8.21]{AlvaradoRamonWang2023} states the same conclusion for
-graphons and $f=I_0$, and its proof applies Theorem~8.7.
-\item \cite[Theorem~5.10]{AlvaradoRamonWang2026}.  Let $f$ be analytic, let
-$\Phi$ and $F_f$ together be independent in the sense
-of~\cite[Definition~5.4]{AlvaradoRamonWang2026}, and let $u$ be regular and
-non-extremal.  Then every minimizer of $F_f$ among the $k_1(u)$-step functions
-$W$ with $\Phi(W)=u$ minimizes $F_f$ on $\{W\in\W_\RR:\Phi(W)=u\}$.
-\item \cite[Theorem~5.25]{AlvaradoRamonWang2026}.  The conclusion of~(S2)
-holds for graphons and $f=I_0$.  Here each constraint may also have the form
-$W\mapsto\int\prod_{ij\in E(F)}h\bigl(W(x_i,x_j)\bigr)\prod_{i\in V(F)}\dd x_i$
-for a graph $F$ and an analytic function $h$.
-\end{enumerate}
-The proofs of (S1)--(S3) rest on the following two assertions, which compare
-step functions of consecutive sizes.
-\begin{enumerate}[label=(K\arabic*),leftmargin=2.6em]
-\item \cite[Theorem~8.20]{AlvaradoRamonWang2023}.  For $u$ as in~(S1) and
-$k\ge k_0$, every minimizer of $F_f$ among the $(k+1)$-step functions with
-$\Phi=u$ is obtained from a minimizer among the $k$-step functions by
-splitting a block into two.  In particular, the two minima coincide.
-\item \cite[Theorem~5.24 and Corollary~5.3]{AlvaradoRamonWang2026}.  For $u$
-as in~(S2) and $k>k_1(u)$, no $k$-step function $W$ with $\Phi(W)=u$ has a
-smaller value of $F_f$ than the minimum over $k_1(u)$-step functions.
-\end{enumerate}
-In the discussion after~\cite[Corollary~5.3]{AlvaradoRamonWang2026}, the
-authors explain that a bound of the type $k_0$ does not suffice in general,
-which is why $k_1(u)$ is used there.  Proposition~\ref{prop:arw-stars} below
-shows that $k_1(u)$ does not suffice either.  Finally, the isolation
-hypotheses in~\cite{AlvaradoRamonWang2026} are to be verified by the
-following assertion.
-\begin{enumerate}[label=(S\arabic*),leftmargin=2.6em]\setcounter{enumi}{3}
-\item \cite[Theorem~5.16]{AlvaradoRamonWang2026}.  A step function that is a
-critical point of $F_f$ on the step functions with $\Phi=u$, whose Lagrangian
-Hessian is positive definite on the tangent space, and which satisfies the
-margin condition~\cite[(5.6)]{AlvaradoRamonWang2026}, is a strict local
-minimizer of $F_f$ with respect to the $L^1$ distance among the $W$ with values
-in $[0,1]$ and $\Phi(W)=u$.
-\end{enumerate}
-
-\subsection{A counterexample with star densities}\label{app:arw-stars}
-
-Let $\alpha:=2/5$, $\beta:=3/5$, and $f(z):=(z-\alpha)^2(z-\beta)^2$.  For
-$W\in\W_\RR$ let $d_W(x):=\int_0^1W(x,y)\dd y$, and consider the densities of
-the edge, the $2$-star, and the $3$-star,
+Since
 \[
-  \Phi(W):=\bigl(t(K_{1,1},W),\,t(K_{1,2},W),\,t(K_{1,3},W)\bigr)
-  =\Bigl(\int_0^1d_W,\ \int_0^1d_W^2,\ \int_0^1d_W^3\Bigr).
+  t(F\sqcup F',W)=t(F,W)t(F',W),\qquad t(K_1,W)=1,
 \]
-Thus $L=3$ and $k_0=3$.
-
-\begin{prop}\label{prop:arw-stars}
-There are a nonempty open set $U\subseteq\RR^3$ and a null set $N$ such that
-every $u\in U\setminus N$ has the following properties.
-\begin{enumerate}[label=(\alph*)]
-\item $u$ is regular and non-extremal, $u\in\operatorname{int}T_3$, and
-$k_1(u)=3$.
-\item The minimum of $F_f$ on $\{W\in\W_\RR:\Phi(W)=u\}$ is $0$, and it is
-attained by a $4$-step function with values in $\{\alpha,\beta\}$.
-\item The minimum of $F_f$ over the $3$-step functions $W$ with $\Phi(W)=u$ is
-attained and positive.
-\end{enumerate}
-Moreover, $\Phi$ is independent in the sense
-of~\cite[Definition~8.4]{AlvaradoRamonWang2023}, and $\Phi$ and $F_f$ together
-are independent in the sense of~\cite[Definition~5.4]{AlvaradoRamonWang2026}.
-\end{prop}
-
-Consequently, for every $u$ in the set $U\setminus N$ of positive measure, no
-minimizer in~(b) is a $3$-step function, which contradicts~(S1), and the
-minimizers in~(c) do not minimize $F_f$ on $\{W\in\W_\RR:\Phi(W)=u\}$, which
-contradicts~(S2).  The same values of $u$ contradict~(K1) with $k=3$
-and~(K2) with $k=4$.
-
-\begin{proof}
-Since $f\ge0$ with equality exactly at $\alpha$ and $\beta$, we have $F_f\ge0$,
-and $F_f(W)=0$ if and only if $W$ takes values in $\{\alpha,\beta\}$ almost
-everywhere.
-
-\emph{Step~1: an open set of values attained with $F_f=0$.}  For
-$\pi\in\operatorname{int}\Delta_4$, let $W_\pi$ be the $4$-step function with
-$a_{ij}=\beta$ if $i+j\ge5$ and $a_{ij}=\alpha$ otherwise.  Its degree equals
-$\alpha+(\beta-\alpha)\sum_{j\ge5-i}\pi_j$ on $S_i$, so $\Phi(W_\pi)$ is a
-polynomial in $(\pi_1,\pi_2,\pi_3)$.  At $\pi^*:=(1/10,1/5,3/10,2/5)$, the
-degrees are $12/25$, $27/50$, $29/50$, $3/5$, the value is
-$u^*:=\Phi(W_{\pi^*})=(57/100,\,8157/25000,\,234357/1250000)$, and a direct
-computation shows that the Jacobian determinant of
-$(\pi_1,\pi_2,\pi_3)\mapsto\Phi(W_\pi)$ equals $27/3906250000\ne0$.  By the
-inverse function theorem, the values $\Phi(W_\pi)$ with $\pi$ near $\pi^*$
-cover an open neighborhood $U_0$ of $u^*$.  Since $F_f(W_\pi)=0$, (b) holds
-for every $u\in U_0$.
-
-\emph{Step~2: the values near $u^*$ are attained by $2$-step functions.}  Let
+where $\sqcup$ denotes disjoint union and $K_1$ is the one-vertex graph,
+$g$ is a finite real linear combination of graph densities.
+We take $C=g$ and $u=0$, so the constraint is $g(W)=0$.
+Up to a positive constant factor, ARW's entropy objective is
 \[
-  e_{1,2}:=\frac{251}{460}\mp\frac{\sqrt{260905}}{11500},
-  \qquad
-  w_1:=\frac12-\frac{28\sqrt{260905}}{52181},
-  \qquad
-  w_2:=1-w_1,
+  I(W):=\int_{[0,1]^2}I_0(W(x,y))\dd x\dd y,
+  \qquad I_0(z):=z\log z+(1-z)\log(1-z),
 \]
-so that $e_1\approx0.5012$, $e_2\approx0.5901$, and $w_1\approx0.2259$.  A
-direct computation shows $w_1e_1^j+w_2e_2^j=u^*_j$ for $j=1,2,3$; thus
-$w_1\delta_{e_1}+w_2\delta_{e_2}$ is the two-point Gaussian quadrature of the
-degree distribution of $W_{\pi^*}$.  The $2$-step function with
-$\pi=(w_1,w_2)$, $a_{11}=a_{12}=e_1$, and $a_{22}=e_1+(e_2-e_1)/w_2\approx0.6160$
-has degree $e_1$ on $S_1$ and $e_2$ on $S_2$, so its value is $u^*$.  The
-Jacobian determinant of $(e_1,e_2,w_1)\mapsto(w_1e_1^j+w_2e_2^j)_{j=1}^3$
-equals $w_1w_2(e_1-e_2)^4\ne0$.  Hence, for every $u$ in a neighborhood $U_1$
-of $u^*$, the same construction with nearby parameters gives a $2$-step
-function with entries in $(0,1)$ and value $u$.  A $2$-step function is also a
-$3$-step function (take $\pi_3=0$), so $U_1\subseteq\operatorname{int}T_2
-\subseteq\operatorname{int}T_3$ for both choices of the range of the entries.
-Let $U:=U_0\cap U_1$.  For $u\in U$ we have $k_1(u)=3$, because
-$2\cdot3/2=3\le4<6=3\cdot4/2$.
+where $0\le z\le1$ and $0\log0:=0$.
 
-\emph{Step~3: the exceptional null set.}  A $3$-step function with values in
-$\{\alpha,\beta\}$ has its matrix in the finite set $\{\alpha,\beta\}^6$, and
-for each such matrix its value is a polynomial function of
-$\pi\in\Delta_3$, a two-dimensional set.  Hence these values form a null set
-$N_1\subseteq\RR^3$.  For each $k$, the critical values of $\Phi$ on $k$-step
-functions form a null set by Sard's theorem~\cite[Theorem~6.10]{Lee2013},
-applied on each open face of $\Delta_k$; let $N_2$ be their union over $k$.
-Each $T_k$ is semialgebraic by the Tarski--Seidenberg theorem, so its boundary
-is a semialgebraic set with empty interior and hence a null
-set~\cite[Chapter~2]{BochnakCosteRoy1998}; let $N_3$ be the union of these
-boundaries.  Put $N:=N_1\cup N_2\cup N_3$.  Then (a) holds on $U\setminus N$.
-
-\emph{Step~4: proof of~(c).}  Let $u\in U\setminus N$, and let
-$(a^n,\pi^n)$ be $3$-step functions with value $u$ whose values of $F_f$
-converge to the infimum.  Since $f(z)\ge z^4/2-C_0$ for a constant $C_0$, we
-have $\pi^n_i\pi^n_j(a^n_{ij})^4\le C_1$ for all $i,j,n$.  After passing to a
-subsequence, $\pi^n\to\pi$, and $a^n_{ij}$ converges whenever
-$\pi_i\pi_j>0$.  Let $P:=\{i:\pi_i>0\}$.  For $i\in P$ and $j\notin P$ we have
-$|a^n_{ij}|\pi^n_j\le C_1^{1/4}(\pi^n_i)^{-1/4}(\pi^n_j)^{3/4}\to0$, so the
-degree $\sum_ja^n_{ij}\pi^n_j$ converges to $\sum_{j\in P}a_{ij}\pi_j$.  For
-$i\notin P$, the same bound gives
-$\pi^n_i\bigl|\sum_ja^n_{ij}\pi^n_j\bigr|^s\le C_2(\pi^n_i)^{1-s/4}\to0$ for
-$s\le3$.  Hence the $3$-step function with lengths $\pi$ and entries $a_{ij}$
-for $i,j\in P$ (the remaining entries are irrelevant) has value $u$, and its value of $F_f$ is at most the infimum.
-So the minimum is attained.  It is positive, because a $3$-step function with
-$F_f=0$ takes values in $\{\alpha,\beta\}$, and $u\notin N_1$.
-
-\emph{Step~5: independence.}  At a $2$-step function with
-$\pi\in\operatorname{int}\Delta_2$ and distinct degrees, the degrees depend
-linearly on the entries with full rank, and the Jacobian computed in Step~2 is
-nonzero, so $\Phi$ has rank~$3$.  Splitting a block does not change the
-function, so the rank does not decrease, and rank~$3$ is attained on $k$-step
-functions with $\pi$ in the interior for every $k\ge2$.  This is the
-independence required in~\cite[Definition~8.4]{AlvaradoRamonWang2023}.
-Similarly, at the $3$-step function with $\pi=(1/3,1/3,1/3)$ and entries
-$(a_{11},a_{12},a_{13},a_{22},a_{23},a_{33})=(1,2,3,4,5,6)/10$, a direct
-computation shows that $(\Phi,F_f)$ has rank~$4$, and splitting gives the same
-for every $k\ge3$.  This is the independence required
-in~\cite[Definition~5.4]{AlvaradoRamonWang2026}.
-\end{proof}
-
-
-\subsection{A counterexample for the entropy}\label{app:arw-entropy}
-
-The second example concerns~(S3), with $f=I_0$ and constraints of the form
-allowed in~\cite[Theorem~5.25]{AlvaradoRamonWang2026}.  Let
-$(x_1,x_2,x_3,x_4):=(1/10,7/20,3/5,4/5)$, and let $H$ be the polynomial of
-degree at most $7$ with $H(x_j)=I_0(x_j)$ and $H'(x_j)=I_0'(x_j)$ for
-$j=1,\dots,4$.  Consider the graphons $W\in\W_0$ with
-\[
-  \Phi(W):=\Bigl(\int W,\ \int W^2,\ \int H(W)\Bigr)=u.
-\]
-Each constraint is the density of a single edge modulated by one of the
-functions $z$, $z^2$, $H(z)$.  Let $\gamma(z):=(z,z^2,H(z))$.
-
-\begin{prop}\label{prop:arw-entropy}
-There are a nonempty open set $U\subseteq\RR^3$ and a null set $N$ such that
-every $u\in U\setminus N$ is regular and non-extremal with $k_1(u)=3$, and
-\begin{enumerate}[label=(\alph*)]
-\item the minimum of $F_{I_0}$ over graphons with $\Phi(W)=u$ equals $u_3$
-and is attained by a $4$-step function with values in $\{x_1,\dots,x_4\}$;
-\item the minimum of $F_{I_0}$ over $3$-step graphons with $\Phi(W)=u$ is
-larger than $u_3$.
-\end{enumerate}
-Moreover, $\Phi$ and $F_{I_0}$ together are independent in the sense
-of~\cite[Definition~5.4]{AlvaradoRamonWang2026}.  Consequently, (S3) fails for
-every $u\in U\setminus N$.
+\begin{prop}\label{prop:arw-entropy-counterexample}
+The constraint $g(W)=0$ satisfies the independence and non-extremal
+regularity hypotheses of~\cite[Theorem~5.25]{AlvaradoRamonWang2026},
+including independence with the entropy objective.  Its global
+entropy minimizers are exactly the two isolated classes $[1/4]$ and
+$[W_*]$, and $W_*$ is not multipodal.
 \end{prop}
 
 \begin{proof}
-Let $\psi:=I_0-H$.  For $x\in(0,1)$, the error formula for Hermite
-interpolation gives $\psi(x)=\frac{I_0^{(8)}(\xi)}{8!}\prod_j(x-x_j)^2$ for
-some $\xi\in(0,1)$.  Since $I_0^{(8)}(z)=720\bigl(z^{-7}+(1-z)^{-7}\bigr)\ge
-720\cdot2^8$, we get $\psi(x)\ge\frac{32}7\prod_j(x-x_j)^2$ on $(0,1)$, and by
-continuity also at $x\in\{0,1\}$.  Hence $F_{I_0}(W)\ge\int H(W)=u_3$ whenever
-$\Phi(W)=u$, with equality if and only if $W$ takes values in
-$\{x_1,\dots,x_4\}$ almost everywhere.
+The feasible graphons $W$ satisfy either $e(W)=1/4$ or $W\sim W_*$ by construction.
+If $e(W)=1/4$, Jensen's inequality and the strict convexity of $I_0$ give
+\[
+  I(W)\ge I_0\bigl(e(W)\bigr)=I_0(1/4),
+\]
+with equality if and only if $W=1/4$ almost everywhere.
+Weakly isomorphic graphons $U,W$ admit measure-preserving maps $\phi,\psi$
+such that $U^\phi=W^\psi$ almost everywhere, so $I(U)=I(W)$.
+Consequently, if $W\sim W_*$, then
+\[
+  I(W)=I(W_*)=\tfrac12 I_0(1/4)+\tfrac12 I_0(3/4)=I_0(1/4).
+\]
+Thus there are exactly two minimizing classes.
+Since $W_*-\tfrac14=\tfrac12W_{\mathrm h}\ge0$, its cut norm equals its
+integral. Relabeling preserves this integral and leaves the constant
+graphon unchanged, so
+\[
+  \delta_\cut\bigl(\tfrac14,W_*\bigr)
+  =\bigl\|W_*-\tfrac14\bigr\|_\cut
+  =\frac12\int_{[0,1]^2}W_{\mathrm h}(x,y)\dd x\dd y=\frac14.
+\]
+Both minimizing classes are therefore isolated.
+The degree distribution, the law of $d_W(X)$ for uniform $X\in[0,1]$,
+is invariant under weak isomorphism because its moments are star densities.
+For $W_*$,
+\[
+  d_{W_*}(x)=\frac34-\frac{x}{2},
+\]
+so this distribution is uniform on $[1/4,3/4]$.
+A finite-step kernel has only finitely many degree values and
+therefore cannot be weakly isomorphic to $W_*$.
 
-A numerical evaluation gives $\det\bigl(1,x_j,x_j^2,I_0(x_j)\bigr)_{j=1}^4
-\approx-6.45\cdot10^{-4}$, so the points $\gamma(x_j)$ are affinely independent,
-and $U_0:=\operatorname{int}\operatorname{conv}\{\gamma(x_1),\dots,\gamma(x_4)\}$
-is a nonempty open set.  Let $u=\sum_jw_j\gamma(x_j)$ with $w$ in the open
-simplex.  The $4$-step function with $a_{ij}=x_{\max(i,j)}$ and
-$\pi_1+\dots+\pi_i=(w_1+\dots+w_i)^{1/2}$ takes the value $x_i$ on a set of
-measure $w_i$.  Its value is $u$, and $F_{I_0}$ equals $u_3$ there.  This
-proves~(a) for $u\in U_0$.
+Every feasible real-valued finite-step kernel $U$ consequently has
+$q(U)>0$ and $e(U)=1/4$.  Writing
+$Dg(U)[V]:=\left.\frac{\dd}{\dd t}g(U+tV)\right|_{t=0}$ for bounded
+symmetric $V$, we obtain
+\[
+  Dg(U)[V]=q(U)\int_{[0,1]^2}V,
+  \qquad Dg(U)[1]=q(U)>0.
+\]
+The constant direction is available at every step size, so $0$ is
+regular.  Along constant graphons $c$ near $1/4$,
+\[
+  g(1/4)=0,\qquad
+  \left.\frac{\dd}{\dd c}g(c)\right|_{c=1/4}=q(1/4)>0.
+\]
+Hence $0\in\operatorname{int}T_k$ for every $k$, with entries
+restricted to $[0,1]$, and $0$ is non-extremal.
 
-For $z\in(x_2,1)$ and $s$ in the open two-dimensional simplex, put
-$G(z,s):=s_1\gamma(x_1)+s_2\gamma(x_2)+(1-s_1-s_2)\gamma(z)$.  Such a point is
-the value of a $3$-step function with values $x_1,x_2,z$, constructed as above,
-so the image of $G$ lies in $T_3$.  The derivative of $G$ at $(x_3,s)$ has
-determinant $(1-s_1-s_2)\det\bigl(\gamma(x_1)-\gamma(x_3),\gamma(x_2)-\gamma(x_3),
-\gamma'(x_3)\bigr)$, and a numerical evaluation gives
-$\det(\cdots)\approx-2.68\cdot10^{-3}\ne0$.  Hence $G$ maps a neighborhood of
-$(x_3,s)$ onto a neighborhood $V$ of $G(x_3,s)$, a point in the relative
-interior of a facet of the tetrahedron $\overline{U_0}$.  Therefore
-$V\subseteq\operatorname{int}T_3$ and $U:=U_0\cap V$ is nonempty and open.  For
-$u\in U$, as in Proposition~\ref{prop:arw-stars}, $k_1(u)=3$.
+It remains to verify independence of $g$ and $I$: for every $k\ge2$,
+we need a $k$-step representation at which the Jacobian of $(g,I)$ in
+the entries of $A$ has rank $2$.  For $k=2$, take $\pi=(1/2,1/2)$ and
+\[
+  A_\delta:=\begin{pmatrix}1/4+\delta&1/4\\1/4&1/4-\delta\end{pmatrix},
+  \qquad U_\delta:=W_{A_\delta,\pi},\qquad 0<\delta<1/4.
+\]
+With $\pi$ fixed, the Jacobian has two rows, for $g$ and $I$, and three
+columns, for $a_{11},a_{12},a_{22}$.  We choose the columns
+for $a_{11}$ and $a_{22}$.
+Since $e(U_\delta)=1/4$, these columns form the matrix
+\[
+  \frac{\partial(g,I)}{\partial(a_{11},a_{22})}(A_\delta,\pi)
+  =\frac14
+  \begin{pmatrix}
+    q(U_\delta)&q(U_\delta)\\
+    I_0'(1/4+\delta)&I_0'(1/4-\delta)
+  \end{pmatrix}.
+\]
+Its determinant is
+\[
+  \det\frac{\partial(g,I)}{\partial(a_{11},a_{22})}(A_\delta,\pi)
+  =\frac{q(U_\delta)}{16}
+     \bigl(I_0'(1/4-\delta)-I_0'(1/4+\delta)\bigr)\ne0,
+\]
+since $q(U_\delta)>0$ and $I_0'$ is strictly increasing.
+Thus the full Jacobian has rank $2$.
+Both functions are analytic at these interior entries.
 
-The null set $N$ is defined as in Step~3 of the proof of
-Proposition~\ref{prop:arw-stars}: $N_1$ is now the set of values of $3$-step
-functions with entries in $\{x_1,\dots,x_4\}$, and $N_2$, $N_3$ are defined as
-before, using that $\Phi$ is polynomial.  The $3$-step graphons form a compact
-parameter set on which $F_{I_0}$ and $\Phi$ are continuous, so the minimum
-in~(b) is attained, and it exceeds $u_3$ because $u\notin N_1$.
-
-Finally, the derivative of $(\Phi,F_{I_0})$ in the entry $a_{ij}$ of a step
-function with $\pi$ in the interior is $(2-\delta_{ij})\pi_i\pi_j
-\bigl(1,2a_{ij},H'(a_{ij}),I_0'(a_{ij})\bigr)$.  The functions $1$, $z$, $H'(z)$,
-and $I_0'(z)=\lo(z)$ are linearly independent on $(0,1)$, because $\lo$ is not
-a polynomial.  Hence some four values in $(0,1)$ give linearly independent
-vectors, and since a $k$-step function with $k\ge3$ has at least six entries,
-the rank is~$4$.
+For $k>2$, refine the two blocks into $k$ positive-mass subblocks.
+Consider the two parameter directions that vary all refined entries
+within the first or the second original diagonal block together.
+The derivative of $(g,I)$ in these directions is the same nonsingular
+$2\times2$ matrix as above, so the full refined Jacobian also has rank $2$.
+All entries remain in $(0,1)$, preserving analyticity and proving
+independence for every $k\ge2$.
 \end{proof}
 
-\begin{rmk}\label{rmk:arw-entropy-nonmultipodal}
-In Proposition~\ref{prop:arw-entropy}, write $u=\sum_jw_j\gamma(x_j)$.  Every
-graphon with values in $\{x_1,\dots,x_4\}$ whose value distribution is
-$\sum_jw_j\delta_{x_j}$ is a minimizer.  For instance, let $J_1,\dots,J_4$ be consecutive intervals of
-lengths $w_1,\dots,w_4$ in $[0,1)$, and let $W(x,y):=x_j$ whenever the
-fractional part of $x+y$ lies in $J_j$.  Every row of $W$ takes the value $x_j$
-on a set of measure $w_j$, so $W$ is a minimizer, but its rows at different
-points $x$ are different.  Thus the minimizers need not be multipodal.
-\end{rmk}
+Thus the assumptions stated in~\cite[Theorem~5.25]{AlvaradoRamonWang2026}
+do not exclude an isolated global minimizer with no finite-step representation.
 
-\subsection{Where the arguments break down}\label{app:arw-gaps}
-
-\paragraph{Comparing $k$ and $k+1$ steps in~\cite{AlvaradoRamonWang2023}.}
-The proof of~(K1) asserts that a local minimizer among $(k+1)$-step functions
-can arise only in two ways: by bifurcation from the split of a critical point
-among $k$-step functions, or from a new connected component of the constraint
-set $\{\Phi=u\}$.  Both possibilities are then excluded
-using~\cite[Theorems~8.15 and~8.17]{AlvaradoRamonWang2023}.  The first
-assertion is not justified.  The set of $(k+1)$-step functions with $\Phi=u$
-has $k+2$ more dimensions than the set of $k$-step functions with $\Phi=u$, and
-$F_f$ may take smaller values far from the split $k$-step functions, without
-any change in the topology of the constraint set.  This happens in
-Proposition~\ref{prop:arw-stars} with $k=3$: the minimizers among $4$-step
-functions take values in $\{\alpha,\beta\}$, while no $3$-step function does.
-
-The last step of the proof of~(S1) excludes minimizers that are not step
-functions.  It takes step functions $V_n\to V$ in $L^1$, where $V$ is such a
-minimizer, uses that $F_f(V_n)$ exceeds the minimum for every $n$, and concludes
-that $\lim_nF_f(V_n)$ exceeds the minimum, contradicting continuity.  A strict
-inequality is not preserved under limits, so no contradiction arises; moreover,
-the functions $V_n$ need not satisfy the constraints.
-
-\paragraph{Comparing $k$ and $k+1$ steps in~\cite{AlvaradoRamonWang2026}.}
-To exclude a $(k+1)$-step function whose value of $F_f$ is smaller than the
-minimum $c_k$ over $k$-step functions, the proof of~(K2) considers the level
-set of the augmented map $(\Phi,F_f)$ at a value $(u',c')$ with $c'<c_k$.  It
-then applies~\cite[Theorem~5.23]{AlvaradoRamonWang2026}, which asserts that
-passing from $k$ to $k+1$ steps creates no new connected component of a level
-set.  That theorem assumes $k\ge m_0$, and by~\cite[Definition~5.7]{AlvaradoRamonWang2026}
-this includes the condition that the value lies in the interior of the set of
-values of $k$-step functions under the map.  By the choice
-$c'<c_k$, however, the value $(u',c')$ is not attained by any $k$-step function
-at all.  So the hypothesis fails in precisely the situation to which the
-theorem is applied.  In Proposition~\ref{prop:arw-stars} with $k=3$, every
-$c'$ between $0$ and the positive minimum in~(c) gives such a value.
-
-\paragraph{The absence of new connected components.}  The proofs
-of~\cite[Theorem~8.15]{AlvaradoRamonWang2023}
-and~\cite[Theorem~5.23]{AlvaradoRamonWang2026} consider a sequence of
-$(k+1)$-step functions $x_n$ with $\Phi(x_n)=u$ that approach the $k$-step
-functions, and conclude that $u$ lies on the boundary of $T_k$.  Since
-$\Phi(x_n)=u$ for all $n$, this conclusion does not follow.  We do not know
-whether these two theorems hold; the counterexamples above do not depend on
-them.
-
-\paragraph{Values $0$ and $1$.}  The proofs
-of~\cite[Lemma~8.7]{AlvaradoRamonWang2023}
-and~\cite[Lemma~5.9]{AlvaradoRamonWang2026} use that the value of a step
-function with an entry equal to $0$ lies on the boundary of $T_k$.  This is
-false: for the edge density, the $2$-step function with $\pi=(1/2,1/2)$,
-$a_{11}=0$, and $a_{12}=a_{22}=1/2$ has value $3/8$, an interior point of
-$T_2=[0,1]$.  The subsequent argument along a path would moreover require a
-lower bound on the derivative of the vanishing entry along the path, which is
-not provided.  We do not claim that the conclusions of these lemmas fail.
-
-\subsection{Second-order conditions and \texorpdfstring{$L^1$}{L1} neighborhoods}\label{app:arw-second-order}
-
-Let $a:=1/5$, $b:=1/2$, $c:=9/10$, $f(z):=(z-a)^2(z-b)^2\bigl((z-c)^2-1/100\bigr)$,
-and let $\Phi(W):=e(W)$ be the edge density.  Let $V^*$ be the $2$-step
-function with $\pi=(1/2,1/2)$, $a_{11}=a$, and $a_{12}=a_{22}=b$, and let
-$u:=e(V^*)=17/40$.
-
-\begin{prop}\label{prop:arw-second-order}
-The function $V^*$ satisfies the hypotheses of~(S4), with $k_1(u)=2$.
-Nevertheless, for every $\theta\in(0,6\cdot10^{-4})$ there is a graphon
-$W_\theta$ with $e(W_\theta)=u$, $\|W_\theta-V^*\|_1=\frac45\theta$, and
-$F_f(W_\theta)<F_f(V^*)$.  In particular, $V^*$ is not a local minimizer with
-respect to the $L^1$ distance, and~(S4) fails.
-\end{prop}
-
-\begin{proof}
-Since $a$ and $b$ are double roots of $f$, we have $f(a)=f(b)=f'(a)=f'(b)=0$,
-while $f''(a)=2(b-a)^2\bigl((c-a)^2-\frac1{100}\bigr)>0$ and
-$f''(b)=2(b-a)^2\bigl((c-b)^2-\frac1{100}\bigr)>0$.  Parametrize the $2$-step
-functions by $(a_{11},a_{12},a_{22},\pi_1)$ with $\pi_2=1-\pi_1$.  All partial
-derivatives of $F_f$ vanish at $V^*$: those in the entries contain the factor
-$f'$, and $\partial_{\pi_1}F_f=2\pi_1\bigl(f(a)-f(b)\bigr)=0$.  So $V^*$ is a
-critical point with Lagrange multiplier $0$, and the Lagrangian Hessian is the
-Hessian of $F_f$.  The latter is diagonal, with entries
-$\frac14f''(a)$, $\frac12f''(b)$, $\frac14f''(b)$, and
-$2\bigl(f(a)-f(b)\bigr)=0$; the mixed second derivatives contain the factor
-$f'$ and vanish.  The tangent space consists of the vectors $v$ with
-$\frac14v_{11}+\frac12v_{12}+\frac14v_{22}+2\pi_1(a-b)v_{\pi}=0$.  Since
-$a\ne b$, a tangent vector with vanishing entry components also has $v_\pi=0$.
-Hence the Hessian is positive definite on the tangent space.  The edge is a
-matching, so the margin in~\cite[(5.6)]{AlvaradoRamonWang2026} vanishes,
-see~\cite[Remark~5.15]{AlvaradoRamonWang2026}, and the condition reduces to
-$f''(a),f''(b)>0$.  Every value is regular, since $\partial e/\partial a_{ij}
-=(2-\delta_{ij})\pi_i\pi_j$ is positive for some $(i,j)$, and $u$ is an
-interior point of every $T_k$.  Finally $k_1(u)=2$, since $1\le2<3$.
-
-Let $\theta\in(0,6\cdot10^{-4})$, let $E_\theta\subseteq S_2\times S_2$ be a
-symmetric set of measure $\theta$, and put
-$\delta_\theta:=\frac25\theta/(\frac14-\theta)$ and
+This example suggests extending the regularity requirement to all global
+optimizers, including those without finite-step representations.
+Each density difference defining $q$ vanishes at $W_*$, so for every
+bounded symmetric $V$,
 \[
-  W_\theta:=V^*+(c-b)\1_{E_\theta}-\delta_\theta\1_{(S_2\times S_2)\setminus E_\theta}.
+  q(W_*+tV)=O(t^2),\qquad g(W_*+tV)=O(t^2),\qquad Dg(W_*)[V]=0.
 \]
-Then $W_\theta$ takes values in $[0,1]$, $e(W_\theta)=e(V^*)$, and
-$\|W_\theta-V^*\|_1=\frac25\theta+(\frac14-\theta)\delta_\theta=\frac45\theta$.
-Using $f(b-\delta)\le\delta^2$ for $0\le\delta\le1/10$ and
-$f(c)=-49/62500$, we obtain
-\[
-  F_f(W_\theta)-F_f(V^*)=\theta f(c)+\Bigl(\frac14-\theta\Bigr)f(b-\delta_\theta)
-  \le-\frac{49}{62500}\theta+\frac{32}{25}\theta^2<0.
-\]
-\end{proof}
-
-The proof of~(S4) bounds the Taylor remainder by
-$C\|\eta\|_\infty\|\eta\|_2^2$, where $\eta=W-V^*$, and then by $C\|\eta\|_2^2$
-using $\|\eta\|_\infty\le1$.  This bound is of the same order as the quadratic
-term, and $\|\eta\|_\infty$ is not small in $L^1$ neighborhoods: in
-Proposition~\ref{prop:arw-second-order}, $\|W_\theta-V^*\|_\infty\ge c-b=2/5$.
-The isolation in the cut distance~\cite[Theorem~5.19 and
-Corollary~5.2]{AlvaradoRamonWang2026}, and the remark that the isolation
-hypothesis of~(S3) can be checked~\cite[Remark~5.26]{AlvaradoRamonWang2026},
-rely on~(S4).
-
-\subsection{Why the arguments of this paper are not affected}\label{app:arw-ours}
-
-Our proofs do not use any result of~\cite{AlvaradoRamonWang2023,AlvaradoRamonWang2026}.
-The following table lists, for each problem identified above, the corresponding
-part of our argument.
-
-\begin{center}
-\small
-\begin{tabular}{p{0.26\textwidth}p{0.3\textwidth}p{0.34\textwidth}}
-\toprule
-Step in~\cite{AlvaradoRamonWang2023,AlvaradoRamonWang2026} & Problem & Corresponding part of this paper\\
-\midrule
-Comparison of $k$- and $(k+1)$-step functions, (K1), (K2) &
-Propositions~\ref{prop:arw-stars} and~\ref{prop:arw-entropy}; Section~\ref{app:arw-gaps} &
-Not used.  Finiteness comes from Theorem~\ref{thm:row-criterion}, applied to
-the rows of an optimizer.\\
-Second-order conditions imply $L^1$ local optimality, (S4) &
-Proposition~\ref{prop:arw-second-order} &
-Not used.  Lemmas~\ref{lem:upper-tail-insertion} and~\ref{lem:fixed-insertion}
-derive a first-order condition from global optimality.\\
-Exclusion of the values $0$ and $1$ &
-Section~\ref{app:arw-gaps} &
-Lemmas~\ref{lem:upper-tail-basic}, \ref{lem:upper-tail-multiplier},
-\ref{lem:fixed-interior}, and~\ref{lem:row-interior}; degenerate cases in
-Corollary~\ref{cor:almost-every-tau}.\\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\paragraph{No reduction to step functions of bounded size.}  We never compare
-step functions of different sizes, and we use no topological property of level
-sets.  Theorem~\ref{thm:row-criterion} is applied to an actual optimizer $W$ of
-the graphon problem.  Its input is the insertion inequality, which compares
-$W$ with graphons obtained by inserting a small block of vertices with an
-arbitrary row, and thus uses the optimality of $W$ among all graphons, not only
-among step functions.  The finiteness of the set $\mathcal M_W$ of row
-minimizers is then derived from its compactness (Lemma~\ref{lem:row-compact})
-and from the analytic implicit function theorem at points of $\mathcal M_W$
-(Lemma~\ref{lem:row-finite}).  Every point of $\mathcal M_W$ is a global
-minimizer of the row functional $\mathcal F_W$, and this is what rules out an
-accumulation of minimizers.  We do not claim any bound on the number of blocks.
-
-\paragraph{The examples do not satisfy our hypotheses.}
-Propositions~\ref{prop:arw-stars} and~\ref{prop:arw-entropy} do not contradict
-our theorems, whose hypotheses they do not satisfy, and in each case the step of
-our argument that is not available can be named.  In the example of
-Proposition~\ref{prop:arw-entropy}, the minimizers need not even be multipodal
-(Remark~\ref{rmk:arw-entropy-nonmultipodal}).  In Proposition~\ref{prop:arw-stars} the objective $f$ is not convex.
-Our arguments use the strict convexity of $J_q$ at several places: in the
-interiority of row minimizers (Lemma~\ref{lem:row-interior}), in the
-fixed-point form of~\eqref{eq:row-euler} used for compactness, and in the
-coercivity of the second variation (Lemma~\ref{lem:coercive}), which rests on
-$J_q''\ge4$.  In Proposition~\ref{prop:arw-entropy} the constraints are
-integrals of functions of $W$ over single edges.  For such constraints the
-analogue of the rooted density is $u\mapsto\int h(u)$, which has no terms
-involving two different vertices.  The strict supermodularity of
-Lemma~\ref{lem:strict-supermodular} then fails, and with it the ordering of the
-rows.  This is why our theorems require a graph $H$ with a vertex of degree at
-least two.
-
-\paragraph{Second-order conditions are used only at global row minimizers.}
-We never deduce local optimality from second-order conditions.  The
-perturbation in Proposition~\ref{prop:arw-second-order} is an insertion of a
-small block in the sense of Lemmas~\ref{lem:upper-tail-insertion}
-and~\ref{lem:fixed-insertion}.  In that example, the analogue of the row
-functional with multiplier $0$ is $u\mapsto2\int f(u)$.  It vanishes at the
-rows of $V^*$ and is negative at the constant row $c$, so the insertion
-inequality detects that $V^*$ is not optimal.  In our proofs, the insertion is
-applied to a global optimizer, where it yields the inequality
-$\mathcal F_W\ge c_W$.  The second variation (Lemmas~\ref{lem:coercive}
-and~\ref{lem:bordered}) is used only at points of $\mathcal M_W$, which are
-already known to be global minimizers of $\mathcal F_W$, and only to apply the
-implicit function theorem.
-
-\paragraph{Interiority.}  We prove directly that optimizers take values in a
-compact subinterval of $(0,1)$.  For the upper-tail problem this follows from
-explicit perturbations that use $W\ge p$ and the singularity of $J_p'$ at $1$
-(Lemmas~\ref{lem:upper-tail-basic} and~\ref{lem:upper-tail-multiplier}).  For
-prescribed densities, the constraint qualification provides the corrections
-needed to restore both constraints (Lemma~\ref{lem:fixed-interior}).  Where the
-constraint qualification fails, we do not claim interiority; instead,
-Lemmas~\ref{lem:degenerate-forms} and~\ref{lem:degenerate-slope} show that this
-happens only for a null set of values of the $H$-density.
+Requiring a nonzero constraint derivative at every global optimizer would
+therefore exclude this example; for several constraints, the corresponding
+condition is surjectivity of their joint derivative.
+A separate argument would be needed to establish that this stronger
+condition suffices for the general finite-step conclusion.

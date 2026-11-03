@@ -1,8 +1,8 @@
-# Lean formalization of *Multipodal structure of optimizers in the upper-tail variational problem*
+# Lean formalization of *Ordered multipodal structure of optimizers in the upper-tail variational problem*
 
 This repository formalizes in Lean 4 and Mathlib the graphon results of
 Sangho Lim, Seonghyuk Im, Taeyoung Kim, Kyeongsik Nam, and Hongseok Yang,
-*Multipodal structure of optimizers in the upper-tail variational problem*.
+*Ordered multipodal structure of optimizers in the upper-tail variational problem*.
 Its LaTeX source is also included in this repository, as [paper/paper.tex](paper/paper.tex).
 
 ## Main results
@@ -13,10 +13,8 @@ names are relative to the namespace `UpperTailMultipodality`.
 
 | Paper result | Lean declaration |
 |---|---|
-| [Theorem 1.1][thm:upper-tail] — Every minimizer of the upper-tail problem is multipodal, with ordered blocks | Multipodality and ordering: [upper_tail](UpperTailMultipodality/UpperTail/Main.lean#L23) |
-| [Theorem 1.2][thm:fixed-densities] — Entropy maximizers at prescribed edge and subgraph densities | Multipodality under the constraint qualification: [fixed_densities](UpperTailMultipodality/FixedDensities/Main.lean#L19) |
-| [Corollary 1.3][cor:almost-every-tau] — Almost every value of the subgraph density | Null set of degenerate values: [almost_every_tau](UpperTailMultipodality/FixedDensities/AlmostEvery.lean#L16) |
-| [Theorem 3.1][thm:row-criterion] — A criterion for finitely many row types | Finiteness, total order and ordered blocks: [row_criterion](UpperTailMultipodality/RowCriterion/Main.lean#L23) |
+| [Theorem 1.1][thm:joint-upper-tail] — Every minimizer under finitely many upper-tail constraints is multipodal, with ordered blocks | Multipodality and ordering: [joint_upper_tail](UpperTailMultipodality/UpperTail/Joint/Main.lean#L32); for one constraint: [upper_tail](UpperTailMultipodality/UpperTail/Main.lean#L24) |
+| [Theorem 1.2][thm:fixed-densities] — Entropy maximizers at fixed edge and subgraph densities | Multipodality and ordering at every density: [fixed_densities](UpperTailMultipodality/FixedDensities/Main.lean#L111) |
 
 ## Assumptions
 
@@ -32,9 +30,11 @@ The proofs use four axioms, together with Lean's foundational axioms
 
 These four standard facts of dense graph-limit theory are used only where the
 paper uses them: to know that the entropy-maximization problem has a solution.
-[Theorem 1.1][thm:upper-tail] and [Theorem 3.1][thm:row-criterion] do not use
-them, and depend on the foundational axioms only.
-Some proofs use different arguments from the paper.
+[Theorem 1.1][thm:joint-upper-tail] does not use them, and depends on the
+foundational axioms only.
+Some proofs use different arguments from the paper; they are described in
+[FORMALIZATION.md](FORMALIZATION.md), which also says why Appendix A is outside the
+formalization.
 
 ## Build
 
@@ -55,7 +55,7 @@ After building, inspect a theorem's assumptions with `#print axioms`:
 ```sh
 lake env lean --stdin <<'EOF'
 import UpperTailMultipodality
-#print axioms UpperTailMultipodality.upper_tail
+#print axioms UpperTailMultipodality.joint_upper_tail
 #print axioms UpperTailMultipodality.fixed_densities
 EOF
 ```
@@ -68,7 +68,5 @@ For definitions, the proof overview, detailed theorem correspondence and exact
 assumptions, read [FORMALIZATION.md](FORMALIZATION.md).
 
 <!-- Paper citations link to the corresponding source labels. -->
-[thm:upper-tail]: paper/sections/intro.tex#L98
-[thm:fixed-densities]: paper/sections/intro.tex#L130
-[cor:almost-every-tau]: paper/sections/intro.tex#L137
-[thm:row-criterion]: paper/sections/row_criterion.tex#L29
+[thm:joint-upper-tail]: paper/sections/intro.tex#L167
+[thm:fixed-densities]: paper/sections/intro.tex#L264

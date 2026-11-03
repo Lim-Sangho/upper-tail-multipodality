@@ -111,6 +111,15 @@ namespace Graphon
 
 instance : CoeFun Graphon (fun _ => ℝ → ℝ → ℝ) := ⟨Graphon.toFun⟩
 
+/-- Two graphons with the same kernel are equal: the remaining fields are proofs. -/
+@[ext] theorem ext {W W' : Graphon} (h : ∀ x y, W.toFun x y = W'.toFun x y) : W = W' := by
+  have hfg : W.toFun = W'.toFun := funext fun x => funext fun y => h x y
+  obtain ⟨f, hs, hm, hn, hl⟩ := W
+  obtain ⟨g, hs', hm', hn', hl'⟩ := W'
+  simp only at hfg
+  subst hfg
+  rfl
+
 variable (W : Graphon)
 
 /-- Measurability of `z ↦ W z.1 z.2`. -/

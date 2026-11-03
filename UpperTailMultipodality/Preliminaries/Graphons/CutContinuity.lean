@@ -16,7 +16,7 @@ Limits*; Chatterjee–Varadhan), recorded in `sec:graphons`:
 
 They are not re-proved here and are recorded **as axioms**, phrased through the predicate
 `CutTendsto` (cut convergence of a sequence of graphons).  Attainment of the infimum of
-`eq:graphon-variational-problem` is the theorem `feasible_attains` in
+`eq:joint-variational-problem` with `s = 1` is the theorem `feasible_attains` in
 `Preliminaries/Graphons/Attainment.lean`, derived from three of these axioms.
 -/
 

@@ -6,7 +6,6 @@ import UpperTailMultipodality.Preliminaries.Perturbation
 Elementary facts used in `lem:upper-tail-basic` and `lem:upper-tail-multiplier`:
 
 * `convexOn_tangent_le`, `Jp_tangent_le` — the tangent line lies below a convex function;
-* `Jp'_strictMonoOn` — `J_p'` is strictly increasing on `(0,1)`;
 * `exists_Jp'_eq` — every real number is a value of `J_p'` on `(0,1)`;
 * `exists_pos_lt_of_hasDerivAt_pos`, `nonneg_of_hasDerivAt_of_le` — the sign of a derivative at
   `0` and one-sided comparisons near `0`.
@@ -40,24 +39,6 @@ theorem convexOn_tangent_le {S : Set ℝ} {f : ℝ → ℝ} {f' x₀ : ℝ}
 theorem Jp_tangent_le {p t y : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (ht0 : 0 < t) (ht1 : t < 1)
     (hy : y ∈ Icc (0:ℝ) 1) : Jp p t + Jp' p t * (y - t) ≤ Jp p y :=
   convexOn_tangent_le (convexOn_Jp hp0 hp1) ⟨ht0.le, ht1.le⟩ (hasDerivAt_Jp hp0 hp1 ht0 ht1) y hy
-
-/-- `J_p'` is strictly increasing on `(0,1)`. -/
-theorem Jp'_strictMonoOn {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
-    StrictMonoOn (Jp' p) (Ioo 0 1) := by
-  refine strictMonoOn_of_deriv_pos (convex_Ioo 0 1) ?_ ?_
-  · intro x hx
-    exact (hasDerivAt_Jp' hp0 hp1 hx.1 hx.2).continuousAt.continuousWithinAt
-  · intro x hx
-    rw [interior_Ioo] at hx
-    rw [(hasDerivAt_Jp' hp0 hp1 hx.1 hx.2).deriv]
-    exact Jp''_pos hx.1 hx.2
-
-/-- `J_p ≥ 0` on `[0,1]`. -/
-theorem Jp_nonneg_of_mem {p u : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (hu0 : 0 ≤ u) (hu1 : u ≤ 1) :
-    0 ≤ Jp p u := by
-  rcases eq_or_ne u p with h | h
-  · rw [h, Jp_self hp0 hp1]
-  · exact (Jp_pos_of_ne hp0 hp1 hu0 hu1 h).le
 
 /-- **Moving down by `θ`.**  If `0 < w - θ` and `c ≤ J_p'(w - θ)`, then
 `J_p(w - θ) ≤ J_p(w) - θc`. -/

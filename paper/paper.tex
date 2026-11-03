@@ -9,7 +9,8 @@
 \usetikzlibrary{patterns}
 \usetikzlibrary{shapes}
 \usepackage{fullpage}
-\usepackage{hyperref}
+% \usepackage[hidelinks]{hyperref}
+\usepackage[colorlinks=false,citebordercolor=red]{hyperref}
 %\usepackage[notref,notcite]{showkeys}
 \usepackage{enumitem,verbatim}%,itemize
 \usepackage{array,booktabs,longtable}
@@ -185,94 +186,85 @@
 \newcommand{\blue}[1]{\textcolor[rgb]{0.00,0.00,1.00}{#1}}
 \newcommand{\red}[1]{\textcolor[rgb]{1.00,0.00,0.00}{#1}}
 
-\NewDocumentEnvironment{shl}{}
-  {%
-    \begingroup
-    \color{blue}%
-    \bfseries
-    \boldmath
-    [SL:\space\ignorespaces
-  }
-  {%
-    \unskip]\endgroup\ignorespacesafterend
-  }
+\NewDocumentCommand{\shl}{+m}{%
+  \begingroup
+  \color{blue}%
+  \bfseries
+  \boldmath
+  [SL:\space#1]%
+  \endgroup
+}
 
 
 % Notation specific to this paper.
 \newcommand{\lo}{\ell}
 \newcommand{\HS}{\mathrm{HS}}
 
-\title{Multipodal structure of optimizers in the upper-tail variational problem}
+\title{Multipodal structure in upper-tail problems for subgraph counts}
 
 \date{}
 
-\author[1,2]{Sangho Lim}
-\author[3]{Seonghyuk Im}
-\author[1,2]{Taeyoung Kim}
+\author[1]{Seonghyuk Im}
+\author[2,3]{Taeyoung Kim}
+\author[2,3]{Sangho Lim}
 \author[4]{Kyeongsik Nam}
-\author[1,2]{Hongseok Yang}
-\affil[1]{School of Computing, KAIST, Daejeon, Korea}
-\affil[2]{School of Computational Sciences, Korea Institute for Advanced Study (KIAS), Seoul, Korea}
-\affil[3]{Center for AI and Natural Sciences, Korea Institute for Advanced Study (KIAS), Seoul, Korea}
+\author[2,3]{Hongseok Yang}
+\affil[1]{Center for AI and Natural Sciences, Korea Institute for Advanced Study (KIAS), Seoul, Korea}
+\affil[2]{School of Computing, KAIST, Daejeon, Korea}
+\affil[3]{School of Computational Sciences, Korea Institute for Advanced Study (KIAS), Seoul, Korea}
 \affil[4]{Department of Mathematical Sciences, KAIST, Daejeon, Korea}
-\affil[ ]{E-mail addresses: \texttt{lim.sang@kaist.ac.kr},
+\affil[ ]{E-mail addresses:
 \texttt{seonghyuk@kias.re.kr},
 \texttt{taeyoungkim21@kaist.ac.kr},
+\texttt{lim.sang@kaist.ac.kr},
 \texttt{ksnam@kaist.ac.kr},
 \texttt{hongseokyang@kias.re.kr}}
-
 
 
 \begin{document}
 
 \maketitle
 \begin{abstract}
-Let $H$ be a fixed graph and let $t(H,\cdot)$ denote its homomorphism density.
-For fixed $0<p<r<1$, the upper-tail event $t(H,G(n,p))\ge r^{|E(H)|}$ in the
-dense Erd\H{o}s--R\'enyi random graph is governed by the Chatterjee--Varadhan
-variational problem, whose minimizers describe the typical structure of the
-conditioned random graph.  These minimizers are known only in special cases.
-We prove that, for every graph $H$ and all parameters, every minimizer is
-multipodal, that is, it is the graphon of a stochastic block model with
-finitely many blocks.  Moreover, unless $H$ is a perfect matching, the blocks
-can be ordered so that the edge density between two blocks is nondecreasing in
-the index of each block.
-We also consider the graphons of maximal entropy with a prescribed edge
-density and a prescribed $H$-density above its Erd\H{o}s--R\'enyi value.
-Every such maximizer that satisfies a natural constraint qualification is
-multipodal with ordered blocks, and the values of the $H$-density at which
-some maximizer violates the constraint qualification form a set of Lebesgue
-measure zero.
-The proof is based on inserting into an optimizer $W$ a small block of
-vertices whose edge probabilities to the existing vertices are arbitrary.
-This shows that almost every row $W(x,\cdot)$ of the optimizer minimizes one
-and the same functional over all measurable functions from $[0,1]$ to $[0,1]$.  A
-strict supermodularity property forces these minimizers to be totally
-ordered, and an analysis of the second variation shows that there are only
-finitely many of them.
+We prove that every minimizer of the graphon variational problem for
+joint upper tails of subgraph counts in dense Erd\H{o}s--R\'enyi random
+graphs is multipodal. This holds for any finite collection of finite
+simple graphs, each containing at least one edge. Moreover, the blocks
+can be ordered so that connection probabilities are nondecreasing in
+both block indices. The same conclusion holds for every entropy
+maximizer with a fixed edge density in $(0,1)$ and one prescribed subgraph
+density strictly between its Erd\H{o}s--R\'enyi value and its largest
+feasible value at that edge density. The proof uses vertex insertions
+to derive a row functional whose minimizers form a finite, totally
+ordered set containing almost every row of the optimizing graphon.
 \end{abstract}
 
 \input{sections/intro}
-\input{sections/preliminaries}
+\input{sections/graphons}
+\input{sections/density_variations}
+\input{sections/row_minimality}
 \input{sections/row_criterion}
-\input{sections/single_constraint}
 \input{sections/fixed_densities}
+\input{sections/degenerate_optimizers}
 \input{sections/conclusion}
 
 \paragraph{AI disclosure.}
-\red{[To be written by the authors: describe the role of AI assistance in the
-results, proofs, and writing of this paper, in the same format as the
-companion paper.]}
+AI assistance during revision was used to reorganize and edit the
+manuscript, clarify proof summaries and citation scope, and check
+selected algebraic calculations.
+% This paragraph records the assistance observed in this revision.
+% The authors should supplement it with any earlier use in result exploration
+% or proof development; no claim of independent author verification is made here.
 
 \paragraph{Acknowledgments.}
 % TODO: confirm that the grants below apply to this paper.
-S. Im was supported by a KIAS individual Grant (AP109501) at Korea Institute for Advanced Study.
-S. Lim, T. Kim, and H. Yang were supported by the National Research Foundation of Korea (NRF)
+S. Im and H. Yang were supported by KIAS individual Grants (AP109501, CG109601) at the Korea Institute for Advanced Study.
+T. Kim, S. Lim, and H. Yang were supported by the National Research Foundation of Korea (NRF)
 grant funded by the Korean Government (MSIT) (No.~RS-2023-00279680).
 
 \bibliographystyle{plain}
 \bibliography{cites}
 
+\clearpage
 \appendix
 
 \input{sections/appendix_arw}

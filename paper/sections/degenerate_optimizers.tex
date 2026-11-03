@@ -1,0 +1,675 @@
+\section{Excluding degenerate optimizers}\label{sec:degenerate-optimizers}
+
+In view of \Cref{prop:nondegenerate-multipodality}, the following
+proposition completes the proof of \Cref{thm:fixed-densities}.
+
+\begin{prop}\label{prop:optimizer-nondegeneracy}
+Let $H$ be a graph with a vertex of degree at least two, let $\eps\in(0,1)$,
+and let $\eps^m<\tau<\tau_{\max}(\eps)$. Every minimizer
+of~\eqref{eq:fixed-problem} satisfies the constraint qualification.
+\end{prop}
+
+We first exclude degeneracy for almost every $\tau$ in
+\Cref{cor:almost-every-tau}. To treat an arbitrary density $\tau$,
+we choose optimizers with an ordered structure at densities approaching
+$\tau$ from below and extract a convergent subsequence. The limit is
+again an optimizer with this structure, although its multipodality is
+not yet established. \Cref{lem:ordered-nondegenerate} shows that every
+optimizer with an ordered structure is nondegenerate, so the limit satisfies the
+constraint qualification. Without uniqueness, however, other optimizers
+at $\tau$ could still be degenerate. In
+\Cref{sec:removing-exceptional-densities}, we therefore use the perturbation
+directions at the limit to bound the increase in $\Psi_\eps$ and rule out
+this possibility.
+
+\subsection{Multipodality at almost every density}\label{sec:almost-every-multipodality}
+
+\begin{lemma}\label{lem:degenerate-forms}
+Let $W$ be a degenerate minimizer of~\eqref{eq:fixed-problem} and put
+$\Omega:=\{(x,y):0<W(x,y)<1\}$.  Then $\nu(\Omega)>0$, and there is a constant $\kappa$
+with $\mathcal D_{H,W}=\kappa$ almost everywhere on $\Omega$.
+\end{lemma}
+
+\begin{proof}
+Let $W_{\max}$ attain $\tau_{\max}(\eps)$.  By continuity of the
+$H$-density along the segment from $\eps$ to $W_{\max}$, there is
+$\theta\in(0,1)$ such that
+\[
+  U:=\eps+\theta(W_{\max}-\eps),
+  \qquad e(U)=\eps,\quad t(H,U)=\tau.
+\]
+The values of $U$ lie in a compact subinterval of $(0,1)$,
+so $s(U)>0$.
+Optimality and~\eqref{eq:entropy-identity} give $s(W)\ge s(U)>0$, which
+forces $\nu(\Omega)>0$.
+
+For every $\gamma>0$ such that $\Omega_\gamma(W)$ has positive measure, the
+characterization following \Cref{def:constraint-qualification} shows
+that $\mathcal D_{H,W}$ is essentially constant on $\Omega_\gamma(W)$.  These
+constants agree, because the sets $\Omega_\gamma(W)$ increase as $\gamma$
+decreases and have positive measure.  Since
+$\Omega=\bigcup_{\gamma>0}\Omega_\gamma(W)$, the common value $\kappa$ satisfies
+$\mathcal D_{H,W}=\kappa$ almost everywhere on $\Omega$.
+\end{proof}
+
+\begin{lemma}\label{lem:degenerate-smoothing}
+Let $W$ be a degenerate minimizer of~\eqref{eq:fixed-problem} at $\tau$.
+Let $W_s:=(1-s)W+s\eps$, and
+denote its cost saving and density loss by
+\[
+  g_s:=I_\eps(W)-I_\eps(W_s),
+  \qquad
+  d_s:=\tau-t(H,W_s)
+  \qquad(0\le s\le1).
+\]
+Then $g_s$ and $d_s$ are positive for $0<s<1$.
+Moreover, $d_s$ is a polynomial in $s$ and
+\[
+  d_s=a_k s^k+O(s^{k+1}),\qquad
+  \frac{g_s}{d_s}\longrightarrow\infty
+  \quad\text{as }s\downarrow0
+\]
+for some $k\ge1$ and $a_k>0$.
+\end{lemma}
+
+\begin{proof}
+We have $e(W_s)=\eps$, and $W\not\equiv\eps$ because $\tau>\eps^m$, so
+$I_\eps(W)>0$.  Convexity of $J_\eps$ and $J_\eps(\eps)=0$ give
+\[
+  I_\eps(W_s)\le(1-s)I_\eps(W),
+  \qquad g_s\ge s I_\eps(W)>0.
+\]
+By the comparison in \Cref{lem:fixed-monotonicity}, a graphon with edge
+density $\eps$ and cost below $I_\eps(W)$ cannot have $H$-density at least
+$\tau$; hence $d_s>0$.  Since $s\mapsto d_s$ is a polynomial
+vanishing at $s=0$ and positive on $(0,1)$, its first nonzero
+coefficient $a_k$ satisfies $k\ge1$ and $a_k>0$.
+
+If $\{W=0\}\cup\{W=1\}$ has positive measure, the endpoint values give an
+additional logarithmic saving.  For small $s>0$,
+\[
+  J_\eps(0)-J_\eps(s\eps) =\eps s\log(1/s)+O(s),\qquad J_\eps(1)-J_\eps(1-s(1-\eps)) =(1-\eps)s\log(1/s)+O(s).
+\]
+Since interpolation toward $\eps$ decreases $J_\eps$ at every other
+point as well, integration gives
+\[
+  g_s\ge c s\log(1/s),\qquad d_s\le C s,
+\]
+after decreasing $c>0$ and increasing $C>0$ if necessary.
+Thus $g_s/d_s\to\infty$ as $s\downarrow0$.
+
+Otherwise $0<W<1$ almost everywhere, so $\mathcal D_{H,W}=\kappa$ almost everywhere by
+\Cref{lem:degenerate-forms} and
+\[
+  \frac{\dd}{\dd s}t(H,W_s)\Big|_{s=0}
+  =\int\mathcal D_{H,W}\,(\eps-W)=\kappa\bigl(\eps-e(W)\bigr)=0.
+\]
+Thus the first order term of $d_s$ vanishes, which implies $k\ge2$,
+and the bounds
+\[
+  g_s\ge s I_\eps(W), \qquad
+  d_s\le C s^2
+\]
+again imply $g_s/d_s\to\infty$ as $s\downarrow0$.
+\end{proof}
+
+The following lemma turns the comparison in \Cref{lem:degenerate-smoothing}
+into an infinite left slope of $\Psi_\eps$.
+
+\begin{lemma}\label{lem:degenerate-slope}
+If~\eqref{eq:fixed-problem} has a degenerate minimizer at
+$\tau\in(\eps^m,\tau_{\max}(\eps))$, then
+\[
+  \lim_{\tau'\uparrow\tau}\frac{\Psi_\eps(\tau)-\Psi_\eps(\tau')}{\tau-\tau'}=\infty.
+\]
+\end{lemma}
+
+\begin{proof}
+Keep the notation of \Cref{lem:degenerate-smoothing}.  The polynomial
+density loss has positive leading coefficient, so
+\[
+  \frac{\dd}{\dd s}d_s=ka_k s^{k-1}+O(s^k)>0
+\]
+for small $s>0$.  Every $\tau'<\tau$ sufficiently close to $\tau$
+therefore has a unique small $s>0$ with $d_s=\tau-\tau'$.
+The graphon $W_s$ is feasible for~\eqref{eq:fixed-problem} at $\tau'$,
+thus $\Psi_\eps(\tau')\le I_\eps(W_s)$, and
+\[
+  \frac{\Psi_\eps(\tau)-\Psi_\eps(\tau')}{\tau-\tau'}
+  \ge\frac{I_\eps(W)-I_\eps(W_s)}{d_s}
+  =\frac{g_s}{d_s}.
+\]
+As $\tau'\uparrow\tau$ we have $s\downarrow0$, and the right-hand side
+tends to infinity by \Cref{lem:degenerate-smoothing}.
+\end{proof}
+
+\begin{cor}\label{cor:almost-every-tau}
+The set of $\tau\in(\eps^m,\tau_{\max}(\eps))$ for
+which~\eqref{eq:fixed-problem} has a degenerate minimizer has Lebesgue measure
+zero.  Consequently, for almost every such $\tau$, every maximizer
+of~\eqref{eq:entropy-maximization} is multipodal with ordered blocks.
+\end{cor}
+
+\begin{proof}
+By \Cref{lem:fixed-monotonicity}, $\Psi_\eps$ is increasing, so Lebesgue's
+theorem implies that it is
+differentiable with a finite derivative at almost every point of
+$(\eps^m,\tau_{\max}(\eps))$.
+At such a point, the left difference
+quotients converge to the finite derivative, so by
+\Cref{lem:degenerate-slope} no degenerate minimizer exists there.
+At every such point, \Cref{prop:nondegenerate-multipodality} applies to every maximizer.
+\end{proof}
+
+\subsection{Ordered optimizers are nondegenerate}\label{sec:ordered-nondegeneracy}
+
+Without a uniform bound on the number of blocks, compactness does not
+imply that a limit of the minimizers in \Cref{cor:almost-every-tau} is
+multipodal. We therefore prove nondegeneracy for any minimizer with
+an ordered structure, as defined in \Cref{def:ordered-structure}.
+
+\begin{lemma}[Global row maximality]\label{lem:degenerate-insertion}
+Let $W$ be a degenerate minimizer of~\eqref{eq:fixed-problem} at
+$\tau\in(\eps^m,\tau_{\max}(\eps))$, and let $\kappa$ be as in
+\Cref{lem:degenerate-forms}.  Then
+\begin{equation}\label{eq:degenerate-insertion}
+  \mathcal B_W(u)
+  :=a_H(u)-\kappa a_e(u)
+  =\mathcal R_{H,W}(u)-N\tau-2\kappa\Bigl(\int_0^1u-\eps\Bigr)\le0
+\end{equation}
+for every measurable $u:[0,1]\to[0,1]$, with equality for almost every row
+$u=W_x$.
+\end{lemma}
+
+\begin{proof}
+Suppose that $\mathcal B_W(u)>0$ for some measurable $u:[0,1]\to[0,1]$.
+Let $W_s$, $g_s$, and $d_s$ be as in \Cref{lem:degenerate-smoothing}.
+By \Cref{lem:degenerate-forms} we may fix $\gamma>0$ such that
+$\Omega_\gamma(W)$ has positive measure. Choose the direction
+\[
+  V:=\mathbf1_{\Omega_\gamma(W)},
+  \qquad \int V=\nu(\Omega_\gamma(W))>0,
+  \qquad \int\mathcal D_{H,W}V=\kappa\int V.
+\]
+
+Define $V_{s,\theta,\zeta}$ by~\eqref{eq:vertex-insertion}, using insertion
+mass $0\le\theta<1$, row $u$, internal value $\eps$, and old kernel
+$W_s+\zeta V$. The parameters $\theta$ and $\zeta$
+vary independently near $0$.
+The edge density is
+\[
+  e(V_{s,\theta,\zeta})
+  =(1-\theta)^2\Bigl(\eps+\zeta\int V\Bigr)
+    +2\theta(1-\theta)\int_0^1u+\theta^2\eps.
+\]
+For the $H$-density, \eqref{eq:insertion-density-expansion} gives
+\[
+  t(H,V_{s,\theta,\zeta})
+  =(1-\theta)^N t(H,W_s+\zeta V)
+    +\theta(1-\theta)^{N-1}\mathcal R_{H,W_s+\zeta V}(u)+O(\theta^2).
+\]
+Both densities extend to polynomials in $(s,\theta,\zeta)$: each
+assignment of $k$ vertices to the new class contributes the mass factor
+$\theta^k(1-\theta)^{N-k}$, and the remaining edge factors are $u$, $\eps$, or
+$W_s+\zeta V=(1-s)W+s\eps+\zeta V$.
+At $s=0$, expanding in $(\theta,\zeta)$ and using
+$\int\mathcal D_{H,W}V=\kappa\int V$ gives
+\[
+  \left.\frac{\partial\mathbf C(V_{s,\theta,\zeta})}{\partial(\theta,\zeta)}
+  \right|_{(s,\theta,\zeta)=(0,0,0)}
+  =
+  \begin{pmatrix}
+    a_e(u) & \int V\\[1mm]
+    a_H(u) & \kappa\int V
+  \end{pmatrix}.
+\]
+These linear terms show that canceling the change in edge density leaves
+\[
+  \theta a_e(u)+\zeta\int V=0
+  \quad\Longrightarrow\quad
+  \theta a_H(u)+\kappa\zeta\int V=\theta\mathcal B_W(u).
+\]
+Thus $\mathcal B_W(u)$ is the remaining first-order $H$-density change
+per unit inserted mass after the perturbation $\zeta V$ of the old graphon
+cancels the change in edge density. We use its positivity to restore
+the loss $d_s$ with a positive inserted mass.
+
+The Jacobian above has determinant $-(\int V)\mathcal B_W(u)\ne0$.
+Applying the implicit function theorem to the polynomial extensions
+of the densities therefore gives a local map
+$s\mapsto(\theta(s),\zeta(s))$ with $\theta(0)=\zeta(0)=0$ and
+\[
+  \mathbf C\bigl(V_{s,\theta(s),\zeta(s)}\bigr)
+  =\mathbf C(V_{0,0,0})
+  =(\eps,\tau).
+\]
+To bound $\theta(s)$ and $\zeta(s)$, fix $s$ and consider the
+density map
+\[
+  F_s(\theta,\zeta):=\mathbf C(V_{s,\theta,\zeta}),
+  \qquad F_s(\theta(s),\zeta(s))=(\eps,\tau),
+  \qquad F_s(0,0)=(\eps,\tau-d_s).
+\]
+The invertibility of the Jacobian above also gives local inverses
+$F_s^{-1}$ on a common convex neighborhood of $(\eps,\tau)$ for
+small $s$. For $(\eps',\tau')$
+in this neighborhood, $F_s^{-1}(\eps',\tau')$ gives the
+parameters $(\theta,\zeta)$ solving $F_s(\theta,\zeta)=(\eps',\tau')$.
+The derivative of this inverse
+depends continuously on $(s,\eps',\tau')$. After shrinking the
+neighborhood, there is therefore a constant $C$ such that
+\[
+  \|D(F_s^{-1})(\eps',\tau')\|_{\mathrm{op}}\le C
+\]
+uniformly for small $s$ and $(\eps',\tau')$ in the small neighborhood,
+using the norm $\|(x,y)\|_1:=|x|+|y|$ on $\RR^2$.  Since
+\[
+  F_s^{-1}(\eps,\tau)=(\theta(s),\zeta(s)),
+  \qquad F_s^{-1}(\eps,\tau-d_s)=(0,0),
+\]
+the bound on the derivative gives
+\[
+  |\theta(s)|+|\zeta(s)|
+  =\bigl\|F_s^{-1}(\eps,\tau)
+           -F_s^{-1}(\eps,\tau-d_s)\bigr\|_1
+  \le C\bigl\|(\eps,\tau)-(\eps,\tau-d_s)\bigr\|_1
+  =Cd_s.
+\]
+Expanding the two constraints at $(\theta,\zeta)=(\theta(s),\zeta(s))$ gives
+\begin{align*}
+  0&=e(V_{s,\theta,\zeta})-e(W_s)
+     =a_e(u)\theta(s)+\Bigl(\int V\Bigr)\zeta(s)+O((|\theta(s)|+|\zeta(s)|)^2),\\
+  d_s&=t(H,V_{s,\theta,\zeta})-t(H,W_s)
+     =a_H(u)\theta(s)+\kappa\Bigl(\int V\Bigr)\zeta(s)+O(d_s^2+s d_s).
+\end{align*}
+The quadratic remainders are $O(d_s^2)$; replacing the $H$-density
+derivatives at $W_s$ by those at $W$ adds $O(s d_s)$.
+Both errors are $o(d_s)$.
+Subtracting $\kappa$ times the first equation from the second gives
+\[
+  d_s=\mathcal B_W(u)\theta(s)+o(d_s),
+\]
+and hence
+\[
+  \theta(s)=\left(\frac1{\mathcal B_W(u)}+o(1)\right)d_s.
+\]
+Since $\mathcal B_W(u)>0$ and $d_s>0$ and $d_s\to0$ as $s\downarrow0$,
+we have $0<\theta(s)<1$ for small $s>0$.
+On the support of $V$, the values
+of $W_s$ lie in $[\gamma/2,1-\gamma/2]$ for small $s>0$.
+Thus taking $|\zeta(s)|\|V\|_\infty<\gamma/4$ keeps the old
+graphon $W_s+\zeta(s)V$ in $[0,1]$.
+The inserted row $u$ and the internal value $\eps$ are also admissible.
+Thus the constructed graphon $V_{s,\theta(s),\zeta(s)}$ is a feasible graphon.
+
+For the cost, write $\theta=\theta(s)$ and $\zeta=\zeta(s)$. The exact
+insertion formula is
+\[
+  I_\eps(V_{s,\theta,\zeta})
+    =(1-\theta)^2I_\eps(W_s+\zeta V)
+      +2\theta(1-\theta)I_\eps(u).
+\]
+Subtracting $I_\eps(W_s)$ and separating the three contributions gives
+\[
+  I_\eps(V_{s,\theta,\zeta})-I_\eps(W_s)
+  =(1-\theta)^2\bigl(I_\eps(W_s+\zeta V)-I_\eps(W_s)\bigr)
+  -\theta(2-\theta)I_\eps(W_s)+2\theta(1-\theta)I_\eps(u).
+\]
+On the support of $V$, both $W_s$ and $W_s+\zeta V$ take
+values in $[\gamma/4,1-\gamma/4]$, so define
+\[
+  M:=\max_{z\in[0,1]}J_\eps(z),\qquad
+  L:=\max_{z\in[\gamma/4,1-\gamma/4]}|J_\eps'(z)|.
+\]
+Outside the support of $V$, the old graphon is unchanged. The mean
+value theorem therefore gives
+\begin{align*}
+  \bigl|I_\eps(W_s+\zeta V)-I_\eps(W_s)\bigr|
+  &\le\int_{\Omega_\gamma(W)}
+    \bigl|J_\eps(W_s+\zeta V)-J_\eps(W_s)\bigr|\\
+  &\le L|\zeta|\int_{\Omega_\gamma(W)}|V|
+   =L|\zeta|\|V\|_1.
+\end{align*}
+Combining these bounds with $0<\theta<1$, we obtain
+\begin{align*}
+  \bigl|I_\eps(V_{s,\theta,\zeta})-I_\eps(W_s)\bigr|
+  &\le(1-\theta)^2L|\zeta|\|V\|_1+\theta(2-\theta)M+2\theta(1-\theta)M\\
+  &\le L|\zeta|\|V\|_1+4M\theta
+   \le C(|\theta|+|\zeta|)
+   = O(d_s).
+\end{align*}
+Combining this cost bound with the smoothing gain $g_s$ gives
+\[
+  I_\eps(V_{s,\theta(s),\zeta(s)})
+  \le I_\eps(W_s) + Cd_s
+  =I_\eps(W)-g_s+ Cd_s,
+\]
+which is smaller than $I_\eps(W)$ for small $s>0$, because
+$g_s/d_s\to\infty$ as $s\downarrow0$ by \Cref{lem:degenerate-smoothing}.
+This contradicts the minimality of $W$ and proves~\eqref{eq:degenerate-insertion}.
+
+For existing rows, Fubini's theorem and~\eqref{eq:rooted-average} give
+\[
+  \int_0^1\mathcal R_{H,W}(W_x)\dd x=N\tau,
+  \qquad \int_0^1\int_0^1W_x(y)\dd y\dd x=\eps.
+\]
+It follows that $\int_0^1\mathcal B_W(W_x)\dd x=0$.
+Since $\mathcal B_W(W_x)\le0$, equality holds for almost every row.
+\end{proof}
+
+\Cref{lem:degenerate-insertion} makes almost every existing row $u$ of a
+degenerate minimizer a global maximizer of $\mathcal B_W$. Keeping $W$
+fixed, every admissible pair of rows $u\pm h$ must therefore satisfy
+\[
+  \mathcal B_W(u+h)+\mathcal B_W(u-h)-2\mathcal B_W(u)\le0.
+\]
+We will use the ordered structure to find such a pair for which the
+left-hand side is strictly positive.
+
+\begin{lemma}\label{lem:ordered-nondegenerate}
+Let $W$ be a minimizer of~\eqref{eq:fixed-problem} at
+$\tau\in(\eps^m,\tau_{\max}(\eps))$. If $W$ has an ordered structure,
+then it satisfies the constraint qualification.
+\end{lemma}
+
+\begin{proof}
+Suppose that $W$ is degenerate. \Cref{lem:degenerate-forms} gives
+$\nu(\{0<W<1\})>0$. By symmetry, the subset where $y\ge x$ also has positive
+measure.  Fubini's theorem and \Cref{lem:degenerate-insertion} therefore
+give a row $u=W_x$ with $\mathcal B_W(u)=0$ such that the set
+\[
+  B_x:=\{y \in [0,1]:y\ge x,\ 0<u(y)<1\}
+\]
+has positive measure.  For $(y,z)\in B_x\times B_x$, monotonicity gives
+$W(y,z)\ge W(x,z)=u(z)>0$.
+Thus the ordered structure ensures that no edge factor vanishes when
+both vertices lie in $B_x$.
+
+To keep both $u+h$ and $u-h$ in $[0,1]$, choose a permissible
+change at each coordinate, $h(y):=\min\{u(y),1-u(y)\}$.
+Then $h>0$ on $B_x$. Using the definition of $\mathcal B_W$ in
+\eqref{eq:degenerate-insertion}, we obtain
+\begin{align*}
+  \mathcal B_W(u+h)-\mathcal B_W(u)
+    &=\mathcal R_{H,W}(u+h)-\mathcal R_{H,W}(u)-2\kappa\int_0^1h,\\
+  \mathcal B_W(u-h)-\mathcal B_W(u)
+    &=\mathcal R_{H,W}(u-h)-\mathcal R_{H,W}(u)+2\kappa\int_0^1h.
+\end{align*}
+Adding these identities cancels the linear terms and gives
+\begin{equation}\label{eq:rooted-density-difference}
+  \mathcal B_W(u+h)+\mathcal B_W(u-h)-2\mathcal B_W(u)
+  =\mathcal R_{H,W}(u+h)+\mathcal R_{H,W}(u-h)-2\mathcal R_{H,W}(u).
+\end{equation}
+
+We show that the right-hand side of~\eqref{eq:rooted-density-difference}
+is strictly positive by expanding the rooted densities.
+For each root $v\in V(H)$, the product of row factors satisfy
+\[
+  \prod_{z\in N_H(v)}(u+h)(x_z)+\prod_{z\in N_H(v)}(u-h)(x_z)
+    -2\prod_{z\in N_H(v)}u(x_z)
+  =2\sum_{\substack{S\subseteq N_H(v)\\|S|\ge2\text{ even}}}
+    \prod_{z\in S}h(x_z)\prod_{z\in N_H(v)\setminus S}u(x_z)\ge0.
+\]
+Terms with an odd number of factors $h$ cancel, and all remaining terms
+are nonnegative. Thus each root contributes a nonnegative amount to
+the right-hand side of~\eqref{eq:rooted-density-difference}.
+To obtain a positive contribution, choose a vertex $v_0$ with
+$d_{v_0}\ge2$ and distinct neighbors $z_1,z_2$.
+Keep the term corresponding to $v=v_0$ and $S=\{z_1,z_2\}$, which uses
+$h$ on two incident edges. Restricting the labels of all vertices other
+than $v_0$ to $B_x$ gives the contribution
+\[
+  2\int_{B_x^{V(H)\setminus\{v_0\}}}
+    h(x_{z_1})h(x_{z_2})
+    \prod_{z\in N_H(v_0)\setminus\{z_1,z_2\}}u(x_z)
+    \prod_{\substack{ab\in E(H)\\a,b\ne v_0}}W(x_a,x_b)
+    \prod_{z\ne v_0}\dd x_z>0,
+\]
+since $h,u>0$ on $B_x$, $W>0$ on $B_x\times B_x$, and the domain has
+measure $\nu(B_x)^{N-1}>0$. Hence
+\[
+  \mathcal B_W(u+h)+\mathcal B_W(u-h)-2\mathcal B_W(u)>0.
+\]
+This contradicts the fact that $u$ maximizes $\mathcal B_W$.
+\end{proof}
+
+\subsection{Compactness and removal of the exceptional set}\label{sec:removing-exceptional-densities}
+
+\begin{lemma}\label{lem:ordered-compact}
+Let $(W_n)$ be graphons with an ordered structure. After
+measure-preserving relabelings, some subsequence converges in
+$L^1([0,1]^2)$ to a graphon with an ordered structure.
+\end{lemma}
+
+\begin{proof}
+For each integer $k\ge1$, partition $[0,1]$ into the intervals
+$I_a=[(a-1)/k,a/k)$ for $1\le a<k$, and $I_k=[(k-1)/k,1]$.
+For a graphon $V$, define its step approximation
+$V^{(k)}:[0,1]^2\to[0,1]$ by
+\[
+  V^{(k)}(x,y):=k^2\int_{I_a\times I_b}V(s,t)\dd s\dd t,
+  \qquad (x,y)\in I_a\times I_b.
+\]
+This is a graphon that is constant on each of the $k^2$ squares.
+If $V$ is nondecreasing in each variable, then so is $V^{(k)}$.
+On each square, both $V$ and its average lie between the values of $V$
+at the lower left and upper right corners. Hence
+\[
+  \|V-V^{(k)}\|_1
+  \le\frac1{k^2}\sum_{a,b=1}^k\Bigl(V\bigl(\tfrac ak,\tfrac bk\bigr)
+  -V\bigl(\tfrac{a-1}k,\tfrac{b-1}k\bigr)\Bigr).
+\]
+Split each corner difference into the increments $V(a/k,b/k)-V((a-1)/k,b/k)$
+and $V((a-1)/k,b/k)-V((a-1)/k,(b-1)/k)$. Summing the first-coordinate
+increments gives
+\[
+  \sum_{a,b=1}^k\Bigl(V\bigl(\tfrac ak,\tfrac bk\bigr)
+    -V\bigl(\tfrac{a-1}k,\tfrac bk\bigr)\Bigr)
+  =\sum_{b=1}^k\Bigl(V\bigl(1,\tfrac bk\bigr)-V\bigl(0,\tfrac bk\bigr)\Bigr)
+  \le k.
+\]
+The sum of the second-coordinate increments is also at most $k$, so
+$\|V-V^{(k)}\|_1\le2/k$.
+
+By \Cref{def:ordered-structure}, we may relabel each $W_n$ and modify it
+on a null set so that it is symmetric and nondecreasing in both variables.
+Keep the notation $W_n$ for these graphons.
+For each fixed $k$, the vector of block values of $W_n^{(k)}$ belongs to
+the compact set $[0,1]^{k^2}$. We can therefore choose an infinite set
+of indices along which all $k^2$ block values converge. Along these
+indices, the step graphons converge in $L^1([0,1]^2)$, since their
+$L^1$ distance is $k^{-2}$ times the sum
+of the absolute differences of their block values.
+
+Choose an infinite index set $\mathcal N_1\subseteq\mathbb N$ along which
+$W_n^{(1)}$ converges. Restricting to indices in $\mathcal N_1$, choose an
+infinite subset $\mathcal N_2\subseteq\mathcal N_1$ along which $W_n^{(2)}$
+converges, and continue. This gives nested infinite index sets
+\[
+  \mathcal N_1\supseteq\mathcal N_2\supseteq\cdots
+\]
+such that $W_n^{(k)}$ converges in $L^1([0,1]^2)$ as $n\to\infty$ through
+$\mathcal N_k$. Restricting the index set preserves the convergence
+obtained at earlier steps. Now choose an increasing sequence $(n_j)_{j=1}^\infty$
+with $n_j\in\mathcal N_j$ for each $j$.
+For every fixed $k$, we have $n_j\in\mathcal N_j\subseteq\mathcal N_k$
+whenever $j\ge k$. Thus $W_{n_j}^{(k)}$ converges for every $k$ along
+the same index sequence $(n_j)_{j=1}^\infty$. Keep the notation $(W_n)$ for the
+resulting graphon subsequence $(W_{n_j})$. The approximation bound gives
+\[
+  \|W_n-W_m\|_1
+  \le\|W_n-W_n^{(k)}\|_1+\|W_n^{(k)}-W_m^{(k)}\|_1
+    +\|W_m^{(k)}-W_m\|_1
+  \le\frac4k+\|W_n^{(k)}-W_m^{(k)}\|_1.
+\]
+Choosing $k$ large and then $n,m$ large shows that $(W_n)$ is Cauchy
+in $L^1([0,1]^2)$. By completeness, it has a limit $W_*$ in this space.
+The limit is a graphon, since symmetry and the bounds $0\le W_n\le1$
+are preserved under $L^1$ convergence.
+
+We now show that $W_*$ has an ordered structure.
+For each fixed $k$, averaging over the squares gives
+\[
+  \|W_n^{(k)}-W_*^{(k)}\|_1\le\|W_n-W_*\|_1\longrightarrow0.
+\]
+On this fixed partition, each block value of $W_n^{(k)}$
+converges to the corresponding block value
+of $W_*^{(k)}$, preserving the inequalities between block values.
+Thus $W_*^{(k)}$ is also nondecreasing in each variable.
+Letting $n\to\infty$ in the approximation bound $\|W_n-W_n^{(k)}\|_1\le2/k$
+gives $\|W_*-W_*^{(k)}\|_1\le2/k$.
+Thus $W_*^{(k)}\to W_*$ in $L^1([0,1]^2)$. Choose a subsequence
+$(W_*^{(k_i)})_{i=1}^{\infty}$ that converges pointwise to $W_*$ on a
+symmetric set $F\subseteq[0,1]^2$ of full measure.
+For $(x,y),(x',y')\in F$ with $x\le x'$ and $y\le y'$,
+since $W_*^{(k_i)}(x,y)\le W_*^{(k_i)}(x',y')$ for every $i$,
+passing to the limit gives $W_*(x,y)\le W_*(x',y')$.
+Hence the symmetric function
+\[
+  (x,y)\longmapsto
+  \sup\bigl\{W_*(x',y'):(x',y')\in F,\ x'\le x,\ y'\le y\bigr\}
+\]
+with $\sup\emptyset:=0$ is nondecreasing in each variable and agrees with
+$W_*$ on $F$. It differs from $W_*$ only on the null set $F^c$, so
+$W_*$ has the required ordered structure.
+\end{proof}
+
+The uniform cost bound in the next lemma will control the left
+difference quotients of $\Psi_\eps$ at the limit density. By
+\Cref{lem:degenerate-slope}, this will exclude any degenerate minimizer there.
+
+\begin{lemma}\label{lem:uniform-density-restoration}
+Let $W_n\to W_*$ in $L^1([0,1]^2)$ be graphons, and suppose that $W_*$ satisfies the
+constraint qualification.  There is $C<\infty$ such that, for all large $n$,
+there is a graphon $V_n$ with
+\[
+  \mathbf C(V_n)=\mathbf C(W_*),\qquad
+  |I_\eps(V_n)-I_\eps(W_n)|\le C|\mathbf C(W_n)-\mathbf C(W_*)|.
+\]
+\end{lemma}
+
+\begin{proof}
+Choose $\gamma,U_1,U_2$ satisfying \Cref{def:constraint-qualification}
+at $W_*$, and restrict these directions to the interior region of $W_n$:
+\[
+  U_{i,n}:=U_i\mathbf1_{\{\gamma/2<W_n<1-\gamma/2\}},\qquad i=1,2.
+\]
+For $\xi=(\xi_1,\xi_2)^{\mathsf T}\in\RR^2$, define the bounded symmetric kernel
+\[
+  V_n(\xi):=W_n+\xi_1U_{1,n}+\xi_2U_{2,n}.
+\]
+Since $W_n\to W_*$ in $L^1([0,1]^2)$ and $U_i$ is supported where
+$\gamma<W_*<1-\gamma$, we have $U_{i,n}\to U_i$ in $L^1([0,1]^2)$.
+By~\eqref{eq:derivative-kernel-lipschitz}, we also have
+$\mathcal D_{H,W_n}\to\mathcal D_{H,W_*}$ in $L^1([0,1]^2)$.
+These convergences give
+\[
+  \Gamma_n:=\Gamma_{W_n}(U_{1,n},U_{2,n})
+  \longrightarrow\Gamma_{W_*}(U_1,U_2).
+\]
+The limiting matrix is invertible, so there is $M<\infty$ such that
+$\|\Gamma_n^{-1}\|_{\mathrm{op}}\le M$ for all large $n$.
+
+Define the remainder in the linear approximation to the density map by
+\begin{equation}\label{eq:remainder}
+  R_n(\xi):=\mathbf C(V_n(\xi))-\mathbf C(W_n)-\Gamma_n\xi.
+\end{equation}
+The definition of $\Gamma_n$ gives $R_n(0)=0$ and $DR_n(0)=0$.
+Since the densities are polynomial in $\xi$, the bounds $0\le W_n\le1$
+and $\|U_{i,n}\|_\infty\le\|U_i\|_\infty$ imply that the second
+derivatives of $R_n$ with respect to $\xi$ are uniformly bounded in $n$
+on a fixed ball about the origin.
+Hence, on that ball,
+\[
+  |R_n(\xi)|\le C|\xi|^2,\qquad \|DR_n(\xi)\|_{\mathrm{op}}\le C|\xi|,
+\]
+with $C$ independent of $n$.  Put
+$\Delta_n:=\mathbf C(W_*)-\mathbf C(W_n)$, which tends to zero.
+Using~\eqref{eq:remainder}, we can rewrite the constraint equations
+$\mathbf C(V_n(\xi))=\mathbf C(W_*)$ as
+\[
+  \xi=\Gamma_n^{-1}\bigl(\Delta_n-R_n(\xi)\bigr).
+\]
+For all sufficiently large $n$ and $|\xi|\le2M|\Delta_n|$, we have
+\begin{align*}
+  \bigl|\Gamma_n^{-1}(\Delta_n-R_n(\xi))\bigr|
+  &\le M|\Delta_n|+4CM^3|\Delta_n|^2\le2M|\Delta_n|,\\
+  \|\Gamma_n^{-1}DR_n(\xi)\|_{\mathrm{op}}
+  &\le2CM^2|\Delta_n|<\tfrac12.
+\end{align*}
+The first inequality shows that the map
+$\xi\mapsto\Gamma_n^{-1}(\Delta_n-R_n(\xi))$ sends the closed ball
+$|\xi|\le2M|\Delta_n|$ into itself. The second shows that its Lipschitz
+constant on this ball is at most $1/2$. The contraction mapping theorem
+therefore gives a fixed point $\xi_n=(\xi_{1,n},\xi_{2,n})^{\mathsf T}$ satisfying
+\[
+  |\xi_n|\le2M|\Delta_n|,\qquad
+  \mathbf C(V_n(\xi_n))=\mathbf C(W_*).
+\]
+Set $V_n:=V_n(\xi_n)$.
+For large $n$, the perturbation has $L^\infty([0,1]^2)$-norm at most
+$\gamma/4$ and is supported in $\Omega_{\gamma/2}(W_n)$, so $V_n$ is a graphon.
+On this set, both $W_n$ and $V_n$ take values in $[\gamma/4,1-\gamma/4]$.
+Let
+\[
+  L:=\max_{z\in[\gamma/4,1-\gamma/4]}|J_\eps'(z)|<\infty.
+\]
+Since each $U_{i,n}$ vanishes outside $\Omega_{\gamma/2}(W_n)$, we have
+$V_n=W_n$ outside this set. Applying the mean value theorem gives
+\begin{align*}
+  |I_\eps(V_n)-I_\eps(W_n)|
+  &=\left|\int_{\Omega_{\gamma/2}(W_n)}
+    \bigl(J_\eps(V_n)-J_\eps(W_n)\bigr)\right|\\
+  &\le L\int_{\Omega_{\gamma/2}(W_n)}|V_n-W_n|\\
+  &\le L\sum_{i=1}^2|\xi_{i,n}|
+    \int_{\Omega_{\gamma/2}(W_n)}|U_{i,n}|\\
+  &=L\sum_{i=1}^2|\xi_{i,n}|\,\|U_{i,n}\|_1\\
+  &\le2ML\bigl(\|U_1\|_1+\|U_2\|_1\bigr)
+    |\mathbf C(W_n)-\mathbf C(W_*)|.
+\end{align*}
+In the last step, we used $\|U_{i,n}\|_1\le\|U_i\|_1$ and
+$|\xi_{i,n}|\le|\xi_n|\le2M|\Delta_n|$.
+The resulting constant is independent of $n$.
+\end{proof}
+
+\begin{proof}[Proof of \Cref{prop:optimizer-nondegeneracy}]
+Fix $\tau\in(\eps^m,\tau_{\max}(\eps))$.
+\Cref{cor:almost-every-tau} gives a sequence $\tau_n\uparrow\tau$
+at which every minimizer has ordered blocks. Choose minimizers $W_n$,
+which therefore have an ordered structure. By \Cref{lem:ordered-compact},
+after suitable relabelings we may pass to a subsequence converging in
+$L^1([0,1]^2)$ to a graphon $W_*$ with an ordered structure.
+By~\eqref{eq:density-l1-continuity}, $\mathbf C(W_*)=(\eps,\tau)$.
+Feasibility of $W_*$, entropy continuity~\eqref{eq:entropy-l1-continuity},
+and monotonicity from \Cref{lem:fixed-monotonicity} give
+\[
+  \Psi_\eps(\tau)\le I_\eps(W_*)
+  =\lim_n I_\eps(W_n)=\lim_n\Psi_\eps(\tau_n)\le\Psi_\eps(\tau).
+\]
+Thus $W_*$ is a minimizer at $\tau$, and \Cref{lem:ordered-nondegenerate}
+shows that it satisfies the constraint qualification.
+
+We have obtained one nondegenerate minimizer at $\tau$; it remains to
+exclude degenerate minimizers that might coexist with $W_*$.
+Using the constraint qualification at $W_*$, \Cref{lem:uniform-density-restoration}
+supplies graphons $V_n$ feasible at $\tau$ and a constant $C$ independent
+of $n$ such that
+\[
+  \Psi_\eps(\tau)\le I_\eps(V_n)
+  \le\Psi_\eps(\tau_n)+C(\tau-\tau_n).
+\]
+Thus the left difference quotients along this sequence are bounded:
+\[
+  \frac{\Psi_\eps(\tau)-\Psi_\eps(\tau_n)}{\tau-\tau_n}\le C.
+\]
+If any minimizer at $\tau$ were degenerate,
+\Cref{lem:degenerate-slope} would force the left difference
+quotients to diverge along every sequence approaching $\tau$ from
+below.  This contradicts the bound along $(\tau_n)$.
+Every minimizer at $\tau$ is therefore nondegenerate.
+\end{proof}
+
+\begin{proof}[Proof of \Cref{thm:fixed-densities}]
+The result follows from
+\Cref{prop:nondegenerate-multipodality,prop:optimizer-nondegeneracy}.
+\end{proof}

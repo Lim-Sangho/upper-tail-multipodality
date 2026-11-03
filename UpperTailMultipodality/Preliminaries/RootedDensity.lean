@@ -10,7 +10,7 @@ For a measurable `u : [0,1] → [0,1]`, regarded as the row of a new vertex, the
 
 and `ℛ_W = ∑_v ℛ_{v,W}`, `eq:total-rooted-density`.  The integral is taken over all coordinates;
 the coordinate `x_v` does not occur in the integrand.  The gradient `∇ℛ_W(u)` is the sum over
-ordered pairs `(v, z₀)` with `z₀ ∈ N_H(v)` of `G_{v,z₀}(u)`, `eq:rooted-gradient`.
+ordered pairs `(v, z₀)` with `z₀ ∈ N_H(v)` of `G_{v,z₀}(u)`, `eq:rooted-gradient-kernel`.
 -/
 
 namespace UpperTailMultipodality
@@ -27,6 +27,21 @@ noncomputable def avoidingProduct (H : SimpleGraph V) [DecidableRel H.Adj] (W : 
     (v : V) (ξ : V → ℝ) : ℝ :=
   ∏ e ∈ H.edgeFinset.filter (fun e => v ∉ e), edgeVal W.toFun W.symm' ξ e
 
+/-- `avoidingProduct` lies in `[0,1]`. -/
+theorem avoidingProduct_mem_Icc (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon) (v : V)
+    (ξ : V → ℝ) : avoidingProduct H W v ξ ∈ Set.Icc (0:ℝ) 1 :=
+  prod_edgeVal_mem_Icc W _ ξ
+
+/-- `avoidingProduct` is bounded and measurable. -/
+theorem isBddMeas_avoidingProduct (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon)
+    (v : V) : IsBddMeas fun ξ : V → ℝ => avoidingProduct H W v ξ :=
+  isBddMeas_prod_edgeVal W _
+
+/-- `avoidingProduct` is measurable. -/
+theorem measurable_avoidingProduct (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon)
+    (v : V) : Measurable (avoidingProduct H W v) :=
+  (isBddMeas_avoidingProduct H W v).1
+
 /-- **The rooted density `ℛ_{v,W}(u)`, `eq:rooted-density`.** -/
 noncomputable def rootedDensity (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon) (v : V)
     (u : ℝ → ℝ) : ℝ :=
@@ -38,7 +53,7 @@ noncomputable def totalRootedDensity (H : SimpleGraph V) [DecidableRel H.Adj] (W
     (u : ℝ → ℝ) : ℝ :=
   ∑ v, rootedDensity H W v u
 
-/-- `G_{v,z₀}(u)(y)`, `eq:rooted-gradient`. -/
+/-- `G_{v,z₀}(u)(y)`, `eq:rooted-gradient-kernel`. -/
 noncomputable def rootedGradientTerm (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon)
     (v z₀ : V) (u : ℝ → ℝ) (y : ℝ) : ℝ :=
   ∫ ξ : V → ℝ, (∏ z ∈ (H.neighborFinset v).erase z₀, u (Function.update ξ z₀ y z))
@@ -202,7 +217,8 @@ theorem rooted_lipschitz (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon)
     _ = 2 * H.edgeFinset.card * ∫ y, |u y - u' y| ∂unitμ := by
         rw [← Finset.sum_mul, sum_card_neighborFinset]
 
-/-- **`eq:rooted-gradient-derivative`.**  `∇ℛ_W(W_x)(y) = 2𝒟_W(x,y)` for almost every `(x,y)`. -/
+/-- **The gradient at a row of `W`.**  `∇ℛ_W(W_x)(y) = 2𝒟_W(x,y)` for almost every `(x,y)`;
+this identifies `eq:rooted-gradient-kernel` at `u = W_x` with `eq:derivative-kernel`. -/
 theorem rootedGradient_row (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon) :
     ∀ᵐ z ∂gμ, rootedGradient H W (W.row z.1) z.2 = 2 * derivKernel H W z.1 z.2 := by
   refine ae_of_all _ fun z => ?_

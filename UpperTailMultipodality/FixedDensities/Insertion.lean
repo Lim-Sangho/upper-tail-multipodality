@@ -3,7 +3,7 @@ import UpperTailMultipodality.Insertion.FirstOrder
 import UpperTailMultipodality.Insertion.Rows
 
 /-!
-# The insertion inequality for prescribed densities (`lem:fixed-insertion`)
+# The insertion inequality for fixed densities (`lem:fixed-insertion`)
 -/
 
 namespace UpperTailMultipodality
@@ -26,9 +26,9 @@ theorem fixed_insertion (H : SimpleGraph V) [DecidableRel H.Adj] (hΔ : ∃ v, 2
         = 2 * W.Ip ε - 2 * α * ε - μ * Fintype.card V * τ := by
   /- Proof.  Insert a block of measure `θ` with row `u` and value `ε`, and move the old values
   along `W + θ/(1-θ) Z` with `Z = v₁U₁ + v₂U₂`.  Since `e` is affine along this path, the choice
-  `∫∫ Z = -2(∫u - ε)` keeps `e = ε` exactly, and the invertibility of `eq:cq-matrix` lets us also
+  `∫∫ Z = -2(∫u - ε)` keeps `e = ε` exactly, and the invertibility of `Γ_W(U₁,U₂)` lets us also
   prescribe `∫∫ 𝒟_W Z`.  If `ℱ_W(u) < c_W`, a suitable choice makes `t(H,·)` increase to first
-  order, so `lem:fixed-monotone` applies for small `θ > 0`, while `I_ε` decreases to first order
+  order, so `lem:fixed-monotonicity` applies for small `θ > 0`, while `I_ε` decreases to first order
   (`insertion_derivative_nonneg`), a contradiction.  The statement about rows is
   `ae_rowFunctional_row_eq`. -/
   obtain ⟨γ, hγ, hWγ⟩ := fixed_interior H hΔ hε0 hε1 hτ0 hτ1 hW hcq

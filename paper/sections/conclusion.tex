@@ -1,48 +1,63 @@
-\section{Concluding remarks}\label{sec:conclusion}
+\section{Conclusion}\label{sec:conclusion}
 
-We proved that every minimizer of the upper-tail variational problem is
-multipodal with ordered blocks, for every graph $H$ and all parameters, and
-that the same holds for the maximizers of the entropy with prescribed edge
-density and $H$-density, apart from a null set of values of the $H$-density.
-The main new ingredient is that inserting a small block of vertices with an
-arbitrary row turns global optimality of the graphon into global minimality of
-each of its rows for a single functional.  We conclude with several questions.
+We have shown that every minimizer of a joint upper-tail problem with
+Erdős–Rényi reference probability $p$ and constraints $t(H_j,W)\ge r_j^{m_j}$ for
+$1\le j\le s$ is multipodal with ordered blocks. For entropy maximization
+with fixed densities $e(W)=\eps$ and $t(H,W)=\tau$, the same conclusion
+holds throughout the open oversaturated range
+$\eps^m<\tau<\tau_{\max}(\eps)$, provided $\Delta(H)\ge2$.
+Vertex insertions connect the two problems to global minimization of
+$\mathcal F_W$ and $\mathcal F_{W,\eps,\tau}$, respectively; the pointwise ordering
+and finiteness of their minimizers yield the ordered block structure.
+For fixed densities, we introduce a constraint
+qualification that establishes multipodality with ordered
+blocks.  We then prove that the condition holds for optimizers
+at every subgraph density in the oversaturated range.
 
-\paragraph{The number of blocks.}  Our proof gives no bound on the number of
-blocks.  For the upper-tail problem with a $d$-regular graph $H$, the companion
-paper~\cite{LimImKimNamYangBipodal} shows that the minimizer has exactly two
-blocks near every point of the phase boundary with target density
-$r\ne(d-1)/d$, and along a curve approaching the boundary at $r=(d-1)/d$.
-Lubetzky and Zhao~\cite[Section~7]{lubetzky2015large} asked whether this is
-always the case in the symmetry-breaking phase.  For stars with many leaves,
-the minimizers on the phase boundary include a nonconstant
-one~\cite{LimImKimNamYangBoundary}; Theorem~\ref{thm:upper-tail} shows that it
-is multipodal, and it would be interesting to decide whether it is bipodal.  It would be interesting to bound the number
-of blocks in terms of $H$ and the parameters, even by a bound that deteriorates
-near exceptional parameters.  For edge and star constraints, such a uniform
-bound is known~\cite{KenyonRadinRenSadun2017}.
+\paragraph{Block structure and phase transitions.}  Our finiteness argument does not
+control the number of blocks in the multipodal optimizers.
+Previous work has established bounds on the number of blocks for specific
+constrained graphs and parameter regions~\cite{ImKimLimNamYangBipodal,
+KenyonRadinRenSadun2017,kenyon2014entropy,NeemanRadinSadun2023,NeemanRadinSadun2024,
+RadinSadunEdge2Star,RadinSadunNearExtreme}.
+A next step is to establish such bounds in more general settings.
+For example, even for triangle upper tails, it remains open whether
+two blocks suffice throughout the symmetry-breaking region.
 
-\paragraph{Degenerate maximizers.}  Corollary~\ref{cor:almost-every-tau}
-leaves open whether the maximizers of~\eqref{eq:entropy-maximization} that
-violate the constraint qualification are multipodal.  By
-Lemma~\ref{lem:degenerate-forms}, such a maximizer either takes the values $0$
-or $1$ on a set of positive measure, or has a constant first variation
-$\mathcal D_W$, so that the first variations of the two constraints are
-linearly dependent.  Handling these cases requires a replacement for the
-two-direction correction used in Lemma~\ref{lem:fixed-insertion}.
+For $d$-regular graphs with $d\ge2$, Lubetzky and
+Zhao~\cite{lubetzky2015large} determined the boundary between constant and
+nonconstant optimizers in the $(p,r)$-plane.
+Determining this boundary for general $H$, and locating transitions
+between different block counts would refine
+our structural result. Even when the block count stays fixed, numerical
+experiments for triangle upper tails suggest jumps in the block
+parameters~\cite{ImKimLimNamYangBipodal}. Proving such transitions and
+describing how the optimizing block parameters vary within and between
+phases remain further questions.
 
-\paragraph{Several subgraph constraints.}  The insertion argument extends
-formally to problems with constraints on several subgraph densities.  The main
-difficulty is the ordering step, which requires the multipliers of the
-constraints to have signs for which the combined rooted density is
-supermodular.
-Understanding when this holds could lead to multipodality results for more
-general constrained problems.
+\paragraph{Several fixed subgraph densities.}  The multipodality conclusion
+for joint upper tails cannot extend to arbitrary finite families of
+prescribed subgraph densities: the universality result of Cooper,
+Kr\'al', and Martins~\cite{CooperKralMartins2018} allows such constraints
+to force a non-multipodal entropy maximizer.
+Our theorem for one fixed $H$-density in the open oversaturated range
+leaves a natural question between these two settings. Which restrictions
+on the number or form of the constrained graphs ensure multipodality,
+and which allow non-multipodal optimizers?
 
-\paragraph{Uniqueness and phase structure.}  Theorem~\ref{thm:upper-tail}
-does not address uniqueness of the minimizer or the dependence of the block
-parameters on $(p,r)$.  Numerical experiments for triangles suggest a curve in
-the symmetry-breaking phase along which uniqueness fails and across which some
-of the block parameters change discontinuously~\cite{LimImKimNamYangBipodal}.  A
-description of these curves would complement the finite block structure
-established here.
+\paragraph{Lower tails.}  A related question is whether every minimizer of
+\[
+  \min\bigl\{I_p(W):W\in\W_0,\ t(H,W)\le r^m\bigr\},
+  \qquad 0<r<p<1,
+\]
+or its joint version with several subgraph densities, is multipodal.
+For triangles, the limiting problem as $p\to0$ with $r/p$ fixed has only
+constant or symmetric bipodal minimizers~\cite{HuangLi2026LowerTail}.
+With fixed edge and triangle densities, symmetric bipodal phases also
+occur in parts of the undersaturated region $\tau<\eps^3$ in the
+$(\eps,\tau)$-plane~\cite{NeemanRadinSadun2024}.
+In these phases, connections are stronger between the blocks than within
+them, so the two row types cross. Establishing multipodality for general
+lower-tail constraints at fixed $p$, or throughout the fixed-density
+undersaturated region, would therefore require an argument that allows
+crossing rows.

@@ -132,6 +132,22 @@ theorem hasDerivAt_Jp' {p u : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (hu0 : 0 < u) (hu
   rw [hval]
   exact hres
 
+/-- `J_p'` is measurable. -/
+theorem measurable_Jp' (p : ℝ) : Measurable (Jp' p) := by
+  unfold Jp'
+  fun_prop
+
+/-- `J_p'` is strictly increasing on `(0,1)`. -/
+theorem Jp'_strictMonoOn {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
+    StrictMonoOn (Jp' p) (Set.Ioo 0 1) := by
+  refine strictMonoOn_of_deriv_pos (convex_Ioo 0 1) ?_ ?_
+  · intro u hu
+    exact (hasDerivAt_Jp' hp0 hp1 hu.1 hu.2).continuousAt.continuousWithinAt
+  · intro u hu
+    rw [interior_Ioo] at hu
+    rw [(hasDerivAt_Jp' hp0 hp1 hu.1 hu.2).deriv]
+    exact Jp''_pos hu.1 hu.2
+
 /-- `J_p'(u) > 0` for `p < u < 1`: the slope of the relative entropy is positive to
 the right of the background density. -/
 theorem Jp'_pos_of_gt {p u : ℝ} (hp0 : 0 < p) (hpu : p < u) (hu1 : u < 1) :

@@ -4,7 +4,7 @@ import UpperTailMultipodality.Preliminaries.Kernel
 # The entropy identity (`eq:entropy-identity`)
 
 With `S_0(z) = -½(z log z + (1-z) log(1-z))`, every graphon with `e(W) = ε` satisfies
-`I_ε(W) = 2S_0(ε) - 2s(W)`.  Hence, among graphons with a prescribed edge density, minimizing
+`I_ε(W) = 2S_0(ε) - 2s(W)`.  Hence, among graphons with a fixed edge density, minimizing
 `I_ε` is equivalent to maximizing the entropy `s`.
 -/
 

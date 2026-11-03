@@ -3,7 +3,7 @@ import UpperTailMultipodality.FixedDensities.Support.InteriorAux
 import UpperTailMultipodality.FixedDensities.Support.Lagrange
 
 /-!
-# Interiority and positive multipliers for prescribed densities
+# Interiority and positive multipliers for fixed densities
 
 `lem:fixed-interior` and `lem:fixed-multiplier`.
 -/
@@ -82,7 +82,7 @@ theorem fixed_interior (H : SimpleGraph V) [DecidableRel H.Adj] (hΔ : ∃ v, 2 
   exact ⟨(min_le_left _ _).trans h0, h1.trans (by linarith [min_le_right s₀ s₁])⟩
 
 /-- **`lem:fixed-multiplier`.**  A minimizer of `eq:fixed-problem` that satisfies the constraint
-qualification satisfies `J_ε'(W) = α + μ𝒟_W` almost everywhere, `eq:fixed-el`, for some `α` and
+qualification satisfies `J_ε'(W) = α + μ𝒟_W` almost everywhere, `eq:fixed-stationarity`, for some `α` and
 some `μ > 0`. -/
 theorem fixed_multiplier (H : SimpleGraph V) [DecidableRel H.Adj] (hΔ : ∃ v, 2 ≤ H.degree v)
     {ε τ : ℝ} (hε0 : 0 < ε) (hε1 : ε < 1) (hτ0 : ε ^ H.edgeFinset.card < τ)
@@ -149,7 +149,7 @@ theorem fixed_multiplier (H : SimpleGraph V) [DecidableRel H.Adj] (hΔ : ∃ v, 
           * Z₀.toFun z.1 z.2 = Jp' ε (W.toFun z.1 z.2) * Z₀.toFun z.1 z.2
             - α * Z₀.toFun z.1 z.2 - μ * (derivKernel H W z.1 z.2 * Z₀.toFun z.1 z.2) :=
         fun z => by ring
-      have hi1 := integrable_Jp'_mul W hε0 hε1 hγ hγW Z₀
+      have hi1 := integrable_Jp'_mul W Z₀ hε0 hε1 hγ (by linarith) hγW
       have hi2 := (kernel_integrable Z₀).const_mul α
       have hi3 := (integrable_derivKernel_mul H W Z₀).const_mul μ
       have hi12 : Integrable (fun z : ℝ × ℝ => Jp' ε (W.toFun z.1 z.2) * Z₀.toFun z.1 z.2

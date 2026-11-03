@@ -9,7 +9,7 @@ factors of `t(H,W)` depend on disjoint sets of coordinates, and hence
 disjoint blocks of coordinates under the product measure.
 
 For such `H`, Jensen's inequality and its equality case show that every minimizer of
-`eq:graphon-variational-problem` is almost everywhere equal to the constant `r`
+`eq:joint-variational-problem` with `s = 1` is almost everywhere equal to the constant `r`
 (`ae_eq_of_degree_le_one`), which is multipodal with one block
 (`isOrderedMultipodal_of_ae_const`).
 -/
@@ -165,7 +165,8 @@ theorem tDensity_eq_edgeDensity_pow (H : SimpleGraph V) [DecidableRel H.Adj]
   integral_prod_edges_of_degree_le_one H hdeg W H.edgeFinset subset_rfl
 
 /-- **Minimizers for graphs of maximum degree at most one are constant.**  If every vertex of
-`H` has degree at most one, every minimizer of `eq:graphon-variational-problem` equals `r`
+`H` has degree at most one, every minimizer of `eq:joint-variational-problem` with `s = 1`
+equals `r`
 almost everywhere. -/
 theorem ae_eq_of_degree_le_one (H : SimpleGraph V) [DecidableRel H.Adj]
     (hdeg : ∀ v, H.degree v ≤ 1) (hm : 1 ≤ H.edgeFinset.card) {p r : ℝ} (hp0 : 0 < p)
@@ -205,6 +206,50 @@ theorem ae_eq_of_degree_le_one (H : SimpleGraph V) [DecidableRel H.Adj]
   · rw [average_eq_integral, average_eq_integral] at h
     have h' : Jp p W.edgeDensity < W.Ip p := h
     linarith
+
+/-! ### The derivative kernel of a graph of maximum degree at most one -/
+
+omit [Fintype V] in
+/-- Pinning two coordinates does not change the factor of an edge avoiding them. -/
+theorem edgeVal_pin_of_notMem (W : Graphon) {a b : V} {e : Sym2 V} (he : a ∉ e ∧ b ∉ e)
+    (ξ : V → ℝ) (x y : ℝ) :
+    edgeVal W.toFun W.symm' (pin ξ a b x y) e = edgeVal W.toFun W.symm' ξ e := by
+  obtain ⟨ha, hb⟩ := he
+  induction e using Sym2.ind with
+  | _ i j =>
+    rw [Sym2.mem_iff] at ha hb
+    show W.toFun (pin ξ a b x y i) (pin ξ a b x y j) = W.toFun (ξ i) (ξ j)
+    rw [pin_apply_of_ne ξ (fun h => ha (Or.inl h.symm)) (fun h => hb (Or.inl h.symm)),
+      pin_apply_of_ne ξ (fun h => ha (Or.inr h.symm)) (fun h => hb (Or.inr h.symm))]
+
+/-- For a graph of maximum degree at most one the kernels `K_{ab,W}` are constant. -/
+theorem edgeRemovedDensity_of_degree_le_one (H : SimpleGraph V) [DecidableRel H.Adj]
+    (hdeg : ∀ v, H.degree v ≤ 1) (W : Graphon) {a b : V} (hab : H.Adj a b) (x y : ℝ) :
+    edgeRemovedDensity H W a b x y
+      = W.edgeDensity ^ (H.edgeFinset.erase s(a, b)).card := by
+  have hcongr : ∀ ξ : V → ℝ,
+      ∏ e ∈ H.edgeFinset.erase s(a, b), edgeVal W.toFun W.symm' (pin ξ a b x y) e
+        = ∏ e ∈ H.edgeFinset.erase s(a, b), edgeVal W.toFun W.symm' ξ e := by
+    intro ξ
+    refine Finset.prod_congr rfl fun e he => ?_
+    exact edgeVal_pin_of_notMem W (not_mem_of_degree_le_one H hdeg hab
+      (Finset.mem_of_mem_erase he) (Finset.ne_of_mem_erase he)) ξ x y
+  refine Eq.trans (integral_congr_ae (Filter.Eventually.of_forall hcongr)) ?_
+  exact integral_prod_edges_of_degree_le_one H hdeg W _ (Finset.erase_subset _ _)
+
+/-- **`𝒟_W` is constant for a graph of maximum degree at most one.**  Every edge other than the
+differentiated one avoids its endpoints, so the remaining factors do not see the pinned
+coordinates. -/
+theorem derivKernel_const_of_degree_le_one (H : SimpleGraph V) [DecidableRel H.Adj]
+    (hdeg : ∀ v, H.degree v ≤ 1) (W : Graphon) (x y x' y' : ℝ) :
+    derivKernel H W x y = derivKernel H W x' y' := by
+  unfold derivKernel
+  refine congrArg (fun t => (1 / 2 : ℝ) * t) ?_
+  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
+  split_ifs with hab
+  · rw [edgeRemovedDensity_of_degree_le_one H hdeg W hab,
+      edgeRemovedDensity_of_degree_le_one H hdeg W hab]
+  · rfl
 
 /-- An almost everywhere constant graphon is multipodal with one block. -/
 theorem isOrderedMultipodal_of_ae_const {W : Graphon} {r : ℝ} (hr : r ∈ Set.Icc (0:ℝ) 1)

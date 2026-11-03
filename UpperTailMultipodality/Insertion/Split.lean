@@ -3,7 +3,7 @@ import UpperTailMultipodality.RowCriterion.Defs
 /-!
 # Splitting `[0,1]` into an inserted block and the old vertices
 
-The insertion of `lem:upper-tail-insertion` and `lem:fixed-insertion` gives the new vertices the
+The insertion of `eq:vertex-insertion` and `lem:fixed-insertion` gives the new vertices the
 interval `[0,θ)` and rescales the old vertices affinely from `[θ,1]` onto `[0,1]`.  Instead of
 rescaling the graphon, this file relabels the points of `[0,1]`:
 

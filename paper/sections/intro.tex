@@ -1,253 +1,445 @@
 \section{Introduction}\label{sec:introduction}
 
-The Erd\H{o}s--R\'enyi graph $G(n,p)$ is the random graph on $n$ vertices in
-which each edge is present independently with probability $p$.  For a fixed
-graph $H$ and fixed $0<p<r<1$, consider the upper-tail event that the
-homomorphism density of $H$ in $G(n,p)$ is at least $r^{|E(H)|}$, which is,
-to leading order, its typical value in $G(n,r)$.  Two questions
-of Chatterjee and Varadhan~\cite{ChatterjeeVaradhanLDP} guide the study of
-this event: how small is its probability, and what does $G(n,p)$ typically
-look like conditioned on it?  In the dense regime considered here, both
-questions are answered by a variational problem on graphons, and the second
-question asks for the structure of its minimizers.
+Let $G(n,p)$ be the Erd\H{o}s--R\'enyi graph on $n$ vertices, with each edge
+present independently with probability $p$. We consider the dense regime,
+in which $p\in(0,1)$ is fixed as $n\to\infty$. An upper-tail event requires
+this graph to contain unusually many copies of a prescribed graph, such
+as a triangle. Such an event raises two questions: how unlikely is it,
+and what does the graph typically look like when it occurs? For example,
+extra triangles can be produced by increasing edge probabilities
+throughout the graph or by making selected groups of vertices denser.
+The most likely arrangement depends on the edge probability and the
+required number of copies.
 
-These minimizers are known only in special cases.  If the parameters lie in
-the replica-symmetric phase, the unique minimizer is the constant graphon, and
-the conditioned graph looks like $G(n,r)$.  Lubetzky and
-Zhao~\cite{lubetzky2015large} determined this phase exactly when $H$ is
-regular.  In the complementary symmetry-breaking phase, the minimizers are
-nonconstant, and Lubetzky and Zhao~\cite[Section~7]{lubetzky2015large} asked
-whether they are always bipodal, that is, whether the conditioned graph always
-splits into two blocks of vertices with homogeneous edge densities within and
-between the blocks.  The companion paper~\cite{LimImKimNamYangBipodal}
-confirmed this for $d$-regular $H$ near every point of the phase boundary with
-target density $r\ne(d-1)/d$, and along a curve approaching the boundary at the
-exceptional target density $(d-1)/d$, using the entropy-maximization results of
-Kenyon, Radin, Ren, and Sadun~\cite{kenyon2014entropy}.  For nonregular graphs,
-the phase boundary is studied in~\cite{LimImKimNamYangBoundary}, where it is
-shown, for instance, that stars with many leaves have nonconstant minimizers on
-the boundary itself.  Away from the boundary, and for nonregular graphs, even
-the following weaker question has remained open: is every minimizer a graphon
-with \emph{finitely many} blocks?
+The large-deviation principle of Chatterjee and
+Varadhan~\cite{ChatterjeeVaradhanLDP} connects these probability and
+structure questions through a variational problem on graphons. A graphon
+specifies edge probabilities as a function of the labels of the two
+endpoints. The variational problem minimizes the relative-entropy cost
+of changing the constant edge probability $p$ while meeting the required
+subgraph densities. Its minimum determines the exponential decay of the
+upper-tail probability, and its minimizers describe the possible limiting
+structures of the conditioned graph. Understanding these minimizers is
+therefore essential to explaining how the rare event occurs.
 
-A closely related question arises for dense graphs with prescribed edge
-density and prescribed density of $H$.  Their typical structure is given by the
-graphons of maximal entropy under these two constraints.  Radin, Ren, and
-Sadun~\cite{RadinRenSadun2014} and subsequent
-works~\cite{KenyonRadinRenSadun2017b,NeemanRadinSadun2023,NeemanRadinSadun2024,RadinSadun2013,RadinSadun2015}
-revealed a rich phase diagram when $H$ is a triangle.  The maximizers found
-there, numerically and in the regimes where they have been determined
-rigorously, are \emph{multipodal}: they have finitely many blocks.  Kenyon,
-Radin, Ren, and Sadun~\cite{KenyonRadinRenSadun2017} proved multipodality when
-$H$ is a star, and showed in~\cite{kenyon2014entropy} that for every graph $H$
-the maximizers are bipodal when the $H$-density is slightly above the
-Erd\H{o}s--R\'enyi value, for all but finitely many edge densities.  Beyond
-these regimes, multipodality has not been established.
+The difficulty is that the optimization ranges over measurable functions
+of two variables. A graphon may have infinitely many vertex types, where
+vertices have the same type if they have the same connection probabilities
+to almost every other vertex. We prove that every upper-tail minimizer
+has only finitely many types. Moreover, the types have a common ordering:
+replacing either endpoint by a vertex of a later type never decreases
+the probability of an edge. This holds for simultaneous upper-tail
+constraints on any finite collection of finite simple graphs, each with
+at least one edge.
 
-In this paper we show that every minimizer of the upper-tail variational
-problem is multipodal, for every graph $H$ and every $0<p<r<1$, and that the
-same holds for the maximizers of the entropy with prescribed edge density and
-$H$-density, for almost every value of the $H$-density.  In both settings the
-blocks are moreover ordered: the blocks can be listed so that the edge density
-between two blocks is nondecreasing in the index of each block.
+Thus every optimizer can be described by finitely many vertex-class
+sizes and a matrix of connection probabilities. Establishing this
+structure justifies studying finite block descriptions even when the
+optimizer is not known explicitly. The number of blocks and their
+parameters remain to be determined. We also prove the same structural
+conclusion for entropy maximizers with fixed edge density and one fixed
+subgraph density, when the latter is above its typical Erd\H{o}s--R\'enyi
+value and below its maximum feasible value at that edge density.
 
-Finite multipodality is not a formal consequence of the fact that only
-finitely many densities are prescribed.  Graphons that are uniquely determined
-by finitely many subgraph densities can have a very complex structure; see,
-for example,~\cite{CooperKralMartins2018,GrzesikKralLovasz2020}.  Our argument
-uses both the entropy and the global optimality of the minimizer in an
-essential way.
+\subsection{Joint upper-tail constraints}\label{sec:main-results}
 
-\subsection{Main results}\label{sec:main-results}
+We first formulate the upper-tail problem and state the structural result.
+For finite simple graphs $H$ and $G$, let $\hom(H,G)$ be the number of
+maps $\phi:V(H)\to V(G)$ that preserve edges. Write $N:=|V(H)|$ and
+$m:=|E(H)|$. If $G$ has $n$ vertices, its \emph{homomorphism density} is
+\[
+  t(H,G):=\frac{\hom(H,G)}{n^N},
+  \qquad \mathbb E\,t(H,G(n,p))=p^m+O_H(n^{-1}).
+\]
+The maps counted by $\hom(H,G)$ need not be injective. There are only
+$O_H(n^{N-1})$ non-injective maps, so replacing homomorphisms by injective
+homomorphisms changes the normalized count by $O_H(n^{-1})$.
+Thus $t(H,G)$ measures the normalized number of copies of $H$ in $G$,
+and $p^m$ is its typical limiting value in $G(n,p)$.
 
-A \emph{graphon} is a symmetric measurable function $W:[0,1]^2\to[0,1]$, and
-$\W_0$ denotes the space of graphons~\cite{LovaszGraphLimits}.  For a graph $H$
-with $m:=|E(H)|\ge1$ edges and a graphon $W$, the edge density, the
-homomorphism density of $H$, and the relative entropy with respect to $p$ are
+A \emph{graphon} is a symmetric measurable function
+$W:[0,1]^2\to[0,1]$. It describes a random graph model in which vertices
+receive independent uniform labels in $[0,1]$, and vertices with labels
+$x,y$ are joined with probability $W(x,y)$, independently conditional on
+the labels. Let $\W_0$ be the space of graphons up to equality almost
+everywhere~\cite{LovaszGraphLimits}. The Bernoulli relative entropy is
+\[
+  J_p(z):=z\log\frac zp+(1-z)\log\frac{1-z}{1-p}
+  \qquad(0\le z\le1),
+\]
+where logarithms are natural and $0\log0=0$. For a graphon, define
 \begin{equation}\label{eq:graphon-quantities}
-  e(W)=\int_{[0,1]^2}W,
-  \qquad
-  t(H,W)=\int_{[0,1]^{V(H)}}\prod_{ij\in E(H)}W(x_i,x_j)\prod_{i\in V(H)}\dd x_i,
-  \qquad
-  I_p(W)=\int_{[0,1]^2}J_p(W),
+  \begin{gathered}
+    e(W):=\int_{[0,1]^2}W(x,y)\dd x\dd y,\qquad
+    I_p(W):=\int_{[0,1]^2}J_p\bigl(W(x,y)\bigr)\dd x\dd y,\\
+    t(H,W):=\int_{[0,1]^{V(H)}}\prod_{ij\in E(H)}W(x_i,x_j)
+      \prod_{i\in V(H)}\dd x_i.
+  \end{gathered}
 \end{equation}
-where $J_p(z)=z\log\frac zp+(1-z)\log\frac{1-z}{1-p}$.  For $0<p<r<1$, the
-Chatterjee--Varadhan variational problem is
-\begin{equation}\label{eq:graphon-variational-problem}
-  \Phi_H(p,r)=\inf\bigl\{I_p(W):W\in\W_0,\ t(H,W)\ge r^m\bigr\}.
+Here $e(W)=t(K_2,W)$ is the edge density, $t(H,W)$ is the density of
+copies of $H$ represented by $W$, and $I_p(W)$ is the average cost of
+changing the edge probabilities from $p$ to those of $W$.
+For the constant graphon with value $r$,
+\[
+  e(r)=r,\qquad t(H,r)=r^m,\qquad I_p(r)=J_p(r).
+\]
+
+Fix graphs $\mathbf H=(H_1,\dots,H_s)$ with $m_j:=|E(H_j)|\ge1$ and
+parameters $\mathbf r=(r_1,\dots,r_s)\in(0,1)^s$. For each $H_j$, we
+require its density of copies to be at least $r_j^{m_j}$, the typical
+density in $G(n,r_j)$. Imposing all these lower bounds at once gives the
+joint variational problem
+\begin{equation}\label{eq:joint-variational-problem}
+  \Phi_{\mathbf H}(p,\mathbf r):=
+  \min\bigl\{I_p(W):W\in\W_0,\ t(H_j,W)\ge r_j^{m_j}
+                                  \text{ for }1\le j\le s\bigr\}.
 \end{equation}
-Chatterjee and Varadhan~\cite{ChatterjeeVaradhanLDP} proved that the
-probability of the event $t(H,G(n,p))\ge r^m$ is
-$\exp(-\Phi_H(p,r)\binom n2+o(n^2))$, and that, conditioned on this event,
-$G(n,p)$ is close in cut distance to the set of minimizers
-of~\eqref{eq:graphon-variational-problem} with probability tending to one.
+The constant graphon with value $\max_j r_j$ is feasible, and the
+minimum is attained by the compactness and semicontinuity facts recalled
+in \Cref{lem:graphon-compactness}. If every $r_j\le p$, the unique minimizer
+is $W=p$ almost everywhere. The nontrivial case occurs when at least one
+threshold exceeds its typical value $p^{m_j}$.
 
-A graphon $W$ is \emph{multipodal} if there are a finite measurable partition
-$[0,1]=A_1\cup\dots\cup A_M$ and numbers $b_{ij}=b_{ji}\in[0,1]$ such that
-$W=b_{ij}$ almost everywhere on $A_i\times A_j$.  Its blocks are
-\emph{ordered} if they can be labeled so that $b_{ij}\le b_{i'j}$ whenever
-$i\le i'$, for every $j$.  Equivalently, the distinct rows $W(x,\cdot)$ of $W$
-are totally ordered pointwise.  In graph terms, an ordered multipodal graphon
-describes a stochastic block model in which the blocks can be ranked so that
-every vertex in a higher-ranked block is at least as likely as every vertex in
-a lower-ranked block to be adjacent to any given vertex.  For example, a
-bipodal graphon of the form $f(x)f(y)$, where $f$ takes two values, has ordered
-blocks; the optimizers constructed in~\cite{LimImKimNamYangBipodal} near the
-exceptional target density $(d-1)/d$ are of this form.
+The Chatterjee--Varadhan principle gives
+\begin{equation}\label{eq:joint-upper-tail-rate}
+  \mathbb P\bigl(t(H_j,G(n,p))\ge r_j^{m_j}\text{ for }1\le j\le s\bigr)
+  =\exp\!\left[-\binom n2\Phi_{\mathbf H}(p,\mathbf r)+o(n^2)\right].
+\end{equation}
+Conditionally on this event, the distance from the graph to the set of
+minimizers tends to zero in probability in the cut metric. This metric
+compares edge densities between vertex sets after allowing changes of
+vertex labels. Thus the variational problem determines both the
+probability of the event and the structures near which the conditioned
+graph concentrates. The precise concentration statements, including the
+case of several simultaneous constraints, appear in
+\Cref{sec:large-deviations}. They do not require a unique minimizer.
 
-\begin{theorem}[Upper tails]\label{thm:upper-tail}
-Let $H$ be a graph with at least one edge, and let $0<p<r<1$.  Every minimizer
-of~\eqref{eq:graphon-variational-problem} is multipodal.  If $H$ is not a
-perfect matching, its blocks are ordered.  If $H$ is a perfect matching, the
-unique minimizer is the constant graphon $W\equiv r$.
+For a single constraint with $p<r$, the simplest way to meet the density
+requirement is the constant graphon $W\equiv r$. When it is the unique
+minimizer, the conditioned graph behaves like a denser Erd\H{o}s--R\'enyi
+graph; this is the \emph{replica-symmetric phase}. Chatterjee
+and Varadhan~\cite{ChatterjeeVaradhanLDP} established that both this
+behavior and symmetry breaking occur for triangle upper tails.
+Lubetzky and Zhao~\cite{lubetzky2015large} determined the phase boundary
+for every $d$-regular graph $H$ with $d\ge2$: the constant graphon is the
+unique minimizer precisely when $(r^d,J_p(r))$ lies on the convex minorant
+of the function
+\[
+  x\longmapsto J_p(x^{1/d}).
+\]
+Here the convex minorant is the largest convex function below the given
+function. Outside this region, the constant graphon is not a minimizer,
+so the rare event is realized by a nonconstant arrangement of edge
+probabilities. Determining the structure of these nonconstant minimizers
+is the next problem.
+
+A graphon is \emph{multipodal} if it can be written as
+\[
+  W=\sum_{i,j=1}^M b_{ij}\mathbf1_{A_i\times A_j},
+  \qquad b_{ij}=b_{ji}\in[0,1],
+\]
+for a finite measurable partition $[0,1]=A_1\cup\cdots\cup A_M$ into
+sets of positive measure. Vertices in one block have the same connection
+probabilities to every other block, so each block represents a vertex
+type. A graphon with two blocks is called \emph{bipodal}. Lubetzky and
+Zhao~\cite[Section~7]{lubetzky2015large} asked whether the minimizers in
+the symmetry-breaking phase are always bipodal. A basic part of this
+question is whether every minimizer has a finite number of blocks at all.
+
+Im, Kim, Lim, Nam, and Yang~\cite{ImKimLimNamYangBipodal} establish
+bipodality and uniqueness for regular graphs near the phase boundary
+on the symmetry-breaking side, away from the exceptional target density
+$(d-1)/d$. The block parameters are analytic in $(p,r)$ in this region.
+They also construct an analytic curve approaching the exceptional
+boundary point along which the unique
+optimizers are nonconstant rank-one bipodal graphons. These results
+describe the optimizers in specific regions near the phase boundary.
+Their numerical experiments for triangle upper tails use the implicit
+neural representations of Kim, Baek, Lee, and
+Yang~\cite{KimBaekLeeYangGraphons} and support bipodality throughout the
+symmetry-breaking region. Further optimization within the bipodal family
+suggests discontinuous changes in the block parameters inside this region.
+
+Our first theorem establishes finite block structure throughout the
+parameter range, without requiring proximity to a phase boundary or
+regularity of the prescribed graphs. It also allows any finite number
+of simultaneous lower bounds. The blocks are \emph{ordered}: they can be
+labeled so that $b_{ij}\le b_{i'j}$ whenever $i\le i'$, for every $j$.
+In words, a vertex in a later block connects to each block with at least
+as high a probability as a vertex in an earlier block. Symmetry gives
+the same monotonicity in the other endpoint.
+
+\begin{theorem}\label{thm:joint-upper-tail}
+Let $H_1,\dots,H_s$ be graphs with $m_j:=|E(H_j)|\ge1$, and let
+$p,r_1,\dots,r_s\in(0,1)$. Every minimizer
+of~\eqref{eq:joint-variational-problem} is multipodal with ordered blocks.
 \end{theorem}
 
-Theorem~\ref{thm:upper-tail} holds throughout the parameter space, including
-the symmetry-breaking phase, where the minimizers are not known explicitly.
-It does not bound the number of blocks, and it does not assert uniqueness.
+This ordering is stronger than ordering vertices by degree: it compares
+connection probabilities to every block, rather than just their average.
+For two blocks it requires $b_{11}\le b_{12}\le b_{22}$. The conclusion
+applies to every optimizer, including when several optimizers coexist.
+It therefore excludes infinitely many vertex types as a possible
+structure of any minimizing graphon. The number of blocks may depend on
+the graphs, parameters, and optimizer, and our argument gives no uniform
+bound on it. In particular, the theorem does not settle whether two
+blocks suffice for a single upper-tail constraint.
 
-We next consider graphons with a prescribed edge density $\eps\in(0,1)$ and a
-prescribed $H$-density $\tau$.  Recall the graphon entropy
+The analogous lower-tail problem imposes $t(H,W)\le r^m$ with $0<r<p$.
+Zhao~\cite{Zhao2017LowerTail} gives a partial characterization of replica
+symmetry and establishes symmetry-breaking regions for non-bipartite $H$.
+For triangles, Huang and Li~\cite{HuangLi2026LowerTail} solve the limiting
+variational problem as $p\to0$ with $r/p$ fixed: every minimizer is either
+constant or bipodal with two blocks of equal size. This classification
+concerns the limit $p\to0$; multipodality for general lower-tail problems
+at fixed $p$ remains open.
+
+\subsection{Fixed edge and subgraph densities}\label{sec:intro-fixed}
+
+The upper-tail problem allows the overall edge density to change. We
+next fix this density and prescribe the density of copies of one graph
+$H$. Requiring more copies of $H$ than in the corresponding
+Erd\H{o}s--R\'enyi graph then forces a nonconstant arrangement of edge
+probabilities. To study typical graphs with these densities, we sample
+uniformly subject to small tolerances around the two prescribed values.
+Their limiting structures maximize graphon
+entropy~\cite{RadinSadun2013,RadinRenSadun2014};
+the large-deviation formulation for a fixed number of edges is due to
+Dembo and Lubetzky~\cite{DemboLubetzky2018}. Define
 \[
-  s(W)=\int_{[0,1]^2}S_0\bigl(W(x,y)\bigr)\dd x\dd y,
-  \qquad
-  S_0(z)=-\frac12\bigl(z\log z+(1-z)\log(1-z)\bigr).
+  S_0(z):=-\frac12\bigl(z\log z+(1-z)\log(1-z)\bigr),
+  \qquad s(W):=\int_{[0,1]^2}S_0\bigl(W(x,y)\bigr)\dd x\dd y.
 \]
-Let $\tau_{\max}(\eps):=\max\{t(H,W):e(W)=\eps\}$, and consider
+For a graph $H$ with $m$ edges and a fixed edge density $\eps\in(0,1)$,
+let
+\[
+  \tau_{\max}(\eps):=\max\{t(H,W):W\in\W_0,\ e(W)=\eps\}.
+\]
+The constant graphon $W\equiv\eps$ has $H$-density $\eps^m$. This is the
+typical value in the Erd\H{o}s--R\'enyi model with edge probability $\eps$.
+We consider prescribed $H$-densities strictly above this value and below
+the largest feasible value at edge density $\eps$:
 \begin{equation}\label{eq:entropy-maximization}
   \sup\bigl\{s(W):W\in\W_0,\ e(W)=\eps,\ t(H,W)=\tau\bigr\},
-  \qquad
-  \eps^m<\tau<\tau_{\max}(\eps).
+  \qquad \eps^m<\tau<\tau_{\max}(\eps).
 \end{equation}
-The maximizers of~\eqref{eq:entropy-maximization} describe the typical
-structure of large graphs with edge density $\eps$ and $H$-density
-$\tau$~\cite{RadinRenSadun2014,RadinSadun2013}; see
-also~\cite{DemboLubetzky2018} for the underlying large-deviation principle.  The two constraints of
-this problem can be degenerate at a maximizer, and we need a constraint
-qualification (Definition~\ref{def:constraint-qualification}) that allows the
-two densities to be corrected independently by bounded perturbations.
+We call this the \emph{open oversaturated range}. The curve
+$\tau=\eps^m$ is the \emph{Erd\H{o}s--R\'enyi curve} in the space of the
+two prescribed densities.
+On the constraint $e(W)=\eps$, the definitions give
+\[
+  I_\eps(W)=2\bigl(S_0(\eps)-s(W)\bigr).
+\]
+Thus maximizing $s$ at fixed edge density is equivalent to minimizing
+the relative-entropy cost $I_\eps$. This connects the second problem to
+the first and allows us to use a common proof strategy. The interval
+in~\eqref{eq:entropy-maximization} is nonempty when $H$ has a vertex of
+degree at least two. If $H$ is a matching, then $t(H,W)=e(W)^m$, so fixing
+the edge density already fixes the $H$-density and no oversaturated
+value is feasible.
 
-\begin{theorem}[Prescribed edge and subgraph densities]\label{thm:fixed-densities}
+Previous results establish finite block structure for special graphs
+throughout their feasible range, and for general graphs near the
+Erd\H{o}s--R\'enyi curve.
+For edge and $k$-star constraints, Kenyon, Radin, Ren, and
+Sadun~\cite{KenyonRadinRenSadun2017} prove multipodality throughout the
+feasible range, with a bound on the number of blocks depending only on
+$k$. Star densities are moments of the degree function:
+\[
+  t(K_{1,k},W)=\int_0^1\left(\int_0^1W(x,y)\dd y\right)^k\dd x.
+\]
+This special form allows the variational equation to be reduced to a
+scalar equation for the degree. For general $H$, the degrees alone do
+not determine the subgraph density, so this reduction is not available.
+
+For arbitrary $H$ with a vertex of degree at least two, the same
+authors~\cite[Theorem~1.2]{kenyon2014entropy} prove a local result near
+the Erd\H{o}s--R\'enyi curve. There is a finite set $B_H\subset(0,1)$ such
+that, for each $\eps\notin B_H$, there is $\tau_0(\eps)>\eps^m$ for which
+\[
+  \eps^m<\tau<\tau_0(\eps)
+  \quad\Longrightarrow\quad
+  \text{the entropy maximizer is unique up to equivalence and bipodal}.
+\]
+Its block parameters depend analytically on the prescribed densities.
+For $d$-regular graphs, the excluded edge density is $(d-1)/d$.
+This local result identifies the optimizer as the subgraph density first
+increases above its Erd\H{o}s--R\'enyi value. It does not describe the
+whole oversaturated interval.
+
+Ordering is another aspect of this structure. For the edge--triangle
+problem, Koch~\cite{Koch2016} proves that maximizers with positive entropy
+can be ordered under an additional correlation assumption, and that a
+set of vertices of positive measure shares the same vertex type. Our
+second theorem gives both ordering and finiteness for general $H$
+throughout the open oversaturated interval, without this additional
+assumption.
+
+\begin{theorem}\label{thm:fixed-densities}
 Let $H$ be a graph with a vertex of degree at least two, let $\eps\in(0,1)$, and
-let $\eps^m<\tau<\tau_{\max}(\eps)$.  Every maximizer
-of~\eqref{eq:entropy-maximization} that satisfies the constraint qualification
-is multipodal with ordered blocks.
+let $\eps^m<\tau<\tau_{\max}(\eps)$. Every maximizer
+of~\eqref{eq:entropy-maximization} is multipodal with ordered blocks.
 \end{theorem}
 
-\begin{cor}\label{cor:almost-every-tau}
-Let $H$ and $\eps$ be as in Theorem~\ref{thm:fixed-densities}.  The set of
-$\tau\in(\eps^m,\tau_{\max}(\eps))$ for which~\eqref{eq:entropy-maximization} has
-a maximizer violating the constraint qualification has Lebesgue measure zero.
-Consequently, for almost every such $\tau$, every maximizer is multipodal with
-ordered blocks.
-\end{cor}
+The conclusion holds for every maximizer at every pair of densities in
+the stated range. It includes the edge densities excluded by the local
+theorem and allows the subgraph density to be far above the
+Erd\H{o}s--R\'enyi curve. The conclusion is finite ordered structure;
+we do not assert that bipodality or uniqueness persists throughout this
+larger range.
+
+Within individual phases, more detailed results identify the number of
+blocks, their parameters, and transitions between competing structures.
+These questions have been investigated for the edge--triangle
+model~\cite{RadinRenSadun2014,KenyonRadinRenSadun2017b,NeemanRadinSadun2023,NeemanRadinSadun2024},
+the edge--$2$-star model~\cite{RadinSadunEdge2Star}, and constraints near
+the feasible boundary~\cite{RadinSadunNearExtreme}.
+Radin and Sadun~\cite{RadinSadun2015} also show that, at fixed edge density
+$\eps$, the maximum entropy in the edge--triangle model is not
+differentiable in $\tau$ at the Erd\H{o}s--R\'enyi value $\tau=\eps^3$.
+Our result supplies
+finite ordered structure across the full open oversaturated range,
+while the description of individual phases requires additional analysis.
+
+For suitable choices of several prescribed subgraph densities, entropy
+maximizers need not be multipodal. Cooper, Kr\'al', and
+Martins~\cite[Theorem~1]{CooperKralMartins2018} show that every graphon
+is a subgraphon of a graphon uniquely determined, up to weak isomorphism,
+by finitely many prescribed subgraph densities. Choosing a non-multipodal
+subgraphon therefore yields constraints with a unique feasible graphon
+that is non-multipodal and necessarily maximizes entropy.
+Grzesik, Kr\'al', and Lov\'asz~\cite[Theorem~28]{GrzesikKralLovasz2020}
+also construct finite density constraints for which the feasible graphons
+are all non-multipodal and have the same entropy, so every one of them
+is an entropy maximizer.
+
+For exponential random graph models with nonnegative subgraph
+parameters, optimizers are constant~\cite{ChatterjeeDiaconis2013}, but
+replacing prescribed density constraints by weighted density terms in
+the objective can change the optimizers. Those results therefore do not
+directly determine the optimizers studied here.
+
+Alvarado, Ramon, and Wang~\cite{AlvaradoRamonWang2026} propose a
+differential geometric approach for entropy optimization under general
+multi-relational equality constraints, assuming analytic independence
+and non-extremal regularity. Their conclusion for all global minimizers
+also assumes isolation. For the constraint classes in this paper,
+we prove ordered multipodality for every optimizer without these assumptions.
+\Cref{app:arw} compares the assumptions and presents an example suggesting
+that additional hypotheses may be needed to justify the finite-step
+conclusion for all global minimizers in~\cite[Theorem~5.25]{AlvaradoRamonWang2026}.
 
 \subsection{Proof strategy}\label{sec:proof-strategy}
 
-The natural starting point is the Euler--Lagrange equation.  For a minimizer
-$W$ of~\eqref{eq:graphon-variational-problem}, it states that
-$J_p'(W(x,y))=\mu\,\mathcal D_W(x,y)$ for a Lagrange multiplier $\mu>0$, where
-$\mathcal D_W$ is the first variation of $t(H,\cdot)$.  One can rewrite this as
-the statement that every row $W_x=W(x,\cdot)$ is a critical point of a
-functional $\mathcal F_W$ defined on all possible rows.  However, the set of
-critical points of a nonlinear functional on an infinite-dimensional space can
-be complicated, and the equation alone does not seem to force finitely many
-row types for general $H$.  Our proof instead proceeds in three steps.
+The central idea is to test an optimizing graphon against every possible
+new vertex type. Fix an upper-tail minimizer $W$. The type of a vertex
+with label $x$ is encoded by its \emph{row} $W_x(y):=W(x,y)$, which lists
+its connection probabilities to the other vertices. We will derive a
+minimization problem for rows, show that almost every row of $W$ solves
+it, and prove that its solutions form a finite ordered set.
 
-\begin{enumerate}[label=(\roman*),leftmargin=2.2em]
-\item \emph{Every row is a global minimizer.}  Given an arbitrary candidate row
-$u:[0,1]\to[0,1]$, we insert into $W$ a new block of vertices of small measure
-$\theta$ whose row is $u$, and we then shift the remaining values slightly so
-that the constraint holds exactly.  Comparing the cost of this graphon with that
-of $W$ to first order in $\theta$ shows that $\mathcal F_W(u)\ge c_W$ for every $u$,
-where $c_W$ is an explicit constant.  The functional $\mathcal F_W$ involves the
-\emph{rooted densities} of $H$, which record the density of copies of $H$ that
-use the new vertex.  Averaging over the rows of $W$ shows that almost every row
-attains the bound $c_W$.  Hence all rows of $W$ are global minimizers of one and
-the same functional.  See Lemma~\ref{lem:upper-tail-insertion}.
+To test a candidate row $u:[0,1]\to[0,1]$, we modify $W$ as follows.
+Rescale the original vertex interval to $[\theta,1]$ and use
+$[0,\theta)$ for a new vertex class, where $\theta>0$ is small. A new
+vertex connects to an original vertex with original label $y$ with
+probability $u(y)$; within the new class, the edge probability is $p$.
+This defines a new graphon $W_\theta$, illustrated in
+\Cref{fig:insertion}. The candidate row $u$ can be chosen freely. Only
+the measure of the new class must be small, so this construction tests
+types whose connection probabilities can differ substantially from
+those already present in $W$.
 
-\item \emph{Minimizers are ordered.}  When two rows $u_1,u_2$ are replaced by
-their pointwise minimum and maximum, the sum of the entropy and linear parts of
-$\mathcal F_W$ over the two rows does not change, while the sum of the rooted
-densities strictly increases whenever $u_1$ and $u_2$ cross; this uses a vertex
-of $H$ of degree at least two and the fact that $W$ is bounded below by a
-positive constant.
-Since the multiplier $\mu$ is positive, two crossing minimizers would produce a
-pair of rows with strictly smaller total value, which is impossible.  Hence the
-set of global minimizers is totally ordered.  See
-Proposition~\ref{prop:row-chain}.
+We compare the entropy cost and subgraph densities of $W_\theta$ with
+those of $W$ and let $\theta$ tend to zero. Combining such insertions
+with bounded perturbations of the original graphon, optimality yields
+nonnegative multipliers $\mu_1,\dots,\mu_s$ for the density constraints.
+For these multipliers, define
+\[
+  \mathcal F_W(u):=\left.\frac{\dd}{\dd\theta}
+  \left(I_p(W_\theta)-\sum_{j=1}^s\mu_j t(H_j,W_\theta)\right)
+  \right|_{\theta=0^+}.
+\]
+This functional measures the first-order change in entropy cost,
+minus the weighted changes in subgraph densities. It satisfies
+\[
+  \mathcal F_W(u)\ge0\quad\text{for every measurable }u:[0,1]\to[0,1],
+  \qquad \mathcal F_W(W_x)=0\quad\text{for almost every }x.
+\]
+Thus almost every row of the original optimizer globally minimizes
+$\mathcal F_W$ over all candidate rows. This is the comparison principle
+from which we obtain the structure of $W$. Its derivation does not
+require an independence assumption on the upper-tail constraints.
 
-\item \emph{There are finitely many minimizers.}  A totally ordered set of
-rows could still be a continuum.  The Euler--Lagrange equation for rows is a
-compact fixed-point equation, so the set of global minimizers is compact.  The
-same strict supermodularity shows that the second variation of $\mathcal F_W$
-is coercive on mean-zero perturbations.  This allows us to parametrize the
-critical rows near a minimizer analytically by their mean.  If minimizers
-accumulated, the Lagrange multiplier for the mean would vanish on an interval,
-and a whole interval of means would consist of minimizers; a compactness
-argument rules this out.  Finitely many row types then yield finitely many
-blocks.  See Theorem~\ref{thm:row-criterion}.
-\end{enumerate}
+We next order the minimizing rows. If every graph with a positive
+multiplier is a matching, strict convexity gives a unique minimizing
+row. Otherwise, suppose that two minimizing rows $u_1,u_2$ cross: the
+first has higher connection probabilities on some set of vertex labels,
+and the second has higher probabilities on another set, both of
+positive measure. Replace them by their pointwise minimum and maximum.
+This sorts the two connection probabilities at each label while
+preserving the sum of their entropy contributions. We show that the
+weighted subgraph contribution strictly increases, giving
+\[
+  \mathcal F_W(\min\{u_1,u_2\})+\mathcal F_W(\max\{u_1,u_2\})
+  <\mathcal F_W(u_1)+\mathcal F_W(u_2),
+\]
+contradicting minimality. Hence any two minimizing rows are ordered
+pointwise, up to null sets.
 
-For the problem~\eqref{eq:entropy-maximization} with two constraints, the
-same argument applies once both densities can be restored after inserting a
-block, which is what the constraint qualification guarantees.  To prove
-Corollary~\ref{cor:almost-every-tau}, we show that a maximizer violating the
-constraint qualification forces the left difference quotients of the value
-function of the problem to be unbounded, which can only happen on a null set
-because the value function is monotone.
+Ordering alone still permits infinitely many vertex types. To prove
+finiteness, observe that distinct ordered rows have distinct means
+$\int_0^1u$, so the mean gives a scalar coordinate for the set of
+minimizing rows. We prove a positive lower bound for the second variation
+of $\mathcal F_W$ under perturbations that leave this mean unchanged.
+This bound allows us to describe nearby solutions of the optimality
+equations as an analytic family indexed by the mean. If minimizing rows
+accumulated, analyticity would force an entire open interval of mean
+values to correspond to minimizers. Compactness then gives a
+contradiction: the least accumulation point would have accumulation
+points below it. Consequently there are only finitely many minimizing
+rows. Almost every row of $W$ belongs to this finite ordered set, and
+the symmetry of $W$ turns these row types into the constant rectangular
+blocks of \Cref{thm:joint-upper-tail}.
 
-\subsection{Related work}
+For fixed edge and subgraph densities, the insertion changes quantities
+that must remain exactly prescribed. We therefore accompany it with
+small changes to the original graphon that restore both densities.
+Such corrections can be constructed when two bounded perturbations,
+supported where $W$ stays away from $0$ and $1$, have linearly independent
+first-order effects on the two densities. This is the \emph{constraint
+qualification}: it ensures that the two density errors can be corrected
+independently. Under this condition, the resulting row functional has
+the same form as $\mathcal F_W$, with a positive subgraph multiplier and
+an additional linear term for the edge constraint. A change of reference
+probability in the relative entropy absorbs this linear term, so the
+ordering and finiteness arguments apply again.
 
-The Euler--Lagrange equations of constrained graphon problems have been used
-to establish multipodality when they separate.  For stars, the first variation
-of the star density is a sum of a function of $x$ and a function of $y$, and
-the equation reduces to a scalar equation for the degree function; this is the
-mechanism behind the multipodality results of Kenyon, Radin, Ren, and
-Sadun~\cite{KenyonRadinRenSadun2017} for edge and star constraints, where a
-uniform bound on the number of blocks is also obtained.  Radin and
-Sadun~\cite{RadinSadunEdge2Star} studied the optimal graphons of the
-edge--$2$-star model in detail.  For the edge--triangle model, Koch~\cite{Koch2016}
-studied an ordering of the vertices of optimal graphons, and Neeman, Radin,
-and Sadun~\cite{NeemanRadinSadun2023,NeemanRadinSadun2024} established
-detailed properties of several phases.  Radin and
-Sadun~\cite{RadinSadunNearExtreme} analyzed optimal graphons for constraints
-close to the boundary of the feasible region.
-For exponential random graph models with nonnegative parameters, which are
-Lagrangian relaxations of problems of the above type, Chatterjee and
-Diaconis~\cite{ChatterjeeDiaconis2013} showed that the optimizers are constant;
-in the symmetry-breaking phase, however, the minimizers
-of~\eqref{eq:graphon-variational-problem} are nonconstant and are not
-minimizers of the corresponding Lagrangian.
+The remaining difficulty is to prove that every optimizer satisfies
+this constraint qualification. We call an optimizer \emph{degenerate}
+if it fails the condition. For fixed edge density $\eps$, consider the
+minimum entropy cost as a function of the prescribed subgraph density
+$\tau$. We show that a degenerate optimizer at $\tau$ would force this
+function to have infinite slope as $\tau$ is approached from below.
+The function is increasing and therefore has finite derivative almost
+everywhere. This first excludes degenerate optimizers at almost every
+subgraph density.
 
-Alvarado, Ramon, and Wang~\cite{AlvaradoRamonWang2023,AlvaradoRamonWang2026}
-consider entropy maximization for multi-relational hypergraphons under
-constraints on subgraph densities, and state that for almost every value of
-the constraints the optimizers are step functions whose number of steps is
-bounded in terms of the number of constraints.  Several steps of their
-arguments, however, do not hold.  Representatively, the arguments compare step
-functions with $k$ and $k+1$ steps and assert that passing to $k+1$ steps
-produces no smaller value of the objective.  This fails in general.  In
-Appendix~\ref{app:arw} we give constraints on the densities of the edge, the
-$2$-star, and the $3$-star, together with a non-convex objective, for which the
-bound on the number of steps fails on a set of constraint values of positive
-measure; a second example shows the same for the entropy under constraints of
-the more general form allowed in~\cite{AlvaradoRamonWang2026}.  The later
-preprint also deduces local optimality in $L^1$ from second-order conditions, although
-inserting a small block of vertices is a perturbation that is small in $L^1$
-and changes the objective at first order.  These examples do not decide whether
-the conclusions of~\cite{AlvaradoRamonWang2023,AlvaradoRamonWang2026} hold for
-the entropy under subgraph density constraints.  Our proofs are independent of
-these works and follow a different route: we never approximate optimizers by
-step functions of bounded size, and the insertion of small blocks is precisely
-what gives the first-order condition satisfied by every optimizer.
-Appendix~\ref{app:arw} contains the counterexamples and explains why they do
-not affect the arguments of this paper.
+To handle every remaining density, we approach it from below by densities
+where degeneracy has already been excluded and take a limit of ordered
+optimizers. The limit is an optimizer that retains the ordering, although
+finiteness of its vertex types is not yet known. A further insertion
+argument shows that this limit optimizer admits the required density
+corrections. Those corrections bound the slope of the minimum entropy
+cost along the approximating sequence, contradicting the infinite slope
+that any degenerate optimizer at the target density would force. This
+excludes degeneracy for every optimizer throughout the stated interval
+and completes the proof of \Cref{thm:fixed-densities}.
 
-\paragraph{Organization.}
-Section~\ref{sec:preliminaries} collects preliminaries, including rooted
-densities.  Section~\ref{sec:row-criterion} proves the criterion for finitely
-many row types.  Sections~\ref{sec:upper-tail} and~\ref{sec:fixed-densities}
-apply it to prove Theorems~\ref{thm:upper-tail} and~\ref{thm:fixed-densities},
-and Section~\ref{sec:conclusion} discusses open problems.
-Appendix~\ref{app:arw} discusses the preprints~\cite{AlvaradoRamonWang2023,AlvaradoRamonWang2026}.
+After the background in \Cref{sec:graphons-entropy},
+\Cref{sec:density-variations} treats derivatives and interiority of
+upper-tail minimizers. \Cref{sec:upper-tail-row-minimality} develops
+vertex insertion and proves global row minimality, and
+\Cref{sec:row-criterion} proves ordering and finiteness.
+\Cref{sec:fixed-densities} treats fixed densities under the constraint
+qualification, which \Cref{sec:degenerate-optimizers} then removes.
+\Cref{sec:conclusion} summarizes the results and discusses further questions.

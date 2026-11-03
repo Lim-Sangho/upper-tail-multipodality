@@ -5,7 +5,7 @@ import UpperTailMultipodality.RowCriterion.Finiteness.ImplicitFunction
 # The analytic branch of minimizers through an accumulation point
 
 The Euler–Lagrange equation `eq:row-euler` with multiplier `λ` is the fixed-point equation
-`u = σ(ℓ(q) + α + λ/2 + (μ/2)∇ℛ_W(u))`, and `elMap` is the corresponding map, bordered by the
+`u = σ(ℓ(q) + α + λ/2 + (1/2)∇𝒫_W(u))`, and `elMap` is the corresponding map, bordered by the
 mean constraint.  It is analytic, and its derivative in `(u,λ)` at a minimizer is the bordered
 operator of `lem:bordered`, so the analytic implicit function theorem produces an analytic
 branch `a ↦ (u_*(a), λ_*(a))` through it.
@@ -21,47 +21,50 @@ namespace UpperTailMultipodality
 open MeasureTheory Filter Topology
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
-variable {H : SimpleGraph V} [DecidableRel H.Adj] {W : Graphon} {q α μ : ℝ}
+variable {ι : Type*} [Fintype ι] {Hs : ι → SimpleGraph V} [∀ j, DecidableRel (Hs j).Adj]
+variable {W : Graphon} {q α : ℝ} {μ : ι → ℝ}
 
-variable (H W q α μ) in
+variable (Hs W q α μ) in
 /-- The argument of the logistic function in the fixed-point form of `eq:row-euler`. -/
 noncomputable def elArg (z : BddMeas × ℝ) : BddMeas :=
-  algebraMap ℝ BddMeas (α + logit q) + (z.2 / 2) • (1 : BddMeas) + (μ / 2) • gradE H W z.1
+  algebraMap ℝ BddMeas (α + logit q) + (z.2 / 2) • (1 : BddMeas)
+    + (1 / 2 : ℝ) • combinedGradE Hs W μ z.1
 
-variable (H W q α μ) in
+variable (Hs W q α μ) in
 /-- The bordered Euler–Lagrange map `Ξ(a; u, λ)` of `lem:row-finite`, in fixed-point form. -/
 noncomputable def elMap (z : BddMeas × ℝ) (a : ℝ) : BddMeas × ℝ :=
-  (z.1 - BddMeas.sigma (elArg H W q α μ z), BddMeas.integ z.1 - a)
+  (z.1 - BddMeas.sigma (elArg Hs W q α μ z), BddMeas.integ z.1 - a)
 
 /-- The value of the argument of the logistic function. -/
 theorem elArg_apply (z : BddMeas × ℝ) (y : ℝ) :
-    elArg H W q α μ z y = α + logit q + z.2 / 2 + μ / 2 * gradE H W z.1 y := by
+    elArg Hs W q α μ z y = α + logit q + z.2 / 2 + 1 / 2 * combinedGradE Hs W μ z.1 y := by
   rw [elArg]
   simp only [BddMeas.add_apply, BddMeas.smul_apply, BddMeas.coe_algebraMap, BddMeas.one_apply]
   ring
 
 /-- Analyticity of the bordered Euler–Lagrange map. -/
 theorem analyticAt_elMap (w : (BddMeas × ℝ) × ℝ) :
-    AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ => elMap H W q α μ w.1 w.2) w := by
+    AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ => elMap Hs W q α μ w.1 w.2) w := by
   have hu : AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ => w.1.1) w :=
     analyticAt_fst.comp analyticAt_fst
   have hlam : AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ => w.1.2) w :=
     analyticAt_snd.comp analyticAt_fst
   have ha : AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ => w.2) w := analyticAt_snd
-  have hgrad : AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ => gradE H W w.1.1) w :=
-    (analyticAt_gradE _).comp hu
-  have harg : AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ => elArg H W q α μ w.1) w := by
+  have hgrad : AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ => combinedGradE Hs W μ w.1.1) w :=
+    (analyticAt_combinedGradE _).comp hu
+  have harg : AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ => elArg Hs W q α μ w.1) w := by
     have h1 : AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ => (w.1.2 / 2) • (1 : BddMeas)) w :=
       AnalyticAt.smul hlam.div_const analyticAt_const
-    have h2 : AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ => (μ / 2) • gradE H W w.1.1) w := by
-      have hmul : AnalyticAt ℝ
-          (fun w : (BddMeas × ℝ) × ℝ => algebraMap ℝ BddMeas (μ / 2) * gradE H W w.1.1) w :=
+    have h2 : AnalyticAt ℝ
+        (fun w : (BddMeas × ℝ) × ℝ => (1 / 2 : ℝ) • combinedGradE Hs W μ w.1.1) w := by
+      have hmul : AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ =>
+          algebraMap ℝ BddMeas (1 / 2 : ℝ) * combinedGradE Hs W μ w.1.1) w :=
         analyticAt_const.mul hgrad
       refine hmul.congr ?_
       filter_upwards with w'
       exact (Algebra.smul_def _ _).symm
     exact (analyticAt_const.add h1).add h2
-  have hsig : AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ => BddMeas.sigma (elArg H W q α μ w.1)) w :=
+  have hsig : AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ => BddMeas.sigma (elArg Hs W q α μ w.1)) w :=
     (BddMeas.analyticAt_sigma _).comp harg
   have hint : AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ => BddMeas.integ w.1.1 - w.2) w :=
     ((BddMeas.integ.analyticAt _).comp hu).sub ha
@@ -70,13 +73,14 @@ theorem analyticAt_elMap (w : (BddMeas × ℝ) × ℝ) :
 /-- **The derivative of the bordered Euler–Lagrange map** at a fixed point with zero multiplier
 is the bordered operator. -/
 theorem hasFDerivAt_elMap {u : BddMeas} (a : ℝ)
-    (hfix : u = BddMeas.sigma (elArg H W q α μ (u, 0))) :
-    HasFDerivAt (fun z : BddMeas × ℝ => elMap H W q α μ z a) (borderedOp H W μ u) (u, 0) := by
+    (hfix : u = BddMeas.sigma (elArg Hs W q α μ (u, 0))) :
+    HasFDerivAt (fun z : BddMeas × ℝ => elMap Hs W q α μ z a) (borderedOp Hs W μ u) (u, 0) := by
   -- the derivative of the argument of the logistic function
   set A : (BddMeas × ℝ) →L[ℝ] BddMeas :=
     ((1 / 2 : ℝ) • (ContinuousLinearMap.snd ℝ BddMeas ℝ).smulRight (1 : BddMeas))
-      + ((μ / 2) • gradDeriv H W u).comp (ContinuousLinearMap.fst ℝ BddMeas ℝ) with hA
-  have hargderiv : HasFDerivAt (fun z : BddMeas × ℝ => elArg H W q α μ z) A (u, 0) := by
+      + ((1 / 2 : ℝ) • combinedGradDeriv Hs W μ u).comp
+        (ContinuousLinearMap.fst ℝ BddMeas ℝ) with hA
+  have hargderiv : HasFDerivAt (fun z : BddMeas × ℝ => elArg Hs W q α μ z) A (u, 0) := by
     have h1 : HasFDerivAt (fun z : BddMeas × ℝ => (z.2 / 2) • (1 : BddMeas))
         ((1 / 2 : ℝ) • (ContinuousLinearMap.snd ℝ BddMeas ℝ).smulRight (1 : BddMeas)) (u, 0) := by
       have : (fun z : BddMeas × ℝ => (z.2 / 2) • (1 : BddMeas))
@@ -89,30 +93,32 @@ theorem hasFDerivAt_elMap {u : BddMeas} (a : ℝ)
         ring
       rw [this]
       exact ContinuousLinearMap.hasFDerivAt _
-    have h2 : HasFDerivAt (fun z : BddMeas × ℝ => (μ / 2) • gradE H W z.1)
-        (((μ / 2) • gradDeriv H W u).comp (ContinuousLinearMap.fst ℝ BddMeas ℝ)) (u, 0) := by
+    have h2 : HasFDerivAt (fun z : BddMeas × ℝ => (1 / 2 : ℝ) • combinedGradE Hs W μ z.1)
+        (((1 / 2 : ℝ) • combinedGradDeriv Hs W μ u).comp
+          (ContinuousLinearMap.fst ℝ BddMeas ℝ)) (u, 0) := by
       have hfstd : HasFDerivAt (fun z : BddMeas × ℝ => z.1)
           (ContinuousLinearMap.fst ℝ BddMeas ℝ) ((u, 0) : BddMeas × ℝ) :=
         (ContinuousLinearMap.fst ℝ BddMeas ℝ).hasFDerivAt
-      have hg0 := (hasFDerivAt_gradE (H := H) (W := W) u).comp ((u, 0) : BddMeas × ℝ) hfstd
-      have hg : HasFDerivAt (fun z : BddMeas × ℝ => gradE H W z.1)
-          ((gradDeriv H W u).comp (ContinuousLinearMap.fst ℝ BddMeas ℝ)) (u, 0) := hg0
-      have hcs := hg.const_smul (μ / 2)
+      have hg0 := (hasFDerivAt_combinedGradE (Hs := Hs) (W := W) (μ := μ) u).comp
+        ((u, 0) : BddMeas × ℝ) hfstd
+      have hg : HasFDerivAt (fun z : BddMeas × ℝ => combinedGradE Hs W μ z.1)
+          ((combinedGradDeriv Hs W μ u).comp (ContinuousLinearMap.fst ℝ BddMeas ℝ)) (u, 0) := hg0
+      have hcs := hg.const_smul (1 / 2 : ℝ)
       refine hcs.congr_fderiv ?_
       refine ContinuousLinearMap.ext fun z => ?_
       rfl
     have h3 := (h1.const_add (algebraMap ℝ BddMeas (α + logit q))).add h2
-    have hfun : (fun z : BddMeas × ℝ => elArg H W q α μ z)
+    have hfun : (fun z : BddMeas × ℝ => elArg Hs W q α μ z)
         = fun z => (algebraMap ℝ BddMeas (α + logit q) + (z.2 / 2) • (1 : BddMeas))
-          + (μ / 2) • gradE H W z.1 := rfl
+          + (1 / 2 : ℝ) • combinedGradE Hs W μ z.1 := rfl
     rw [hfun, hA]
     exact h3
   -- the derivative of the logistic composition
-  have hsig := (BddMeas.hasFDerivAt_sigma (elArg H W q α μ (u, 0))).comp (u, 0) hargderiv
-  have hsigma0 : BddMeas.sigma (elArg H W q α μ (u, 0)) = u := hfix.symm
+  have hsig := (BddMeas.hasFDerivAt_sigma (elArg Hs W q α μ (u, 0))).comp (u, 0) hargderiv
+  have hsigma0 : BddMeas.sigma (elArg Hs W q α μ (u, 0)) = u := hfix.symm
   rw [hsigma0] at hsig
   -- assemble
-  have hfst : HasFDerivAt (fun z : BddMeas × ℝ => z.1 - BddMeas.sigma (elArg H W q α μ z))
+  have hfst : HasFDerivAt (fun z : BddMeas × ℝ => z.1 - BddMeas.sigma (elArg Hs W q α μ z))
       ((ContinuousLinearMap.fst ℝ BddMeas ℝ)
         - (BddMeas.mulLeftCLM (u * (1 - u))).comp A) (u, 0) := by
     have hid : HasFDerivAt (fun z : BddMeas × ℝ => z.1)
@@ -144,9 +150,9 @@ theorem hasFDerivAt_elMap {u : BddMeas} (a : ℝ)
 
 /-- The Euler–Lagrange equation in the form used by `Bordered`, from the fixed-point form. -/
 theorem el_of_fix (hq0 : 0 < q) (hq1 : q < 1) {u : BddMeas}
-    (hfix : u = BddMeas.sigma (elArg H W q α μ (u, 0))) (y : ℝ) :
-    2 * Jp' q (u y) - 2 * α = μ * gradE H W u y := by
-  have h1 : u y = BddMeas.logistic (elArg H W q α μ (u, 0) y) := by
+    (hfix : u = BddMeas.sigma (elArg Hs W q α μ (u, 0))) (y : ℝ) :
+    2 * Jp' q (u y) - 2 * α = combinedGradE Hs W μ u y := by
+  have h1 : u y = BddMeas.logistic (elArg Hs W q α μ (u, 0) y) := by
     conv_lhs => rw [hfix]
     rw [BddMeas.sigma_apply]
   rw [h1, Jp'_logistic hq0 hq1, elArg_apply]
@@ -154,9 +160,9 @@ theorem el_of_fix (hq0 : 0 < q) (hq1 : q < 1) {u : BddMeas}
   ring
 
 /-- Values of a fixed point lie strictly between `0` and `1`. -/
-theorem fix_mem_Icc {u : BddMeas} (hfix : u = BddMeas.sigma (elArg H W q α μ (u, 0))) (y : ℝ) :
+theorem fix_mem_Icc {u : BddMeas} (hfix : u = BddMeas.sigma (elArg Hs W q α μ (u, 0))) (y : ℝ) :
     u y ∈ Set.Icc (0:ℝ) 1 := by
-  have h1 : u y = BddMeas.logistic (elArg H W q α μ (u, 0) y) := by
+  have h1 : u y = BddMeas.logistic (elArg Hs W q α μ (u, 0) y) := by
     conv_lhs => rw [hfix]
     rw [BddMeas.sigma_apply]
   rw [h1]
@@ -165,49 +171,50 @@ theorem fix_mem_Icc {u : BddMeas} (hfix : u = BddMeas.sigma (elArg H W q α μ (
 /-- **The interval of means around an accumulation point** (the core of `lem:row-finite`).
 If the mean `a₀` of a minimizer is an accumulation point of the set `A` of means of minimizers,
 then every mean in a neighbourhood of `a₀` is attained by a minimizer. -/
-theorem exists_interval_of_accPt
-    (hΔ : ∃ v, 2 ≤ H.degree v) (hq0 : 0 < q) (hq1 : q < 1) (hμ : 0 < μ)
+theorem exists_interval_of_accPt {j₀ : ι} (hμ : ∀ j, 0 ≤ μ j) (hμ₀ : 0 < μ j₀)
+    (hΔ : ∃ v, 2 ≤ (Hs j₀).degree v) (hq0 : 0 < q) (hq1 : q < 1)
     {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω ≤ 1) (hWω : ∀ᵐ z ∂gμ, ω ≤ W.toFun z.1 z.2)
     {cval : ℝ}
-    (hlow : ∀ v : BddMeas, (∀ y, v y ∈ Set.Icc (0:ℝ) 1) → cval ≤ rowFunctionalE H W q α μ v)
+    (hlow : ∀ v : BddMeas, (∀ y, v y ∈ Set.Icc (0:ℝ) 1) → cval ≤ rowFunctionalE Hs W q α μ v)
     {lo hi : ℝ} (hlo : 0 < lo) (hhi : hi < 1) (hlo1 : lo ≤ 1)
     {A : Set ℝ} {rep : ℝ → BddMeas}
     (hmem : ∀ a ∈ A, ∀ y, (rep a) y ∈ Set.Icc lo hi)
-    (hval : ∀ a ∈ A, rowFunctionalE H W q α μ (rep a) = cval)
-    (hfixA : ∀ a ∈ A, rep a = BddMeas.sigma (elArg H W q α μ (rep a, 0)))
+    (hval : ∀ a ∈ A, rowFunctionalE Hs W q α μ (rep a) = cval)
+    (hfixA : ∀ a ∈ A, rep a = BddMeas.sigma (elArg Hs W q α μ (rep a, 0)))
     (hmeanA : ∀ a ∈ A, BddMeas.integ (rep a) = a)
     {L : ℝ} (hL0 : 0 ≤ L) (hlip : ∀ a ∈ A, ∀ a' ∈ A, ‖rep a - rep a'‖ ≤ L * |a - a'|)
     {a₀ : ℝ} (ha₀ : a₀ ∈ A) (hacc : AccPt a₀ (𝓟 A)) :
     ∃ ε > 0, ∀ a ∈ Set.Ioo (a₀ - ε) (a₀ + ε), ∃ u : BddMeas,
-      (∀ y, u y ∈ Set.Icc (0:ℝ) 1) ∧ rowFunctionalE H W q α μ u = cval
+      (∀ y, u y ∈ Set.Icc (0:ℝ) 1) ∧ rowFunctionalE Hs W q α μ u = cval
         ∧ BddMeas.integ u = a := by
   classical
   set u₀ : BddMeas := rep a₀ with hu₀
   have hu₀mem : ∀ y, u₀ y ∈ Set.Icc lo hi := hmem a₀ ha₀
-  have hu₀fix : u₀ = BddMeas.sigma (elArg H W q α μ (u₀, 0)) := hfixA a₀ ha₀
+  have hu₀fix : u₀ = BddMeas.sigma (elArg Hs W q α μ (u₀, 0)) := hfixA a₀ ha₀
   have hu₀mean : BddMeas.integ u₀ = a₀ := hmeanA a₀ ha₀
-  have hEL : ∀ y, 2 * Jp' q (u₀ y) - 2 * α = μ * gradE H W u₀ y := el_of_fix hq0 hq1 hu₀fix
+  have hEL : ∀ y, 2 * Jp' q (u₀ y) - 2 * α = combinedGradE Hs W μ u₀ y :=
+    el_of_fix hq0 hq1 hu₀fix
   have hmin : ∀ v : BddMeas, (∀ y, v y ∈ Set.Icc (0:ℝ) 1) →
-      rowFunctionalE H W q α μ u₀ ≤ rowFunctionalE H W q α μ v := by
+      rowFunctionalE Hs W q α μ u₀ ≤ rowFunctionalE Hs W q α μ v := by
     intro v hv
     rw [hval a₀ ha₀]
     exact hlow v hv
   -- the implicit function theorem at `(u₀, 0)`
-  have hF0 : elMap H W q α μ (u₀, 0) a₀ = 0 := by
-    have h1 : u₀ - BddMeas.sigma (elArg H W q α μ (u₀, 0)) = 0 := by rw [← hu₀fix, sub_self]
+  have hF0 : elMap Hs W q α μ (u₀, 0) a₀ = 0 := by
+    have h1 : u₀ - BddMeas.sigma (elArg Hs W q α μ (u₀, 0)) = 0 := by rw [← hu₀fix, sub_self]
     have h2 : BddMeas.integ u₀ - a₀ = 0 := by rw [hu₀mean, sub_self]
     rw [elMap, h1, h2]
     rfl
-  have hjoint : AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ => elMap H W q α μ w.1 w.2)
+  have hjoint : AnalyticAt ℝ (fun w : (BddMeas × ℝ) × ℝ => elMap Hs W q α μ w.1 w.2)
       ((u₀, 0), a₀) := analyticAt_elMap _
-  have hfd := hasFDerivAt_elMap (H := H) (W := W) (q := q) (α := α) (μ := μ) a₀ hu₀fix
-  have hstrict : HasStrictFDerivAt (fun z : BddMeas × ℝ => elMap H W q α μ z a₀)
-      ((borderedEquiv H W μ hΔ hq0 hq1 hμ hω0 hω1 hWω hlo hhi hlo1 hu₀mem hmin hEL :
+  have hfd := hasFDerivAt_elMap (Hs := Hs) (W := W) (q := q) (α := α) (μ := μ) a₀ hu₀fix
+  have hstrict : HasStrictFDerivAt (fun z : BddMeas × ℝ => elMap Hs W q α μ z a₀)
+      ((borderedEquiv Hs W μ hμ hμ₀ hΔ hq0 hq1 hω0 hω1 hWω hlo hhi hlo1 hu₀mem hmin hEL :
         (BddMeas × ℝ) →L[ℝ] (BddMeas × ℝ))) (u₀, 0) := by
-    have han : AnalyticAt ℝ (fun z : BddMeas × ℝ => elMap H W q α μ z a₀) (u₀, 0) := by
+    have han : AnalyticAt ℝ (fun z : BddMeas × ℝ => elMap Hs W q α μ z a₀) (u₀, 0) := by
       have hmap : AnalyticAt ℝ (fun z : BddMeas × ℝ => (z, a₀)) (u₀, 0) :=
         analyticAt_id.prod analyticAt_const
-      exact AnalyticAt.comp (g := fun w : (BddMeas × ℝ) × ℝ => elMap H W q α μ w.1 w.2)
+      exact AnalyticAt.comp (g := fun w : (BddMeas × ℝ) × ℝ => elMap Hs W q α μ w.1 w.2)
         (f := fun z : BddMeas × ℝ => (z, a₀)) hjoint hmap
     have hs := han.hasStrictFDerivAt
     rw [hfd.fderiv] at hs
@@ -244,8 +251,8 @@ theorem exists_interval_of_accPt
           _ = ρ := by field_simp
       exact lt_of_le_of_lt (le_trans (le_of_eq (by
         simp only [max_eq_left (norm_nonneg _)])) h1) h2
-    have hsol : elMap H W q α μ (rep a, 0) a = 0 := by
-      have h1 : rep a - BddMeas.sigma (elArg H W q α μ (rep a, 0)) = 0 := by
+    have hsol : elMap Hs W q α μ (rep a, 0) a = 0 := by
+      have h1 : rep a - BddMeas.sigma (elArg Hs W q α μ (rep a, 0)) = 0 := by
         rw [← hfixA a haA, sub_self]
       have h2 : BddMeas.integ (rep a) - a = 0 := by rw [hmeanA a haA, sub_self]
       rw [elMap, h1, h2]
@@ -322,13 +329,13 @@ theorem exists_interval_of_accPt
     refine Prod.ext rfl ?_
     exact hlam0
   have hfixb : ∀ a, |a - a₀| < ε →
-      ub a = BddMeas.sigma (elArg H W q α μ (ub a, 0)) ∧ BddMeas.integ (ub a) = a := by
+      ub a = BddMeas.sigma (elArg Hs W q α μ (ub a, 0)) ∧ BddMeas.integ (ub a) = a := by
     intro a ha
     obtain ⟨hz, haT⟩ := hball a ha
     have hsol := hzsol a haT
     rw [hz] at hsol
-    have h1 : (elMap H W q α μ (ub a, 0) a).1 = 0 := by rw [hsol]; rfl
-    have h2 : (elMap H W q α μ (ub a, 0) a).2 = 0 := by rw [hsol]; rfl
+    have h1 : (elMap Hs W q α μ (ub a, 0) a).1 = 0 := by rw [hsol]; rfl
+    have h2 : (elMap Hs W q α μ (ub a, 0) a).2 = 0 := by rw [hsol]; rfl
     rw [elMap] at h1 h2
     simp only at h1 h2
     exact ⟨by rw [← sub_eq_zero]; exact h1, by rw [← sub_eq_zero]; exact h2⟩
@@ -346,7 +353,7 @@ theorem exists_interval_of_accPt
 
   -- the row functional is constant along the branch
   have hderiv : ∀ a, |a - a₀| < ε →
-      HasDerivAt (fun a => rowFunctionalE H W q α μ (ub a)) 0 a := by
+      HasDerivAt (fun a => rowFunctionalE Hs W q α μ (ub a)) 0 a := by
     intro a ha
     have hdist : dist a a₀ < ε := by rwa [Real.dist_eq]
     have hana : AnalyticAt ℝ ub a :=
@@ -354,12 +361,13 @@ theorem exists_interval_of_accPt
     have hdiff : HasDerivAt ub (deriv ub a) a := hana.differentiableAt.hasDerivAt
     obtain ⟨hfixa, -⟩ := hfixb a ha
     have hELa := el_of_fix hq0 hq1 hfixa
-    have hg : ∀ y, (0 : BddMeas) y = 2 * Jp' q (ub a y) - 2 * α - μ * gradE H W (ub a) y := by
+    have hg : ∀ y,
+        (0 : BddMeas) y = 2 * Jp' q (ub a y) - 2 * α - combinedGradE Hs W μ (ub a) y := by
       intro y
       rw [BddMeas.zero_apply]
       have := hELa y
       linarith
-    have hFd := hasFDerivAt_rowFunctionalE (H := H) (W := W) (α := α) (μ := μ) hq0 hq1
+    have hFd := hasFDerivAt_rowFunctionalE (Hs := Hs) (W := W) (α := α) (μ := μ) hq0 hq1
       (show (0:ℝ) < lo - ρ₀ by linarith) (show hi + ρ₀ < 1 by linarith) (hmemb a ha) hg
     have hzeroCLM : BddMeas.integ.comp (BddMeas.mulLeftCLM (0 : BddMeas)) = 0 := by
       refine ContinuousLinearMap.ext fun k => ?_
@@ -368,16 +376,16 @@ theorem exists_interval_of_accPt
     rw [hzeroCLM] at hFd
     have hcomp := hFd.comp_hasDerivAt a hdiff
     exact hcomp
-  have hconst : ∀ a, |a - a₀| < ε → rowFunctionalE H W q α μ (ub a) = cval := by
+  have hconst : ∀ a, |a - a₀| < ε → rowFunctionalE Hs W q α μ (ub a) = cval := by
     intro a ha
     have hmemball : a ∈ Metric.ball a₀ ε := by rwa [Metric.mem_ball, Real.dist_eq]
-    have hdiffOn : DifferentiableOn ℝ (fun a => rowFunctionalE H W q α μ (ub a))
+    have hdiffOn : DifferentiableOn ℝ (fun a => rowFunctionalE Hs W q α μ (ub a))
         (Metric.ball a₀ ε) := by
       intro x hx
       have hx' : |x - a₀| < ε := by rwa [Metric.mem_ball, Real.dist_eq] at hx
       exact ((hderiv x hx').differentiableAt).differentiableWithinAt
     have hfd0 : ∀ x ∈ Metric.ball a₀ ε,
-        fderivWithin ℝ (fun a => rowFunctionalE H W q α μ (ub a)) (Metric.ball a₀ ε) x = 0 := by
+        fderivWithin ℝ (fun a => rowFunctionalE Hs W q α μ (ub a)) (Metric.ball a₀ ε) x = 0 := by
       intro x hx
       have hx' : |x - a₀| < ε := by rwa [Metric.mem_ball, Real.dist_eq] at hx
       rw [fderivWithin_of_isOpen Metric.isOpen_ball hx, (hderiv x hx').hasFDerivAt.fderiv]

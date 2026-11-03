@@ -4,7 +4,8 @@ import UpperTailMultipodality.Preliminaries.Graphons.HomDensity
 /-!
 # Attainment of the upper-tail infimum (the direct method)
 
-The infimum `Φ_H(p,r) = inf { I_p(W) : t(H,W) ≥ r^m }` of `eq:graphon-variational-problem` is
+The infimum `Φ_H(p,r) = inf { I_p(W) : t(H,W) ≥ r^m }` of `eq:joint-variational-problem` with
+`s = 1` is
 attained.  This is the classical direct method, derived from three of the graph-limit facts
 assumed in `Preliminaries/Graphons/CutContinuity.lean`:
 
@@ -29,7 +30,7 @@ theorem phiVar_bddBelow {V : Type*} [Fintype V] [DecidableEq V] (H : SimpleGraph
   rintro y ⟨W', _, rfl⟩
   exact Ip_nonneg W' hp0 hp1
 
-/-- **`Φ_H(p,r)` is the infimum** of `eq:graphon-variational-problem`: for `0 < p < 1` and
+/-- **`Φ_H(p,r)` is the infimum** of `eq:joint-variational-problem` with `s = 1`: for `0 < p < 1` and
 `r ∈ [0,1]` the feasible set is nonempty (it contains `W ≡ r`), and the real `sInf` defining
 `phiVar` is the greatest lower bound of the feasible costs. -/
 theorem phiVar_isGLB {V : Type*} [Fintype V] [DecidableEq V] (H : SimpleGraph V)

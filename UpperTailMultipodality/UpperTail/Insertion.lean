@@ -3,7 +3,7 @@ import UpperTailMultipodality.Insertion.FirstOrder
 import UpperTailMultipodality.Insertion.Rows
 
 /-!
-# The insertion inequality for the upper-tail problem (`lem:upper-tail-insertion`)
+# Global row minimality for the upper-tail problem (`lem:global-row-minimality`)
 -/
 
 namespace UpperTailMultipodality
@@ -12,7 +12,8 @@ open MeasureTheory Filter Topology Insertion
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **`lem:upper-tail-insertion`.**  With `μ` as in `lem:upper-tail-multiplier`, the row
+/-- **`lem:global-row-minimality`, for a single constraint.**  With `μ` as in
+`upper_tail_multiplier`, the row
 functional with `q = p` and `α = 0` satisfies `ℱ_W ≥ c_W := 2I_p(W) - μN t(H,W)` on all rows, and
 almost every row of `W` attains `c_W`. -/
 theorem upper_tail_insertion (H : SimpleGraph V) [DecidableRel H.Adj]

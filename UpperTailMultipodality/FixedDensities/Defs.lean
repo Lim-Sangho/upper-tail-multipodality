@@ -2,7 +2,7 @@ import UpperTailMultipodality.RowCriterion.Main
 import UpperTailMultipodality.Preliminaries.Perturbation
 
 /-!
-# Prescribed edge and subgraph densities: definitions (`sec:fixed-densities`)
+# Fixed edge and subgraph densities: definitions (`sec:fixed-densities`)
 
 * `tauMax H ε` — `τ_max(ε) = max { t(H,W) : e(W) = ε }`;
 * `IsEntropyMaximizer H ε τ W` — `W` maximizes `s` subject to `e(W) = ε` and `t(H,W) = τ`,
@@ -55,7 +55,7 @@ theorem isEntropyMaximizer_iff (H : SimpleGraph V) [DecidableRel H.Adj] {ε τ :
     rw [entropy_identity W hε0 hε1 he, entropy_identity W' hε0 hε1 he'] at h1
     linarith
 
-/-- The determinant of the matrix `eq:cq-matrix`. -/
+/-- The determinant of the matrix `Γ_W(U₁,U₂)` of `def:constraint-qualification`. -/
 noncomputable def cqDet (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon) (U₁ U₂ : Kernel) :
     ℝ :=
   (∫ z, U₁.toFun z.1 z.2 ∂gμ) * (∫ z, derivKernel H W z.1 z.2 * U₂.toFun z.1 z.2 ∂gμ)
@@ -66,7 +66,8 @@ def SupportedIn (W : Graphon) (η : ℝ) (U : Kernel) : Prop :=
   ∀ x y, U.toFun x y ≠ 0 → η < W.toFun x y ∧ W.toFun x y < 1 - η
 
 /-- **`def:constraint-qualification`.**  There are `η > 0` and bounded symmetric kernels
-`U₁, U₂` supported in `Ω_η(W)` for which the matrix `eq:cq-matrix` is invertible. -/
+`U₁, U₂` supported in `Ω_η(W)` for which the matrix `Γ_W(U₁,U₂)` of
+`def:constraint-qualification` is invertible. -/
 def ConstraintQualification (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon) : Prop :=
   ∃ η : ℝ, 0 < η ∧ ∃ U₁ U₂ : Kernel, SupportedIn W η U₁ ∧ SupportedIn W η U₂ ∧
     cqDet H W U₁ U₂ ≠ 0

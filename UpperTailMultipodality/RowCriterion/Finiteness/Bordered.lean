@@ -5,16 +5,17 @@ import UpperTailMultipodality.RowCriterion.Finiteness.KernelOperator
 # The bordered second variation is an isomorphism
 
 At a global minimizer `u` of `ℱ_W` satisfying `eq:row-euler`, the linearisation of the
-fixed-point form `u = σ(ℓ(q) + α + λ/2 + (μ/2)∇ℛ_W(u))` of the Euler–Lagrange equation,
+fixed-point form `u = σ(ℓ(q) + α + λ/2 + (1/2)∇𝒫_W(u))` of the Euler–Lagrange equation,
 bordered by the mean constraint,
 
-`(h, λ) ↦ (h - u(1-u)((μ/2) D∇ℛ_W(u)[h] + λ/2), ∫h)`,
+`(h, λ) ↦ (h - u(1-u)((1/2) D∇𝒫_W(u)[h] + λ/2), ∫h)`,
 
 is a bounded isomorphism of `BddMeas × ℝ` (`borderedEquiv`), which is `lem:bordered`.
 Injectivity is the strict positivity of the second variation on mean-zero functions
 (`secondVariation_pos`); surjectivity is the Fredholm alternative on `L²` for the compact
-operator `h ↦ u(1-u)(μ/2) D∇ℛ_W(u)[h]` (`isCompactOperator_kernelOp`), followed by the
-observation that a solution in `L²` is automatically bounded.
+operator `h ↦ u(1-u)(1/2) D∇𝒫_W(u)[h]`, a finite sum of the compact operators
+`isCompactOperator_kernelOp` attached to the single graphs, followed by the observation that a
+solution in `L²` is automatically bounded.
 -/
 
 namespace UpperTailMultipodality
@@ -22,7 +23,6 @@ namespace UpperTailMultipodality
 open MeasureTheory
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
-variable {H : SimpleGraph V} [DecidableRel H.Adj] {W : Graphon} {q α μ : ℝ}
 
 /-- The multiplier `u(1-u) = σ'(σ⁻¹(u))` of the linearised Euler–Lagrange equation. -/
 noncomputable def weight (u : BddMeas) : BddMeas := u * (1 - u)
@@ -47,53 +47,9 @@ theorem weight_mul_Jpp {c d : ℝ} (hc : 0 < c) (hd : d < 1) {u : BddMeas}
   have h := weight_pos hc hd hu y
   rw [weight_apply] at h
   rw [mul_one_div, div_self h.ne']
+section SingleGraph
 
-variable (H W μ) in
-/-- The bordered linearisation `(h, λ) ↦ (h - u(1-u)((μ/2)D∇ℛ_W(u)[h] + λ/2), ∫h)`. -/
-noncomputable def borderedOp (u : BddMeas) : (BddMeas × ℝ) →L[ℝ] (BddMeas × ℝ) :=
-  ((ContinuousLinearMap.fst ℝ BddMeas ℝ)
-      - (BddMeas.mulLeftCLM (weight u)).comp
-          (((μ / 2) • gradDeriv H W u).comp (ContinuousLinearMap.fst ℝ BddMeas ℝ)
-            + (ContinuousLinearMap.snd ℝ BddMeas ℝ).smulRight ((1 / 2 : ℝ) • (1 : BddMeas)))).prod
-    (BddMeas.integ.comp (ContinuousLinearMap.fst ℝ BddMeas ℝ))
-
-/-- The value of the bordered operator. -/
-theorem borderedOp_apply (u : BddMeas) (h : BddMeas) (lam : ℝ) :
-    borderedOp H W μ u (h, lam)
-      = (h - weight u * ((μ / 2) • gradDeriv H W u h + (lam / 2) • (1 : BddMeas)),
-        BddMeas.integ h) := by
-  rw [borderedOp]
-  simp only [ContinuousLinearMap.prod_apply, _root_.sub_apply, ContinuousLinearMap.coe_fst',
-    ContinuousLinearMap.comp_apply, BddMeas.mulLeftCLM_apply, _root_.add_apply,
-    _root_.smul_apply, ContinuousLinearMap.smulRight_apply, ContinuousLinearMap.coe_snd',
-    Prod.mk.injEq]
-  refine ⟨?_, trivial⟩
-  have hsm : lam • ((1 / 2 : ℝ) • (1 : BddMeas)) = (lam / 2) • (1 : BddMeas) := by
-    rw [smul_smul]
-    congr 1
-    ring
-  rw [hsm]
-
-/-- The pointwise Euler–Lagrange form of a bordered kernel element. -/
-theorem el_of_borderedOp_eq_zero {c d : ℝ} (hc : 0 < c) (hd : d < 1) {u : BddMeas}
-    (hu : ∀ y, u y ∈ Set.Icc c d) {h : BddMeas} {lam : ℝ}
-    (hker : borderedOp H W μ u (h, lam) = 0) (y : ℝ) :
-    2 * Jp'' (u y) * h y - μ * gradDeriv H W u h y = lam := by
-  have h1 : h - weight u * ((μ / 2) • gradDeriv H W u h + (lam / 2) • (1 : BddMeas)) = 0 := by
-    have := congrArg Prod.fst hker
-    rw [borderedOp_apply] at this
-    exact this
-  have h2 := congrArg (fun f : BddMeas => f y) h1
-  simp only [BddMeas.sub_apply, BddMeas.mul_apply, BddMeas.add_apply, BddMeas.smul_apply,
-    BddMeas.one_apply, BddMeas.zero_apply] at h2
-  have hs := weight_mul_Jpp hc hd hu y
-  have hspos := weight_pos hc hd hu y
-  have hval : h y = weight u y * (μ / 2 * gradDeriv H W u h y + lam / 2 * 1) := by linarith
-  rw [hval]
-  have : 2 * Jp'' (u y) * (weight u y * (μ / 2 * gradDeriv H W u h y + lam / 2 * 1))
-      = (weight u y * Jp'' (u y)) * (μ * gradDeriv H W u h y + lam) := by ring
-  rw [this, hs]
-  ring
+variable {H : SimpleGraph V} [DecidableRel H.Adj] {W : Graphon} {μ : ℝ}
 
 /-! ### The linearised operator as an integral operator -/
 
@@ -352,13 +308,138 @@ theorem coeFn_linOpL2 (u : BddMeas) (hu : UnitValued u) (f : Lp ℝ 2 unitμ) :
   exact coeFn_kernelOp _ _ _ _ f
 
 
+end SingleGraph
+
+/-! ### The bordered operator of a family -/
+
+section Family
+
+variable {ι : Type*} [Fintype ι] {Hs : ι → SimpleGraph V} [∀ j, DecidableRel (Hs j).Adj]
+variable {W : Graphon} {q α : ℝ} {μ : ι → ℝ}
+
+variable (Hs W μ) in
+/-- The bordered linearisation `(h, λ) ↦ (h - u(1-u)((1/2)D∇𝒫_W(u)[h] + λ/2), ∫h)`. -/
+noncomputable def borderedOp (u : BddMeas) : (BddMeas × ℝ) →L[ℝ] (BddMeas × ℝ) :=
+  ((ContinuousLinearMap.fst ℝ BddMeas ℝ)
+      - (BddMeas.mulLeftCLM (weight u)).comp
+          (((1 / 2 : ℝ) • combinedGradDeriv Hs W μ u).comp
+              (ContinuousLinearMap.fst ℝ BddMeas ℝ)
+            + (ContinuousLinearMap.snd ℝ BddMeas ℝ).smulRight ((1 / 2 : ℝ) • (1 : BddMeas)))).prod
+    (BddMeas.integ.comp (ContinuousLinearMap.fst ℝ BddMeas ℝ))
+
+/-- The value of the bordered operator. -/
+theorem borderedOp_apply (u : BddMeas) (h : BddMeas) (lam : ℝ) :
+    borderedOp Hs W μ u (h, lam)
+      = (h - weight u * ((1 / 2 : ℝ) • combinedGradDeriv Hs W μ u h + (lam / 2) • (1 : BddMeas)),
+        BddMeas.integ h) := by
+  rw [borderedOp]
+  simp only [ContinuousLinearMap.prod_apply, _root_.sub_apply, ContinuousLinearMap.coe_fst',
+    ContinuousLinearMap.comp_apply, BddMeas.mulLeftCLM_apply, _root_.add_apply,
+    _root_.smul_apply, ContinuousLinearMap.smulRight_apply, ContinuousLinearMap.coe_snd',
+    Prod.mk.injEq]
+  refine ⟨?_, trivial⟩
+  have hsm : lam • ((1 / 2 : ℝ) • (1 : BddMeas)) = (lam / 2) • (1 : BddMeas) := by
+    rw [smul_smul]
+    congr 1
+    ring
+  rw [hsm]
+
+/-- The pointwise Euler–Lagrange form of a bordered kernel element. -/
+theorem el_of_borderedOp_eq_zero {c d : ℝ} (hc : 0 < c) (hd : d < 1) {u : BddMeas}
+    (hu : ∀ y, u y ∈ Set.Icc c d) {h : BddMeas} {lam : ℝ}
+    (hker : borderedOp Hs W μ u (h, lam) = 0) (y : ℝ) :
+    2 * Jp'' (u y) * h y - combinedGradDeriv Hs W μ u h y = lam := by
+  have h1 : h - weight u * ((1 / 2 : ℝ) • combinedGradDeriv Hs W μ u h
+      + (lam / 2) • (1 : BddMeas)) = 0 := by
+    have := congrArg Prod.fst hker
+    rw [borderedOp_apply] at this
+    exact this
+  have h2 := congrArg (fun f : BddMeas => f y) h1
+  simp only [BddMeas.sub_apply, BddMeas.mul_apply, BddMeas.add_apply, BddMeas.smul_apply,
+    BddMeas.one_apply, BddMeas.zero_apply] at h2
+  have hs := weight_mul_Jpp hc hd hu y
+  have hspos := weight_pos hc hd hu y
+  have hval : h y
+      = weight u y * (1 / 2 * combinedGradDeriv Hs W μ u h y + lam / 2 * 1) := by linarith
+  rw [hval]
+  have : 2 * Jp'' (u y) * (weight u y * (1 / 2 * combinedGradDeriv Hs W μ u h y + lam / 2 * 1))
+      = (weight u y * Jp'' (u y)) * (combinedGradDeriv Hs W μ u h y + lam) := by ring
+  rw [this, hs]
+  ring
+
+/-! ### The linearised operator of a family -/
+
+variable (Hs W μ) in
+/-- The linearised operator `h ↦ u(1-u)(1/2)D∇𝒫_W(u)[h]`, acting on functions. -/
+noncomputable def combinedLinFun (u : BddMeas) (f : ℝ → ℝ) : ℝ → ℝ :=
+  fun y => ∑ j, linFun (Hs j) W (μ j) u f y
+
+/-- The linearised operator depends only on the almost everywhere class. -/
+theorem combinedLinFun_congr (u : BddMeas) {f g : ℝ → ℝ} (hfg : f =ᵐ[unitμ] g) :
+    combinedLinFun Hs W μ u f = combinedLinFun Hs W μ u g := by
+  funext y
+  exact Finset.sum_congr rfl fun _j _ => congrFun (linFun_congr u hfg) y
+
+/-- The linearised operator produces measurable functions. -/
+theorem measurable_combinedLinFun (u : BddMeas) {f : ℝ → ℝ} (hf : Measurable f) :
+    Measurable (combinedLinFun Hs W μ u f) :=
+  Finset.measurable_sum _ fun _j _ => measurable_linFun u hf
+
+/-- The linearised operator is bounded in terms of the `L¹` norm. -/
+theorem abs_combinedLinFun_le {u : BddMeas} (hu : UnitValued u) {f : ℝ → ℝ}
+    (hfm : Measurable f) (hf : Integrable f unitμ) (y : ℝ) :
+    |combinedLinFun Hs W μ u f y|
+      ≤ ∑ j, ∑ _v : V, ∑ _z₀ : Nbr (Hs j) _v, ∑ _i : Nbr (Hs j) _v,
+          |μ j| / 2 * ∫ t, |f t| ∂unitμ :=
+  (Finset.abs_sum_le_sum_abs _ _).trans
+    (Finset.sum_le_sum fun _j _ => abs_linFun_le hu hfm hf y)
+
+/-- The linearised operator on functions agrees with `combinedGradDeriv` on `BddMeas`. -/
+theorem combinedLinFun_coe {u : BddMeas} (hu : UnitValued u) (h : BddMeas) :
+    combinedLinFun Hs W μ u ⇑h
+      = ⇑(weight u * ((1 / 2 : ℝ) • combinedGradDeriv Hs W μ u h)) := by
+  funext y
+  have hj : ∀ j : ι, linFun (Hs j) W (μ j) u ⇑h y
+      = weight u y * (μ j / 2 * gradDeriv (Hs j) W u h y) := by
+    intro j
+    have hc := congrFun (linFun_coe hu h (H := Hs j) (W := W) (μ := μ j)) y
+    rw [hc]
+    show (weight u * ((μ j / 2) • gradDeriv (Hs j) W u h)) y = _
+    rw [BddMeas.mul_apply, BddMeas.smul_apply]
+  show ∑ j, linFun (Hs j) W (μ j) u ⇑h y = _
+  rw [Finset.sum_congr rfl fun j (_ : j ∈ Finset.univ) => hj j, BddMeas.mul_apply,
+    BddMeas.smul_apply, combinedGradDeriv, _root_.sum_apply, BddMeas.sum_apply, Finset.mul_sum,
+    Finset.mul_sum]
+  refine Finset.sum_congr rfl fun j _ => ?_
+  rw [_root_.smul_apply, BddMeas.smul_apply]
+  ring
+
+variable (Hs W μ) in
+/-- The linearised operator of the family on `L²`, a finite sum of compact operators. -/
+noncomputable def combinedLinOpL2 (u : BddMeas) (hu : UnitValued u) :
+    Lp ℝ 2 unitμ →L[ℝ] Lp ℝ 2 unitμ :=
+  ∑ j, linOpL2 (Hs j) W (μ j) u hu
+
+/-- The linearised operator of the family is compact on `L²`. -/
+theorem isCompactOperator_combinedLinOpL2 (u : BddMeas) (hu : UnitValued u) :
+    IsCompactOperator (combinedLinOpL2 Hs W μ u hu) := by
+  rw [combinedLinOpL2]
+  exact isCompactOperator_finsetSum _ _ fun j _ => isCompactOperator_linOpL2 u hu
+
+/-- The `L²` linearised operator of the family is computed by `combinedLinFun`. -/
+theorem coeFn_combinedLinOpL2 (u : BddMeas) (hu : UnitValued u) (f : Lp ℝ 2 unitμ) :
+    ⇑(combinedLinOpL2 Hs W μ u hu f) =ᵐ[unitμ] combinedLinFun Hs W μ u ⇑f := by
+  rw [combinedLinOpL2]
+  exact coeFn_sum_apply _ f (fun j => linFun (Hs j) W (μ j) u ⇑f)
+    fun j => coeFn_linOpL2 u hu f
+
 /-! ### Bijectivity -/
 
-variable (H W μ) in
+variable (Hs W μ) in
 /-- The compact part of the bordered operator, on `L² × ℝ`. -/
 noncomputable def compactPart (u : BddMeas) (hu : UnitValued u) :
     (Lp ℝ 2 unitμ × ℝ) →L[ℝ] (Lp ℝ 2 unitμ × ℝ) :=
-  (((linOpL2 H W μ u hu).comp (ContinuousLinearMap.fst ℝ (Lp ℝ 2 unitμ) ℝ))
+  (((combinedLinOpL2 Hs W μ u hu).comp (ContinuousLinearMap.fst ℝ (Lp ℝ 2 unitμ) ℝ))
       + (ContinuousLinearMap.snd ℝ (Lp ℝ 2 unitμ) ℝ).smulRight
           (toL2 ((1 / 2 : ℝ) • weight u))).prod
     (ContinuousLinearMap.snd ℝ (Lp ℝ 2 unitμ) ℝ
@@ -366,14 +447,14 @@ noncomputable def compactPart (u : BddMeas) (hu : UnitValued u) :
 
 /-- The value of the compact part of the bordered operator. -/
 theorem compactPart_apply (u : BddMeas) (hu : UnitValued u) (f : Lp ℝ 2 unitμ) (lam : ℝ) :
-    compactPart H W μ u hu (f, lam)
-      = (linOpL2 H W μ u hu f + lam • toL2 ((1 / 2 : ℝ) • weight u), lam - integL2 f) := rfl
+    compactPart Hs W μ u hu (f, lam)
+      = (combinedLinOpL2 Hs W μ u hu f + lam • toL2 ((1 / 2 : ℝ) • weight u), lam - integL2 f) := rfl
 
 /-- The bordered operator on `L²` as `1` minus a compact operator. -/
 theorem id_sub_compactPart_apply (u : BddMeas) (hu : UnitValued u) (f : Lp ℝ 2 unitμ)
     (lam : ℝ) :
-    ((1 : (Lp ℝ 2 unitμ × ℝ) →L[ℝ] (Lp ℝ 2 unitμ × ℝ)) - compactPart H W μ u hu) (f, lam)
-      = (f - linOpL2 H W μ u hu f - lam • toL2 ((1 / 2 : ℝ) • weight u), integL2 f) := by
+    ((1 : (Lp ℝ 2 unitμ × ℝ) →L[ℝ] (Lp ℝ 2 unitμ × ℝ)) - compactPart Hs W μ u hu) (f, lam)
+      = (f - combinedLinOpL2 Hs W μ u hu f - lam • toL2 ((1 / 2 : ℝ) • weight u), integL2 f) := by
   rw [_root_.sub_apply, compactPart_apply, one_apply_eq_self, Prod.mk_sub_mk]
   refine Prod.ext ?_ ?_
   · simp only
@@ -383,10 +464,10 @@ theorem id_sub_compactPart_apply (u : BddMeas) (hu : UnitValued u) (f : Lp ℝ 2
 
 /-- The compact part of the bordered operator is compact. -/
 theorem isCompactOperator_compactPart (u : BddMeas) (hu : UnitValued u) :
-    IsCompactOperator (compactPart H W μ u hu) := by
+    IsCompactOperator (compactPart Hs W μ u hu) := by
   have h1 : IsCompactOperator
-      (⇑((linOpL2 H W μ u hu).comp (ContinuousLinearMap.fst ℝ (Lp ℝ 2 unitμ) ℝ))) :=
-    (isCompactOperator_linOpL2 u hu).comp_clm _
+      (⇑((combinedLinOpL2 Hs W μ u hu).comp (ContinuousLinearMap.fst ℝ (Lp ℝ 2 unitμ) ℝ))) :=
+    (isCompactOperator_combinedLinOpL2 u hu).comp_clm _
   have hsnd : IsCompactOperator (⇑(ContinuousLinearMap.snd ℝ (Lp ℝ 2 unitμ) ℝ)) :=
     isCompactOperator_of_locallyCompactSpace_dom _
   have h2 : IsCompactOperator
@@ -398,13 +479,13 @@ theorem isCompactOperator_compactPart (u : BddMeas) (hu : UnitValued u) :
       (⇑(ContinuousLinearMap.snd ℝ (Lp ℝ 2 unitμ) ℝ
         - integL2.comp (ContinuousLinearMap.fst ℝ (Lp ℝ 2 unitμ) ℝ))) :=
     isCompactOperator_of_locallyCompactSpace_dom _
-  have hA : IsCompactOperator (⇑((linOpL2 H W μ u hu).comp
+  have hA : IsCompactOperator (⇑((combinedLinOpL2 Hs W μ u hu).comp
       (ContinuousLinearMap.fst ℝ (Lp ℝ 2 unitμ) ℝ)
       + (ContinuousLinearMap.snd ℝ (Lp ℝ 2 unitμ) ℝ).smulRight
         (toL2 ((1 / 2 : ℝ) • weight u)))) := h1.add h2
-  have hfun : ⇑(compactPart H W μ u hu)
+  have hfun : ⇑(compactPart Hs W μ u hu)
       = fun x => ContinuousLinearMap.inl ℝ (Lp ℝ 2 unitμ) ℝ
-          (((linOpL2 H W μ u hu).comp (ContinuousLinearMap.fst ℝ (Lp ℝ 2 unitμ) ℝ)
+          (((combinedLinOpL2 Hs W μ u hu).comp (ContinuousLinearMap.fst ℝ (Lp ℝ 2 unitμ) ℝ)
             + (ContinuousLinearMap.snd ℝ (Lp ℝ 2 unitμ) ℝ).smulRight
               (toL2 ((1 / 2 : ℝ) • weight u))) x)
         + ContinuousLinearMap.inr ℝ (Lp ℝ 2 unitμ) ℝ
@@ -418,34 +499,35 @@ theorem isCompactOperator_compactPart (u : BddMeas) (hu : UnitValued u) :
 /-- From a solution of the bordered equation in `L²` one obtains a bounded solution. -/
 theorem exists_bdd_solution {u : BddMeas} (hu : UnitValued u) (g : BddMeas)
     (f : Lp ℝ 2 unitμ) (lam : ℝ)
-    (hf : f - linOpL2 H W μ u hu f - lam • toL2 ((1 / 2 : ℝ) • weight u) = toL2 g) :
-    ∃ b : BddMeas, ⇑f =ᵐ[unitμ] ⇑b ∧ borderedOp H W μ u (b, lam) = (g, integL2 f) := by
+    (hf : f - combinedLinOpL2 Hs W μ u hu f - lam • toL2 ((1 / 2 : ℝ) • weight u) = toL2 g) :
+    ∃ b : BddMeas, ⇑f =ᵐ[unitμ] ⇑b ∧ borderedOp Hs W μ u (b, lam) = (g, integL2 f) := by
   classical
   have hfm : Measurable (⇑f) := (Lp.stronglyMeasurable f).measurable
   have hfi : Integrable (⇑f) unitμ := (Lp.memLp f).integrable (by norm_num)
   -- the bounded representative
-  set M : ℝ := ∑ v : V, ∑ _z₀ : Nbr H v, ∑ _i : Nbr H v, |μ| / 2 * ∫ t, |f t| ∂unitμ with hM
-  set F : ℝ → ℝ := fun y => g y + linFun H W μ u ⇑f y + lam / 2 * weight u y with hF
+  set M : ℝ := ∑ j, ∑ _v : V, ∑ _z₀ : Nbr (Hs j) _v, ∑ _i : Nbr (Hs j) _v,
+    |μ j| / 2 * ∫ t, |f t| ∂unitμ with hM
+  set F : ℝ → ℝ := fun y => g y + combinedLinFun Hs W μ u ⇑f y + lam / 2 * weight u y with hF
   have hFm : Measurable F := by
-    refine (g.measurable.add (measurable_linFun (H := H) (W := W) (μ := μ) u hfm)).add ?_
+    refine (g.measurable.add (measurable_combinedLinFun (Hs := Hs) (W := W) (μ := μ) u hfm)).add ?_
     exact ((weight u).measurable.const_mul _)
   have hFb : ∀ y, |F y| ≤ ‖g‖ + M + |lam| / 2 * ‖weight u‖ := by
     intro y
     refine (abs_add_le _ _).trans (add_le_add ((abs_add_le _ _).trans
       (add_le_add (g.abs_apply_le_norm y)
-        (abs_linFun_le (H := H) (W := W) (μ := μ) hu hfm hfi y))) ?_)
+        (abs_combinedLinFun_le (Hs := Hs) (W := W) (μ := μ) hu hfm hfi y))) ?_)
     rw [abs_mul, abs_div, abs_two]
     exact mul_le_mul_of_nonneg_left ((weight u).abs_apply_le_norm y) (by positivity)
   set b : BddMeas := BddMeas.mk F hFm _ hFb with hb
-  have hbval : ∀ y, b y = g y + linFun H W μ u ⇑f y + lam / 2 * weight u y := fun y => rfl
+  have hbval : ∀ y, b y = g y + combinedLinFun Hs W μ u ⇑f y + lam / 2 * weight u y := fun y => rfl
   -- `f` and `b` agree almost everywhere
-  have hfeq : f = linOpL2 H W μ u hu f + lam • toL2 ((1 / 2 : ℝ) • weight u) + toL2 g := by
+  have hfeq : f = combinedLinOpL2 Hs W μ u hu f + lam • toL2 ((1 / 2 : ℝ) • weight u) + toL2 g := by
     rw [← hf]; abel
   have hfb : ⇑f =ᵐ[unitμ] ⇑b := by
     conv_lhs => rw [hfeq]
-    have h1 := Lp.coeFn_add (linOpL2 H W μ u hu f + lam • toL2 ((1 / 2 : ℝ) • weight u)) (toL2 g)
-    have h2 := Lp.coeFn_add (linOpL2 H W μ u hu f) (lam • toL2 ((1 / 2 : ℝ) • weight u))
-    have h3 := coeFn_linOpL2 (H := H) (W := W) (μ := μ) u hu f
+    have h1 := Lp.coeFn_add (combinedLinOpL2 Hs W μ u hu f + lam • toL2 ((1 / 2 : ℝ) • weight u)) (toL2 g)
+    have h2 := Lp.coeFn_add (combinedLinOpL2 Hs W μ u hu f) (lam • toL2 ((1 / 2 : ℝ) • weight u))
+    have h3 := coeFn_combinedLinOpL2 (Hs := Hs) (W := W) (μ := μ) u hu f
     have h4 := Lp.coeFn_smul lam (toL2 ((1 / 2 : ℝ) • weight u))
     have h5 := coeFn_toL2 ((1 / 2 : ℝ) • weight u)
     have h6 := coeFn_toL2 g
@@ -457,13 +539,13 @@ theorem exists_bdd_solution {u : BddMeas} (hu : UnitValued u) (g : BddMeas)
     ring
   refine ⟨b, hfb, ?_⟩
   -- the bordered equation
-  have hlin : linFun H W μ u ⇑f = ⇑(weight u * ((μ / 2) • gradDeriv H W u b)) := by
-    rw [linFun_congr (H := H) (W := W) (μ := μ) u hfb]
-    exact linFun_coe hu b
-  have hfirst : b - weight u * ((μ / 2) • gradDeriv H W u b + (lam / 2) • (1 : BddMeas)) = g := by
+  have hlin : combinedLinFun Hs W μ u ⇑f = ⇑(weight u * ((1 / 2 : ℝ) • combinedGradDeriv Hs W μ u b)) := by
+    rw [combinedLinFun_congr (Hs := Hs) (W := W) (μ := μ) u hfb]
+    exact combinedLinFun_coe hu b
+  have hfirst : b - weight u * ((1 / 2 : ℝ) • combinedGradDeriv Hs W μ u b + (lam / 2) • (1 : BddMeas)) = g := by
     ext y
     have hy := hbval y
-    have hy2 : linFun H W μ u ⇑f y = (weight u * ((μ / 2) • gradDeriv H W u b)) y := by
+    have hy2 : combinedLinFun Hs W μ u ⇑f y = (weight u * ((1 / 2 : ℝ) • combinedGradDeriv Hs W μ u b)) y := by
       rw [hlin]
     simp only [BddMeas.sub_apply, BddMeas.mul_apply, BddMeas.add_apply, BddMeas.smul_apply,
       BddMeas.one_apply]
@@ -477,14 +559,15 @@ theorem exists_bdd_solution {u : BddMeas} (hu : UnitValued u) (g : BddMeas)
 
 /-- **Injectivity of the bordered operator**: a kernel element is a mean-zero solution of the
 linearised Euler–Lagrange equation, which vanishes by `secondVariation_pos`. -/
-theorem borderedOp_injective (hΔ : ∃ v, 2 ≤ H.degree v) (hq0 : 0 < q) (hq1 : q < 1) (hμ : 0 < μ)
+theorem borderedOp_injective {j₀ : ι} (hμ : ∀ j, 0 ≤ μ j) (hμ₀ : 0 < μ j₀)
+    (hΔ : ∃ v, 2 ≤ (Hs j₀).degree v) (hq0 : 0 < q) (hq1 : q < 1)
     {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω ≤ 1) (hWω : ∀ᵐ z ∂gμ, ω ≤ W.toFun z.1 z.2)
     {c d : ℝ} (hc : 0 < c) (hd : d < 1) (hc1 : c ≤ 1) {u : BddMeas}
     (hu : ∀ y, u y ∈ Set.Icc c d)
     (hmin : ∀ v : BddMeas, (∀ y, v y ∈ Set.Icc (0:ℝ) 1) →
-      rowFunctionalE H W q α μ u ≤ rowFunctionalE H W q α μ v)
-    (hEL : ∀ y, 2 * Jp' q (u y) - 2 * α = μ * gradE H W u y) :
-    Function.Injective (borderedOp H W μ u) := by
+      rowFunctionalE Hs W q α μ u ≤ rowFunctionalE Hs W q α μ v)
+    (hEL : ∀ y, 2 * Jp' q (u y) - 2 * α = combinedGradE Hs W μ u y) :
+    Function.Injective (borderedOp Hs W μ u) := by
   rw [injective_iff_map_eq_zero]
   rintro ⟨h, lam⟩ hker
   have hUV : UnitValued u := fun y => ⟨hc.le.trans (hu y).1, (hu y).2.trans hd.le⟩
@@ -495,21 +578,24 @@ theorem borderedOp_injective (hΔ : ∃ v, 2 ≤ H.degree v) (hq0 : 0 < q) (hq1 
     exact h2
   -- the second variation vanishes
   have hA : Integrable (fun y => Jp'' (u y) * h y ^ 2) unitμ := integrable_Jpp_mul_sq hc hd hu h
-  have hB : Integrable (fun y => (gradDeriv H W u h) y * h y) unitμ :=
-    (gradDeriv H W u h * h).integrable
-  have hQ : secondVariation H W μ u h = lam * BddMeas.integ h := by
+  have hB : Integrable (fun y => (combinedGradDeriv Hs W μ u h) y * h y) unitμ :=
+    (combinedGradDeriv Hs W μ u h * h).integrable
+  have hQ : secondVariation Hs W μ u h = lam * BddMeas.integ h := by
     rw [secondVariation]
-    have e0 : ∀ y, 2 * (Jp'' (u y) * h y ^ 2) - μ * ((gradDeriv H W u h) y * h y) = lam * h y := by
+    have e0 : ∀ y, 2 * (Jp'' (u y) * h y ^ 2) - (combinedGradDeriv Hs W μ u h) y * h y
+        = lam * h y := by
       intro y
       linear_combination (h y) * hELh y
-    have hcoe : BddMeas.integ (gradDeriv H W u h * h)
-        = ∫ y, (gradDeriv H W u h) y * h y ∂unitμ := rfl
+    have hcoe : BddMeas.integ (combinedGradDeriv Hs W μ u h * h)
+        = ∫ y, (combinedGradDeriv Hs W μ u h) y * h y ∂unitμ := rfl
     rw [hcoe]
-    have hsplit : ∫ y, (2 * (Jp'' (u y) * h y ^ 2) - μ * ((gradDeriv H W u h) y * h y)) ∂unitμ
+    have hsplit : ∫ y, (2 * (Jp'' (u y) * h y ^ 2)
+          - (combinedGradDeriv Hs W μ u h) y * h y) ∂unitμ
         = 2 * (∫ y, Jp'' (u y) * h y ^ 2 ∂unitμ)
-          - μ * ∫ y, (gradDeriv H W u h) y * h y ∂unitμ := by
-      rw [integral_sub (hA.const_mul 2) (hB.const_mul μ), integral_const_mul, integral_const_mul]
-    have hlam : ∫ y, (2 * (Jp'' (u y) * h y ^ 2) - μ * ((gradDeriv H W u h) y * h y)) ∂unitμ
+          - ∫ y, (combinedGradDeriv Hs W μ u h) y * h y ∂unitμ := by
+      rw [integral_sub (hA.const_mul 2) hB, integral_const_mul]
+    have hlam : ∫ y, (2 * (Jp'' (u y) * h y ^ 2)
+          - (combinedGradDeriv Hs W μ u h) y * h y) ∂unitμ
         = lam * BddMeas.integ h := by
       rw [integral_congr_ae (Filter.Eventually.of_forall e0), BddMeas.integ_apply,
         integral_const_mul]
@@ -517,7 +603,7 @@ theorem borderedOp_injective (hΔ : ∃ v, 2 ≤ H.degree v) (hq0 : 0 < q) (hq1 
   -- hence `h` vanishes almost everywhere
   have hzero : ⇑h =ᵐ[unitμ] 0 := by
     by_contra hne
-    have hpos := secondVariation_pos hΔ hq0 hq1 hμ hω0 hω1 hWω hc hd hc1 hu hmin hEL hmean hne
+    have hpos := secondVariation_pos hμ hμ₀ hΔ hq0 hq1 hω0 hω1 hWω hc hd hc1 hu hmin hEL hmean hne
     rw [hQ, hmean, mul_zero] at hpos
     exact lt_irrefl 0 hpos
   have hint0 : ∫ t, |h t| ∂unitμ = 0 := by
@@ -526,15 +612,15 @@ theorem borderedOp_injective (hΔ : ∃ v, 2 ≤ H.degree v) (hq0 : 0 < q) (hq1 
     filter_upwards [hzero] with t ht
     simp only [Pi.zero_apply] at ht
     simp [ht]
-  have hgrad : ∀ y, gradDeriv H W u h y = 0 := by
+  have hgrad : ∀ y, combinedGradDeriv Hs W μ u h y = 0 := by
     intro y
-    have h1 := abs_gradDeriv_apply_le (H := H) (W := W) hUV h y
+    have h1 := abs_combinedGradDeriv_apply_le (Hs := Hs) (W := W) hμ hUV h y
     rw [hint0, mul_zero] at h1
     exact abs_eq_zero.mp (le_antisymm h1 (abs_nonneg _))
   have hy : ∀ y, 2 * Jp'' (u y) * h y = lam := by
     intro y
     have := hELh y
-    rw [hgrad y, mul_zero, sub_zero] at this
+    rw [hgrad y, sub_zero] at this
     exact this
   have hlam0 : lam = 0 := by
     have hint : ∫ y, (2 * Jp'' (u y) * h y) ∂unitμ = ∫ _y : ℝ, lam ∂unitμ :=
@@ -560,23 +646,24 @@ theorem borderedOp_injective (hΔ : ∃ v, 2 ≤ H.degree v) (hq0 : 0 < q) (hq1 
   exact ⟨hh, hlam0⟩
 
 /-- **Surjectivity of the bordered operator**, from the Fredholm alternative on `L²`. -/
-theorem borderedOp_surjective (hΔ : ∃ v, 2 ≤ H.degree v) (hq0 : 0 < q) (hq1 : q < 1) (hμ : 0 < μ)
+theorem borderedOp_surjective {j₀ : ι} (hμ : ∀ j, 0 ≤ μ j) (hμ₀ : 0 < μ j₀)
+    (hΔ : ∃ v, 2 ≤ (Hs j₀).degree v) (hq0 : 0 < q) (hq1 : q < 1)
     {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω ≤ 1) (hWω : ∀ᵐ z ∂gμ, ω ≤ W.toFun z.1 z.2)
     {c d : ℝ} (hc : 0 < c) (hd : d < 1) (hc1 : c ≤ 1) {u : BddMeas}
     (hu : ∀ y, u y ∈ Set.Icc c d)
     (hmin : ∀ v : BddMeas, (∀ y, v y ∈ Set.Icc (0:ℝ) 1) →
-      rowFunctionalE H W q α μ u ≤ rowFunctionalE H W q α μ v)
-    (hEL : ∀ y, 2 * Jp' q (u y) - 2 * α = μ * gradE H W u y) :
-    Function.Surjective (borderedOp H W μ u) := by
+      rowFunctionalE Hs W q α μ u ≤ rowFunctionalE Hs W q α μ v)
+    (hEL : ∀ y, 2 * Jp' q (u y) - 2 * α = combinedGradE Hs W μ u y) :
+    Function.Surjective (borderedOp Hs W μ u) := by
   have hUV : UnitValued u := fun y => ⟨hc.le.trans (hu y).1, (hu y).2.trans hd.le⟩
-  have hinj := borderedOp_injective hΔ hq0 hq1 hμ hω0 hω1 hWω hc hd hc1 hu hmin hEL
+  have hinj := borderedOp_injective hμ hμ₀ hΔ hq0 hq1 hω0 hω1 hWω hc hd hc1 hu hmin hEL
   -- the `L²` operator `1 - compactPart` is injective
   have hinjL2 : Function.Injective
-      ((1 : (Lp ℝ 2 unitμ × ℝ) →L[ℝ] (Lp ℝ 2 unitμ × ℝ)) - compactPart H W μ u hUV) := by
+      ((1 : (Lp ℝ 2 unitμ × ℝ) →L[ℝ] (Lp ℝ 2 unitμ × ℝ)) - compactPart Hs W μ u hUV) := by
     rw [injective_iff_map_eq_zero]
     rintro ⟨f, lam⟩ hf
     rw [id_sub_compactPart_apply] at hf
-    have hf1 : f - linOpL2 H W μ u hUV f - lam • toL2 ((1 / 2 : ℝ) • weight u) = toL2 0 := by
+    have hf1 : f - combinedLinOpL2 Hs W μ u hUV f - lam • toL2 ((1 / 2 : ℝ) • weight u) = toL2 0 := by
       have := congrArg Prod.fst hf
       simp only at this
       rw [this]
@@ -600,19 +687,19 @@ theorem borderedOp_surjective (hΔ : ∃ v, 2 ≤ H.degree v) (hq0 : 0 < q) (hq1
     rw [Prod.mk_eq_zero]
     exact ⟨hfz, hlam⟩
   -- the Fredholm alternative
-  have hcompact := isCompactOperator_compactPart (H := H) (W := W) (μ := μ) u hUV
+  have hcompact := isCompactOperator_compactPart (Hs := Hs) (W := W) (μ := μ) u hUV
   have hfred := hcompact.hasEigenvalue_or_mem_resolventSet (μ := (1:ℝ)) one_ne_zero
   have hunit : IsUnit ((1 : (Lp ℝ 2 unitμ × ℝ) →L[ℝ] (Lp ℝ 2 unitμ × ℝ))
-      - compactPart H W μ u hUV) := by
+      - compactPart Hs W μ u hUV) := by
     rcases hfred with heig | hres
     · exfalso
       obtain ⟨x, hx⟩ := heig.exists_hasEigenvector
       have hx0 : x ≠ 0 := hx.2
-      have hxe : compactPart H W μ u hUV x = x := by
+      have hxe : compactPart Hs W μ u hUV x = x := by
         have := Module.End.mem_eigenspace_iff.mp hx.1
         simpa using this
       have hx1 : ((1 : (Lp ℝ 2 unitμ × ℝ) →L[ℝ] (Lp ℝ 2 unitμ × ℝ))
-          - compactPart H W μ u hUV) x = 0 := by
+          - compactPart Hs W μ u hUV) x = 0 := by
         rw [_root_.sub_apply, one_apply_eq_self, hxe, sub_self]
       exact hx0 (hinjL2 (by rw [hx1, map_zero]))
     · rw [spectrum.mem_resolventSet_iff] at hres
@@ -621,39 +708,41 @@ theorem borderedOp_surjective (hΔ : ∃ v, 2 ≤ H.degree v) (hq0 : 0 < q) (hq1
   rintro ⟨g, β⟩
   obtain ⟨⟨f, lam⟩, hflam⟩ := hbij.2 (toL2 g, β)
   rw [id_sub_compactPart_apply] at hflam
-  have hf1 : f - linOpL2 H W μ u hUV f - lam • toL2 ((1 / 2 : ℝ) • weight u) = toL2 g :=
+  have hf1 : f - combinedLinOpL2 Hs W μ u hUV f - lam • toL2 ((1 / 2 : ℝ) • weight u) = toL2 g :=
     congrArg Prod.fst hflam
   have hf2 : integL2 f = β := congrArg Prod.snd hflam
   obtain ⟨b, -, hb2⟩ := exists_bdd_solution hUV g f lam hf1
   exact ⟨(b, lam), by rw [hb2, hf2]⟩
 
-variable (H W μ) in
+variable (Hs W μ) in
 /-- **`lem:bordered`**: the bordered second variation is a bounded isomorphism of
 `BddMeas × ℝ`. -/
-noncomputable def borderedEquiv (hΔ : ∃ v, 2 ≤ H.degree v) (hq0 : 0 < q) (hq1 : q < 1)
-    (hμ : 0 < μ) {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω ≤ 1) (hWω : ∀ᵐ z ∂gμ, ω ≤ W.toFun z.1 z.2)
+noncomputable def borderedEquiv {j₀ : ι} (hμ : ∀ j, 0 ≤ μ j) (hμ₀ : 0 < μ j₀)
+    (hΔ : ∃ v, 2 ≤ (Hs j₀).degree v) (hq0 : 0 < q) (hq1 : q < 1) {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω ≤ 1) (hWω : ∀ᵐ z ∂gμ, ω ≤ W.toFun z.1 z.2)
     {c d : ℝ} (hc : 0 < c) (hd : d < 1) (hc1 : c ≤ 1) {u : BddMeas}
     (hu : ∀ y, u y ∈ Set.Icc c d)
     (hmin : ∀ v : BddMeas, (∀ y, v y ∈ Set.Icc (0:ℝ) 1) →
-      rowFunctionalE H W q α μ u ≤ rowFunctionalE H W q α μ v)
-    (hEL : ∀ y, 2 * Jp' q (u y) - 2 * α = μ * gradE H W u y) :
+      rowFunctionalE Hs W q α μ u ≤ rowFunctionalE Hs W q α μ v)
+    (hEL : ∀ y, 2 * Jp' q (u y) - 2 * α = combinedGradE Hs W μ u y) :
     (BddMeas × ℝ) ≃L[ℝ] (BddMeas × ℝ) :=
-  ContinuousLinearEquiv.ofBijective (borderedOp H W μ u)
-    (LinearMap.ker_eq_bot.mpr (borderedOp_injective hΔ hq0 hq1 hμ hω0 hω1 hWω hc hd hc1 hu hmin
+  ContinuousLinearEquiv.ofBijective (borderedOp Hs W μ u)
+    (LinearMap.ker_eq_bot.mpr (borderedOp_injective hμ hμ₀ hΔ hq0 hq1 hω0 hω1 hWω hc hd hc1 hu hmin
       hEL))
-    (LinearMap.range_eq_top.mpr (borderedOp_surjective hΔ hq0 hq1 hμ hω0 hω1 hWω hc hd hc1 hu hmin
+    (LinearMap.range_eq_top.mpr (borderedOp_surjective hμ hμ₀ hΔ hq0 hq1 hω0 hω1 hWω hc hd hc1 hu hmin
       hEL))
 
 /-- The bordered isomorphism is the bordered operator. -/
-theorem coe_borderedEquiv (hΔ : ∃ v, 2 ≤ H.degree v) (hq0 : 0 < q) (hq1 : q < 1)
-    (hμ : 0 < μ) {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω ≤ 1) (hWω : ∀ᵐ z ∂gμ, ω ≤ W.toFun z.1 z.2)
+theorem coe_borderedEquiv {j₀ : ι} (hμ : ∀ j, 0 ≤ μ j) (hμ₀ : 0 < μ j₀)
+    (hΔ : ∃ v, 2 ≤ (Hs j₀).degree v) (hq0 : 0 < q) (hq1 : q < 1) {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω ≤ 1) (hWω : ∀ᵐ z ∂gμ, ω ≤ W.toFun z.1 z.2)
     {c d : ℝ} (hc : 0 < c) (hd : d < 1) (hc1 : c ≤ 1) {u : BddMeas}
     (hu : ∀ y, u y ∈ Set.Icc c d)
     (hmin : ∀ v : BddMeas, (∀ y, v y ∈ Set.Icc (0:ℝ) 1) →
-      rowFunctionalE H W q α μ u ≤ rowFunctionalE H W q α μ v)
-    (hEL : ∀ y, 2 * Jp' q (u y) - 2 * α = μ * gradE H W u y) :
-    ((borderedEquiv H W μ hΔ hq0 hq1 hμ hω0 hω1 hWω hc hd hc1 hu hmin hEL :
-      (BddMeas × ℝ) →L[ℝ] (BddMeas × ℝ))) = borderedOp H W μ u := rfl
+      rowFunctionalE Hs W q α μ u ≤ rowFunctionalE Hs W q α μ v)
+    (hEL : ∀ y, 2 * Jp' q (u y) - 2 * α = combinedGradE Hs W μ u y) :
+    ((borderedEquiv Hs W μ hμ hμ₀ hΔ hq0 hq1 hω0 hω1 hWω hc hd hc1 hu hmin hEL :
+      (BddMeas × ℝ) →L[ℝ] (BddMeas × ℝ))) = borderedOp Hs W μ u := rfl
 
+
+end Family
 
 end UpperTailMultipodality

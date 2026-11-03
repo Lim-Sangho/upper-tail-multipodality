@@ -5,7 +5,8 @@ import UpperTailMultipodality.Preliminaries.Graphons.Bipodal
 
 This file defines the constant graphon `W ≡ r`, the moments `∫∫ W^d`, the feasibility
 predicate `t(H,W) ≥ r^m` and the upper-tail variational value
-`Φ_H(p,r) = inf { I_p(W) : t(H,W) ≥ r^m }` of `eq:graphon-variational-problem`.
+`Φ_H(p,r) = inf { I_p(W) : t(H,W) ≥ r^m }`, the case `s = 1` of
+`eq:joint-variational-problem`.
 -/
 
 namespace UpperTailMultipodality

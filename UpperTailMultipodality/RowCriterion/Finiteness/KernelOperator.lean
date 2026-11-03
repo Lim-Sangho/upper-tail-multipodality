@@ -11,8 +11,9 @@ kernel `Φ` on `X × [0,1]`, the operator
 
 is bounded on `L²([0,1])` with `‖K‖ ≤ ‖Φ‖_{L²}`, and it is compact (`isCompactOperator_kernelOp`):
 it is a norm limit of the finite-rank operators attached to the finite sums of products supplied by
-`exists_isProdSimple_approx`.  This is the Hilbert–Schmidt compactness used in `lem:row-compact`
-and `lem:bordered`.
+`exists_isProdSimple_approx`.  This is the Hilbert–Schmidt compactness that the paper uses in
+`lem:row-compact`; here it is used for the surjectivity half of `lem:bordered`, while
+`lem:row-compact` is obtained from the mean parametrization instead (`Finiteness/Compact.lean`).
 -/
 
 namespace UpperTailMultipodality

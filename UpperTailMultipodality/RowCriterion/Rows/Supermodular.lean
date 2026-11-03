@@ -3,7 +3,7 @@ import UpperTailMultipodality.RowCriterion.Rows.Resampling
 /-!
 # Supermodularity of rooted densities
 
-The pointwise input to `lem:strict-supermodular`.  For nonnegative `a, b` indexed by a finite
+The pointwise input to the lattice inequality of `prop:row-ordering`.  For nonnegative `a, b` indexed by a finite
 set `S`, the product is supermodular,
 
 `∏ a + ∏ b ≤ ∏ (a ⊓ b) + ∏ (a ⊔ b)`,

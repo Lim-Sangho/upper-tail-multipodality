@@ -10,7 +10,7 @@ gradient `∇ℛ_W` (`gradE`) is a polynomial map `BddMeas → BddMeas`.  This f
 * `hasFDerivAt_gradE`, `analyticAt_gradE` — `∇ℛ_W` is analytic, with derivative `gradDeriv`;
 * `integ_gradDeriv_mul` — the second variation `∫ D∇ℛ_W(u)[a] b` as a sum of rooted forms, and
   its positivity (`integ_gradDeriv_mul_nonneg`, `integ_gradDeriv_mul_ge`), the source of the
-  strict inequalities of `lem:strict-supermodular` and `lem:coercive`;
+  strict inequalities of `prop:row-ordering` and `lem:row-lower-bound`;
 * `abs_gradE_sub_le` — the Lipschitz bound `‖∇ℛ_W(u) - ∇ℛ_W(u')‖_∞ ≤ C_H ‖u-u'‖₁`,
   `eq:gradient-lipschitz`.
 -/
@@ -76,7 +76,7 @@ variable {H W}
 theorem rootedE_eq (u : BddMeas) : rootedE H W u = totalRootedDensity H W u := by
   simp only [rootedE, totalRootedDensity, rootedForm_diag]
 
-/-- `gradE` is the gradient `∇ℛ_W`, `eq:rooted-gradient`. -/
+/-- `gradE` is the gradient `∇ℛ_W`, the sum of the kernels `eq:rooted-gradient-kernel`. -/
 theorem gradE_apply (u : BddMeas) (y : ℝ) : gradE H W u y = rootedGradient H W u y := by
   simp only [gradE, rootedGradient, BddMeas.sum_apply, gradForm_update_one]
   refine Finset.sum_congr rfl fun v _ => ?_
@@ -447,5 +447,157 @@ theorem abs_gradDeriv_apply_le {u : BddMeas} (hu : UnitValued u) (a : BddMeas) (
         Finset.sum_le_sum fun z₀ _ => Finset.sum_le_sum fun i _ => hterm z₀ i
     _ = (Fintype.card (Nbr H v) : ℝ) ^ 2 * ∫ t, |a t| ∂unitμ := by
         simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]; ring
+
+/-! ### Finite families -/
+
+section Family
+
+variable {ι : Type*} [Fintype ι]
+variable (Hs : ι → SimpleGraph V) [∀ j, DecidableRel (Hs j).Adj] (W : Graphon) (μ : ι → ℝ)
+
+/-- **The combined rooted density `𝒫_W = ∑_j μ_j ℛ_{j,W}` on `BddMeas`.** -/
+noncomputable def combinedRootedE (u : BddMeas) : ℝ := ∑ j, μ j * rootedE (Hs j) W u
+
+/-- **The gradient `∇𝒫_W` on `BddMeas`.** -/
+noncomputable def combinedGradE (u : BddMeas) : BddMeas := ∑ j, μ j • gradE (Hs j) W u
+
+/-- **The derivative of `∇𝒫_W` at `u`.** -/
+noncomputable def combinedGradDeriv (u : BddMeas) : BddMeas →L[ℝ] BddMeas :=
+  ∑ j, μ j • gradDeriv (Hs j) W u
+
+/-- The constant `∑_j μ_j C_{H_j}` of the Lipschitz bounds `eq:gradient-lipschitz`. -/
+noncomputable def combinedLipConst : ℝ := ∑ j, μ j * lipConst (Hs j)
+
+variable {Hs W μ}
+
+omit [DecidableEq V] in
+/-- The combined Lipschitz constant is nonnegative for nonnegative weights. -/
+theorem combinedLipConst_nonneg (hμ : ∀ j, 0 ≤ μ j) : 0 ≤ combinedLipConst Hs μ :=
+  Finset.sum_nonneg fun j _ => mul_nonneg (hμ j) lipConst_nonneg
+
+/-- `combinedRootedE` is the combined rooted density `𝒫_W`. -/
+theorem combinedRootedE_eq (u : BddMeas) :
+    combinedRootedE Hs W μ u = combinedRooted Hs W μ ⇑u := by
+  simp only [combinedRootedE, combinedRooted, rootedE_eq]
+
+/-- `combinedGradE` is the gradient `∇𝒫_W`. -/
+theorem combinedGradE_apply (u : BddMeas) (y : ℝ) :
+    combinedGradE Hs W μ u y = combinedRootedGradient Hs W μ ⇑u y := by
+  simp only [combinedGradE, combinedRootedGradient, BddMeas.sum_apply, BddMeas.smul_apply,
+    gradE_apply]
+
+/-- The value of the combined derivative on `a`, tested against `b`. -/
+theorem integ_combinedGradDeriv_mul (u a b : BddMeas) :
+    BddMeas.integ (combinedGradDeriv Hs W μ u a * b)
+      = ∑ j, μ j * BddMeas.integ (gradDeriv (Hs j) W u a * b) := by
+  have hval : combinedGradDeriv Hs W μ u a * b
+      = ∑ j, μ j • (gradDeriv (Hs j) W u a * b) := by
+    refine BddMeas.ext fun y => ?_
+    rw [BddMeas.mul_apply, combinedGradDeriv, _root_.sum_apply, BddMeas.sum_apply,
+      BddMeas.sum_apply, Finset.sum_mul]
+    exact Finset.sum_congr rfl fun j _ => by
+      simp only [_root_.smul_apply, BddMeas.smul_apply, BddMeas.mul_apply]
+      ring
+  rw [hval, map_sum]
+  exact Finset.sum_congr rfl fun j _ => by rw [map_smul, smul_eq_mul]
+
+/-- **The first variation of `𝒫_W`**: `D𝒫_W(u)[k] = ∫ ∇𝒫_W(u) k`. -/
+theorem hasFDerivAt_combinedRootedE (u : BddMeas) :
+    HasFDerivAt (combinedRootedE Hs W μ)
+      (BddMeas.integ.comp (BddMeas.mulLeftCLM (combinedGradE Hs W μ u))) u := by
+  have h : HasFDerivAt (combinedRootedE Hs W μ)
+      (∑ j, μ j • (BddMeas.integ.comp (BddMeas.mulLeftCLM (gradE (Hs j) W u)))) u := by
+    refine HasFDerivAt.fun_sum fun j _ => ?_
+    exact (hasFDerivAt_rootedE (H := Hs j) (W := W) u).const_smul (μ j)
+  refine h.congr_fderiv (ContinuousLinearMap.ext fun k => ?_)
+  rw [ContinuousLinearMap.comp_apply, BddMeas.mulLeftCLM_apply, _root_.sum_apply]
+  have hval : combinedGradE Hs W μ u * k = ∑ j, μ j • (gradE (Hs j) W u * k) := by
+    refine BddMeas.ext fun y => ?_
+    rw [BddMeas.mul_apply, combinedGradE, BddMeas.sum_apply, BddMeas.sum_apply, Finset.sum_mul]
+    exact Finset.sum_congr rfl fun j _ => by
+      rw [BddMeas.smul_apply, BddMeas.smul_apply, BddMeas.mul_apply, mul_assoc]
+  rw [hval, map_sum]
+  refine Finset.sum_congr rfl fun j _ => ?_
+  rw [map_smul, _root_.smul_apply, ContinuousLinearMap.comp_apply, BddMeas.mulLeftCLM_apply]
+
+/-- `∇𝒫_W` is differentiable with derivative `combinedGradDeriv`. -/
+theorem hasFDerivAt_combinedGradE (u : BddMeas) :
+    HasFDerivAt (combinedGradE Hs W μ) (combinedGradDeriv Hs W μ u) u := by
+  refine HasFDerivAt.fun_sum fun j _ => ?_
+  exact (hasFDerivAt_gradE (H := Hs j) (W := W) u).const_smul (μ j)
+
+/-- `∇𝒫_W` is analytic, being a polynomial map. -/
+theorem analyticAt_combinedGradE (u : BddMeas) : AnalyticAt ℝ (combinedGradE Hs W μ) u := by
+  refine Finset.analyticAt_fun_sum _ fun j _ => ?_
+  exact (analyticAt_gradE (H := Hs j) (W := W) u).const_smul (c := μ j)
+
+/-- The second variation of `𝒫_W` is nonnegative on nonnegative functions. -/
+theorem integ_combinedGradDeriv_mul_nonneg (hμ : ∀ j, 0 ≤ μ j) {u a b : BddMeas}
+    (hu : ∀ y, 0 ≤ u y) (ha : ∀ y, 0 ≤ a y) (hb : ∀ y, 0 ≤ b y) :
+    0 ≤ BddMeas.integ (combinedGradDeriv Hs W μ u a * b) := by
+  rw [integ_combinedGradDeriv_mul]
+  exact Finset.sum_nonneg fun j _ =>
+    mul_nonneg (hμ j) (integ_gradDeriv_mul_nonneg hu ha hb)
+
+/-- **Quantitative positivity of the mixed second variation of `𝒫_W`.**  Under
+`Δ(H_{j₀}) ≥ 2` at `j₀`, the lower bound `W ≥ ω` of `lem:upper-tail-basic`, and `c ≤ u ≤ 1`,
+the mixed second
+variation is at least `μ_{j₀} c^N ω^{m_{j₀}} ∫a ∫b` for `a, b ≥ 0`.  All the other summands are
+nonnegative and are discarded. -/
+theorem integ_combinedGradDeriv_mul_ge {j₀ : ι} (hμ : ∀ j, 0 ≤ μ j)
+    (hΔ : ∃ v, 2 ≤ (Hs j₀).degree v) {ω : ℝ} (hω0 : 0 ≤ ω) (hω1 : ω ≤ 1)
+    (hWω : ∀ᵐ z ∂gμ, ω ≤ W.toFun z.1 z.2) {c : ℝ} (hc0 : 0 ≤ c) (hc1 : c ≤ 1) {u a b : BddMeas}
+    (hu : ∀ y, c ≤ u y) (ha : ∀ y, 0 ≤ a y) (hb : ∀ y, 0 ≤ b y) :
+    μ j₀ * (c ^ Fintype.card V * ω ^ (Hs j₀).edgeFinset.card)
+        * BddMeas.integ a * BddMeas.integ b
+      ≤ BddMeas.integ (combinedGradDeriv Hs W μ u a * b) := by
+  have hu0 : ∀ y, 0 ≤ u y := fun y => hc0.trans (hu y)
+  have hnn : ∀ j : ι, 0 ≤ μ j * BddMeas.integ (gradDeriv (Hs j) W u a * b) := fun j =>
+    mul_nonneg (hμ j) (integ_gradDeriv_mul_nonneg hu0 ha hb)
+  have hkeep : μ j₀ * (c ^ Fintype.card V * ω ^ (Hs j₀).edgeFinset.card)
+      * BddMeas.integ a * BddMeas.integ b
+      ≤ μ j₀ * BddMeas.integ (gradDeriv (Hs j₀) W u a * b) := by
+    have h := integ_gradDeriv_mul_ge (H := Hs j₀) (W := W) hΔ hω0 hω1 hWω hc0 hc1 hu ha hb
+    have := mul_le_mul_of_nonneg_left h (hμ j₀)
+    calc μ j₀ * (c ^ Fintype.card V * ω ^ (Hs j₀).edgeFinset.card)
+          * BddMeas.integ a * BddMeas.integ b
+        = μ j₀ * (c ^ Fintype.card V * ω ^ (Hs j₀).edgeFinset.card
+            * BddMeas.integ a * BddMeas.integ b) := by ring
+      _ ≤ _ := this
+  rw [integ_combinedGradDeriv_mul]
+  refine hkeep.trans ?_
+  exact Finset.single_le_sum (f := fun j => μ j * BddMeas.integ (gradDeriv (Hs j) W u a * b))
+    (fun j _ => hnn j) (Finset.mem_univ j₀)
+
+/-- The combined gradient of a function with values in `[0,1]` is bounded by
+`∑_j μ_j C_{H_j}`. -/
+theorem combinedGradE_mem_Icc (hμ : ∀ j, 0 ≤ μ j) {u : BddMeas} (hu : UnitValued u) (y : ℝ) :
+    combinedGradE Hs W μ u y ∈ Set.Icc (0:ℝ) (combinedLipConst Hs μ) := by
+  simp only [combinedGradE, BddMeas.sum_apply, BddMeas.smul_apply, combinedLipConst]
+  refine ⟨Finset.sum_nonneg fun j _ => mul_nonneg (hμ j) (gradE_mem_Icc hu y).1, ?_⟩
+  exact Finset.sum_le_sum fun j _ =>
+    mul_le_mul_of_nonneg_left (gradE_mem_Icc hu y).2 (hμ j)
+
+/-- **`eq:gradient-lipschitz` for `𝒫_W`.** -/
+theorem abs_combinedGradE_sub_le (hμ : ∀ j, 0 ≤ μ j) {u u' : BddMeas} (hu : UnitValued u)
+    (hu' : UnitValued u') (y : ℝ) :
+    |combinedGradE Hs W μ u y - combinedGradE Hs W μ u' y|
+      ≤ combinedLipConst Hs μ * ∫ t, |u t - u' t| ∂unitμ := by
+  simp only [combinedGradE, BddMeas.sum_apply, BddMeas.smul_apply]
+  rw [← Finset.sum_sub_distrib, combinedLipConst, Finset.sum_mul]
+  refine (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum fun j _ => ?_)
+  rw [← mul_sub, abs_mul, abs_of_nonneg (hμ j), mul_assoc]
+  exact mul_le_mul_of_nonneg_left (abs_gradE_sub_le hu hu' y) (hμ j)
+
+/-- The derivative of the combined gradient is bounded from `L¹` to pointwise values. -/
+theorem abs_combinedGradDeriv_apply_le (hμ : ∀ j, 0 ≤ μ j) {u : BddMeas} (hu : UnitValued u)
+    (a : BddMeas) (y : ℝ) :
+    |combinedGradDeriv Hs W μ u a y| ≤ combinedLipConst Hs μ * ∫ t, |a t| ∂unitμ := by
+  rw [combinedGradDeriv, _root_.sum_apply, BddMeas.sum_apply, combinedLipConst, Finset.sum_mul]
+  refine (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum fun j _ => ?_)
+  rw [_root_.smul_apply, BddMeas.smul_apply, abs_mul, abs_of_nonneg (hμ j), mul_assoc]
+  exact mul_le_mul_of_nonneg_left (abs_gradDeriv_apply_le hu a y) (hμ j)
+
+end Family
 
 end UpperTailMultipodality

@@ -1,4 +1,4 @@
-import UpperTailMultipodality.FixedDensities.Main
+import UpperTailMultipodality.FixedDensities.Qualified
 
 /-!
 # Multipodality for almost every value of the subgraph density (`cor:almost-every-tau`)
@@ -43,7 +43,7 @@ theorem almost_every_tau (H : SimpleGraph V) [DecidableRel H.Adj] (hΔ : ∃ v, 
     have hev : ∀ᶠ τ' in 𝓝[<] τ,
         slope (fixedValue H ε) τ τ' < deriv (fixedValue H ε) τ + 1 :=
       hlt.eventually (eventually_lt_nhds (lt_add_one _))
-    have hfr := degenerate_slope H hΔ hε0 hε1 hτS.1 hτS.2 hWmax hWdeg
+    have hfr := degenerate_slope_frequently H hΔ hε0 hε1 hτS.1 hτS.2 hWmax hWdeg
       (deriv (fixedValue H ε) τ + 1)
     obtain ⟨τ', hτ'1, hτ'2⟩ := (hfr.and_eventually hev).exists
     rw [slope_def_field] at hτ'2
@@ -61,6 +61,6 @@ theorem almost_every_tau (H : SimpleGraph V) [DecidableRel H.Adj] (hΔ : ∃ v, 
   obtain ⟨W, hW2⟩ := not_forall.mp hne
   obtain ⟨hWmax, hWnot⟩ := Classical.not_imp.mp hW2
   refine ⟨hτS, W, hWmax, fun hcq => hWnot ?_⟩
-  exact fixed_densities H hΔ hε0 hε1 hτS.1 hτS.2 hWmax hcq
+  exact fixed_densities_of_cq H hΔ hε0 hε1 hτS.1 hτS.2 hWmax hcq
 
 end UpperTailMultipodality

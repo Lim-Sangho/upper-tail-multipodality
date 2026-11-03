@@ -1,0 +1,266 @@
+\section{Graphons, entropy, and large deviations}\label{sec:graphons-entropy}
+
+We use the cut topology for existence and conditional concentration,
+and norms of measurable kernels for the perturbation and limit
+arguments. We record the relevant continuity properties and entropy
+identities here.
+
+\subsection{Graphons and ordered blocks}\label{sec:graphons}
+
+All graphs are finite and simple.  Write $N:=|V(H)|$ and $m:=|E(H)|\ge1$,
+and discard isolated vertices of $H$, since they do not change $t(H,W)$.
+For $v\in V(H)$,
+we write $N_H(v)$ for the set of neighbors of $v$ and $d_v:=|N_H(v)|$ for its
+degree, and $\Delta(H)$ for the maximum degree.
+Thus $\Delta(H)=1$ exactly when $H$ is a perfect matching.
+For a graph $G$ with vertex set $\{1,\ldots,n\}$,
+its associated graphon is defined by
+\[
+  W_G(x,y):=
+  \begin{cases}
+    1,&\text{if }(\lceil nx\rceil,\lceil ny\rceil)\in E(G),\\
+    0,&\text{otherwise}.
+  \end{cases}
+\]
+This representation preserves homomorphism densities:
+$t(H,W_G)=t(H,G)$.
+
+We denote Lebesgue measure on $[0,1]$ and its product measures by $\nu$.
+Throughout the paper, equalities and inequalities between measurable
+functions hold almost everywhere.  The real Banach space
+$L^\infty_{\mathrm{sym}}([0,1]^2)$ consists of the essentially bounded
+symmetric measurable kernels, identified up to equality almost everywhere.
+The graphon space defined in \Cref{sec:main-results} is its subset
+\[
+  \W_0=\bigl\{W\in L^\infty_{\mathrm{sym}}([0,1]^2):0\le W\le1\bigr\}.
+\]
+For $F\in L^\infty_{\mathrm{sym}}([0,1]^2)$ and graphons $U,W$, define
+\[
+  \|F\|_\cut:=\sup_{S,T\subseteq[0,1]}
+       \left|\int_{S\times T}F(x,y)\dd x\dd y\right|,
+  \qquad
+  \delta_\cut(U,W):=\inf_\phi\|U-W^\phi\|_\cut,
+\]
+where $S,T$ are measurable and $\phi:[0,1]\to[0,1]$ ranges over
+measure-preserving bijections modulo null sets, and $W^\phi(x,y):=W(\phi x,\phi y)$.
+We call such maps \emph{relabelings}.
+The cut norm compares edge densities between measurable vertex sets,
+and the infimum removes the dependence on their labels. We call graphons
+equivalent when their cut distance is zero; the quotient is the metric
+space $\widetilde\W_0$.
+This identification is coarser than equality almost everywhere: relabeling
+can change a graphon as a measurable function without changing its class in
+$\widetilde\W_0$.  For a constant graphon, however,
+\[
+  \delta_\cut(W,p)=0\quad\Longleftrightarrow\quad W=p
+  \quad\text{almost everywhere}.
+\]
+The densities $e(W)$ and $t(H,W)$ and the entropy cost $I_p(W)$
+depend only on the cut-distance equivalence class, so we use the same
+notation for them on $\widetilde\W_0$. Kernel norms and perturbations
+are taken with vertex labels fixed.
+We use the following standard facts about the cut
+topology~\cite{LovaszGraphLimits,ChatterjeeVaradhanLDP}.
+
+\begin{lemma}[Compactness and continuity]\label{lem:graphon-compactness}
+The space $\widetilde\W_0$ is compact.  For every finite simple graph $H$
+and every $p\in(0,1)$, the functions $W\mapsto t(H,W)$ and $W\mapsto e(W)$
+are continuous on $\widetilde\W_0$, and $W\mapsto I_p(W)$ is lower
+semicontinuous.  In particular, $I_p$ attains its minimum on every
+nonempty closed subset of $\widetilde\W_0$.
+\end{lemma}
+
+For a graphon $W$, its \emph{row} at $x$ and its
+\emph{degree function} are
+\[
+  W_x(y):=W(x,y),\qquad
+  d_W(x):=\int_0^1W_x(y)\dd y.
+\]
+By Fubini's theorem, $W_x$ is measurable for almost every $x$, and $d_W$
+is measurable.  Two rows are regarded as equal if they agree almost
+everywhere.
+
+For a measurable row $u:[0,1]\to[0,1]$ and $p\in(0,1)$, we also write
+\[
+  I_p(u):=\int_0^1J_p\bigl(u(y)\bigr)\dd y
+\]
+for its entropy cost. With this notation, Fubini's theorem gives
+$I_p(W)=\int_0^1I_p(W_x)\dd x$.
+
+For a multipodal graphon, the block structure gives $W_x=b_{ij}$ on $A_j$
+for almost every $x\in A_i$.
+The blocks, also called \emph{podes}, are ordered when
+\begin{equation}\label{eq:ordered-blocks}
+  b_{ij}\le b_{i'j}\qquad\text{whenever }i\le i',\ \text{for every }j;
+\end{equation}
+by symmetry, $(b_{ij})$ is then nondecreasing in both indices.
+Equivalently, after discarding a null set of vertex labels, the distinct
+row types can be listed as $g_1\le\cdots\le g_M$.
+After merging identical rows, their means are strictly increasing, so
+these means distinguish the blocks.
+
+\begin{defn}[Ordered structure]\label{def:ordered-structure}
+A graphon $W$ has an \emph{ordered structure} if there is a
+measure-preserving relabeling $\phi:[0,1]\to[0,1]$ such that, after
+modification on a null set, $W^\phi$ is nondecreasing in both variables:
+\[
+  W^\phi(x,y)\le W^\phi(x',y')
+  \qquad\text{whenever }x\le x'\text{ and }y\le y'.
+\]
+\end{defn}
+
+For a multipodal graphon, this is equivalent to having ordered blocks:
+placing the blocks on consecutive intervals makes the graphon
+nondecreasing in both variables. In general, the definition allows infinitely
+many row types.
+
+\subsection{Entropy and continuity}\label{sec:relative-entropy}
+
+The Bernoulli relative entropy $J_p$ is nonnegative and vanishes only at
+$p$.  Thus $I_p(W)\ge0$, with equality exactly when $W=p$ almost everywhere.
+We write
+\[
+  \lo(z):=\log\frac z{1-z},
+  \qquad
+  \sigma(\xi):=\frac1{1+e^{-\xi}}
+\]
+for the log-odds function $\lo:(0,1)\to\RR$ and its inverse
+$\sigma:\RR\to(0,1)$.  For $0<z<1$,
+\begin{equation}\label{eq:entropy-derivatives}
+  J_p'(z)=\lo(z)-\lo(p),
+  \qquad
+  J_p''(z)=\frac1{z(1-z)}\ge4.
+\end{equation}
+Thus $J_p$ is strictly convex, decreases on $[0,p]$, and increases on
+$[p,1]$.  Although $J_p$ is continuous on $[0,1]$, its derivative satisfies
+\begin{equation}\label{eq:entropy-endpoint-limits}
+  \lim_{z\downarrow0}J_p'(z)=-\infty,
+  \qquad \lim_{z\uparrow1}J_p'(z)=+\infty.
+\end{equation}
+Moving values away from either endpoint can therefore give an
+arbitrarily large first-order entropy saving per unit change.
+This is the basis of the interiority arguments below.
+The inverse log-odds function satisfies
+\begin{equation}\label{eq:logistic-derivative}
+  0<\sigma'(\xi)=\sigma(\xi)\bigl(1-\sigma(\xi)\bigr)\le\frac14
+  \qquad(\xi\in\RR),
+\end{equation}
+so composition with $\sigma$ is Lipschitz in each $L^q([0,1])$ norm,
+$1\le q\le\infty$.
+
+Changing the reference probability changes $J_p$ by an affine function:
+for $p,q\in(0,1)$ and $z\in[0,1]$,
+\begin{equation}\label{eq:entropy-reference-change}
+  J_p(z)-J_q(z)
+  =\bigl(\lo(q)-\lo(p)\bigr)z+\log\frac{1-q}{1-p}.
+\end{equation}
+Consequently, at fixed edge density, the choice of reference probability
+does not change the minimizers. The definition of $S_0$ in
+\Cref{sec:intro-fixed} also gives
+\[
+  I_p(W)=-2s(W)-\log(1-p)-e(W)\lo(p).
+\]
+Taking $p=\eps$ and $e(W)=\eps$ yields
+\begin{equation}\label{eq:entropy-identity}
+  I_\eps(W)=2\bigl(S_0(\eps)-s(W)\bigr)\qquad\text{whenever }e(W)=\eps.
+\end{equation}
+Thus, among graphons with edge density $\eps$, minimizing $I_\eps$
+is equivalent to maximizing $s$.
+
+We will also compare graphons in $L^1([0,1]^2)$, keeping their vertex
+labels fixed.  For graphons $U,W$ and a graph $H$ with $m$ edges,
+\begin{equation}\label{eq:density-l1-continuity}
+  |t(H,U)-t(H,W)|\le m\|U-W\|_1.
+\end{equation}
+To see this, order the edges of $H$ and apply the product identity
+\begin{equation}\label{eq:product-difference}
+  \prod_{i=1}^m a_i-\prod_{i=1}^m b_i
+  =\sum_{i=1}^m(a_i-b_i)
+       \prod_{k<i}a_k\prod_{k>i}b_k.
+\end{equation}
+In the density integrals, take $a_i=U(x_v,x_w)$ and $b_i=W(x_v,x_w)$
+for the $i$th edge $vw$.  All other factors lie in $[0,1]$, so each
+summand contributes at most $\|U-W\|_1$ in absolute value.
+
+On $\W_0$ with the $L^1([0,1]^2)$ topology, relative entropy is continuous:
+\begin{equation}\label{eq:entropy-l1-continuity}
+  \|W_n-W\|_1\longrightarrow0
+  \quad\Longrightarrow\quad I_p(W_n)\longrightarrow I_p(W).
+\end{equation}
+For every $\eta>0$, uniform continuity of $J_p$ on $[0,1]$ gives
+$\delta>0$ such that $|J_p(a)-J_p(b)|\le\eta$ whenever $|a-b|\le\delta$.
+Splitting the integral according to this inequality yields
+\[
+  |I_p(W_n)-I_p(W)|
+  \le\eta+\frac{2\max_{z\in[0,1]}J_p(z)}{\delta}\|W_n-W\|_1.
+\]
+First letting $n\to\infty$ and then $\eta\downarrow0$
+proves~\eqref{eq:entropy-l1-continuity}.
+
+\subsection{Large deviations and conditioning}\label{sec:large-deviations}
+
+For fixed $p\in(0,1)$, the Chatterjee--Varadhan
+principle~\cite{ChatterjeeVaradhanLDP} is a large-deviation principle for
+$W_{G(n,p)}$ in $\widetilde\W_0$, with speed $\binom n2$ and rate function
+$I_p$.  For every open set $\mathcal O$ and closed set $\mathcal C$ in
+$\widetilde\W_0$, it gives
+\begin{align*}
+  \liminf_{n\to\infty}\frac1{\binom n2}
+    \log\mathbb P(W_{G(n,p)}\in\mathcal O)
+    &\ge-\inf_{W\in\mathcal O}I_p(W),\\
+  \limsup_{n\to\infty}\frac1{\binom n2}
+    \log\mathbb P(W_{G(n,p)}\in\mathcal C)
+    &\le-\inf_{W\in\mathcal C}I_p(W).
+\end{align*}
+For the joint upper-tail constraints, these bounds give the
+rate~\eqref{eq:joint-upper-tail-rate}.
+
+Conditional concentration is expressed in terms of the distance to the
+optimizer set: for nonempty $\mathcal K\subseteq\widetilde\W_0$, write
+\[
+  \delta_\cut(U,\mathcal K):=\inf_{W\in\mathcal K}\delta_\cut(U,W).
+\]
+
+Let $\mathcal K_{\mathbf H}(p,\mathbf r)$ be the set of minimizers
+of~\eqref{eq:joint-variational-problem}, viewed in $\widetilde\W_0$.
+For every $\eta>0$,
+\begin{equation*}
+  \mathbb P\!\left(
+    \delta_\cut\bigl(W_{G(n,p)},\mathcal K_{\mathbf H}(p,\mathbf r)\bigr)\ge\eta
+    \,\middle|\,
+    t(H_j,G(n,p))\ge r_j^{m_j},\, 1\le j\le s
+  \right)\rightarrow0
+  \qquad (n\to\infty).
+\end{equation*}
+Both this concentration statement and~\eqref{eq:joint-upper-tail-rate}
+follow because the open and closed joint constraint sets have the same
+infimum:
+replacing a feasible $W$ by $(1-\theta)W+\theta$, with $0<\theta<1$, makes
+all inequalities strict, while its cost tends to $I_p(W)$ as $\theta\downarrow0$.
+By \Cref{lem:graphon-compactness}, the minimum over feasible graphons
+outside any fixed neighborhood of the minimizer set is strictly larger.
+Applying the large-deviation upper bound to this restricted set and the
+lower bound to the conditioning event proves concentration; see
+also~\cite[Theorem~3.1 and its proof]{ChatterjeeVaradhanLDP}.
+
+For fixed densities, let $\mathcal K_H(\eps,\tau)$ be the set of maximizers
+of~\eqref{eq:entropy-maximization} in $\widetilde\W_0$.
+Choose $G_{n,\delta}$ uniformly among labeled graphs on $n$ vertices satisfying
+\[
+  |e(W_G)-\eps|<\delta,
+  \qquad |t(H,G)-\tau|<\delta.
+\]
+Then, for every $\eta>0$,
+\begin{equation*}
+  \lim_{\delta\downarrow0}\limsup_{n\to\infty}
+  \mathbb P\!\left(
+    \delta_\cut\bigl(W_{G_{n,\delta}},\mathcal K_H(\eps,\tau)\bigr)\ge\eta
+  \right)=0.
+\end{equation*}
+The uniform law here is that of $G(n,1/2)$ conditioned on the density
+window.  Since $I_{1/2}(W)=\log2-2s(W)$, its rate minimizers on the exact
+constraint set are precisely $\mathcal K_H(\eps,\tau)$, and the same
+compactness and conditioning argument applies.  The tolerance around the
+prescribed densities tends to zero after taking $n\to\infty$;
+see~\cite[Section~1]{DemboLubetzky2018}
+for the large-deviation formulation.

@@ -1,250 +1,580 @@
-\section{Prescribed edge and subgraph densities}\label{sec:fixed-densities}
+\section{Fixed densities}\label{sec:fixed-densities}
 
-In this section we prove Theorem~\ref{thm:fixed-densities} and
-Corollary~\ref{cor:almost-every-tau}.  Fix a graph $H$ with $\Delta(H)\ge2$
-and $\eps\in(0,1)$, and recall
-$\tau_{\max}(\eps)=\max\{t(H,W):e(W)=\eps\}$.  By~\eqref{eq:entropy-identity},
+Fix a graph $H$ with $\Delta(H)\ge2$ and $\eps\in(0,1)$, and recall
+$\tau_{\max}(\eps)=\max\{t(H,W):W\in\W_0,\ e(W)=\eps\}$.  By~\eqref{eq:entropy-identity},
 the maximizers of~\eqref{eq:entropy-maximization} are exactly the minimizers of
 \begin{equation}\label{eq:fixed-problem}
-  \Psi_\eps(\tau):=\min\bigl\{I_\eps(W):e(W)=\eps,\ t(H,W)=\tau\bigr\},
+  \Psi_\eps(\tau):=\min\bigl\{I_\eps(W):W\in\W_0,\ e(W)=\eps,\ t(H,W)=\tau\bigr\},
   \qquad
-  \eps^m<\tau<\tau_{\max}(\eps),
+  \eps^m<\tau<\tau_{\max}(\eps).
 \end{equation}
-and we work with this formulation.  The interval of values of $\tau$ is
-nonempty: the graphon $\mathbf 1_{[0,\sqrt\eps]^2}$ has edge density $\eps$ and
-$H$-density $\eps^{N/2}$, and $\eps^{N/2}>\eps^m$ because $2m\ge N+1$ when
-$\Delta(H)\ge2$.  Every value in the interval is attained along the segment
-$\eps+\theta(W_{\max}-\eps)$, $\theta\in[0,1]$, where $W_{\max}$ attains
-$\tau_{\max}(\eps)$, and minimizers exist by compactness.
+To see that $\tau_{\max}(\eps)>\eps^m$, consider the graphon
+$\mathbf 1_{[0,\sqrt\eps]^2}$. Its edge density is $\eps$, and its
+$H$-density is $\eps^{N/2}>\eps^m$, since $\Delta(H)\ge2$ implies
+$2m\ge N+1$.
+Next, we verify that the minimum in~\eqref{eq:fixed-problem} is attained.
+Choose a graphon $W_{\max}$ attaining $\tau_{\max}(\eps)$ and set
+\[
+  W_\theta:=(1-\theta)\eps+\theta W_{\max},\qquad 0\le\theta\le1.
+\]
+These graphons all have the prescribed edge density:
+\[
+  e(W_\theta)=(1-\theta)\eps+\theta e(W_{\max})=\eps.
+\]
+The function $\theta\mapsto t(H,W_\theta)$ is continuous, with
+\[
+  t(H,W_0)=\eps^m,\qquad t(H,W_1)=\tau_{\max}(\eps).
+\]
+The intermediate value theorem therefore gives a $\theta$ with
+$t(H,W_\theta)=\tau$, so the constraint set in~\eqref{eq:fixed-problem}
+is nonempty.
+By \Cref{lem:graphon-compactness}, this constraint set is compact in
+$\widetilde\W_0$, and $I_\eps$ is lower semicontinuous on it.
+Thus the minimum in~\eqref{eq:fixed-problem} is attained.
 
-\subsection{The constraint qualification}
+\subsection{Constraint qualification}\label{sec:constraint-qualification}
 
-Inserting a block of vertices changes both the edge density and the
-$H$-density, and both must be restored.  This requires two independent
-directions of perturbation.
+To compare a minimizer $W$ of \eqref{eq:fixed-problem}
+with other graphons satisfying the same
+constraints, we first perturb $W$ in a bounded symmetric direction $V$.
+This may change both prescribed densities, so we also perturb $W$ along
+two directions $U_1,U_2$ to restore them to $(\eps,\tau)$. The constraint
+qualification in the following definition
+requires the existence of directions whose independent
+first-order effects allow both densities to be restored.
+Write the density constraint vector as
+\[
+  \mathbf C(V):=\bigl(e(V),t(H,V)\bigr),
+  \qquad V\in L^\infty_{\mathrm{sym}}([0,1]^2).
+\]
 
 \begin{defn}[Constraint qualification]\label{def:constraint-qualification}
-Let $W$ be a graphon with $e(W)=\eps$ and $t(H,W)=\tau$.  For $\eta>0$, put
-$\Omega_\eta(W):=\{(x,y):\eta<W(x,y)<1-\eta\}$.  We say that $W$
-\emph{satisfies the constraint qualification} if there are $\eta>0$ and bounded
-symmetric functions $U_1,U_2$ supported in $\Omega_\eta(W)$ such that the matrix
-\begin{equation}\label{eq:cq-matrix}
+Let $W$ be a graphon with $e(W)=\eps$ and $t(H,W)=\tau$.  For $\gamma>0$, put
+\[
+  \Omega_\gamma(W):=\{(x,y)\in[0,1]^2:\gamma<W(x,y)<1-\gamma\}.
+\]
+We say that $W$
+\emph{satisfies the constraint qualification} if there are $\gamma>0$ and
+$U_1,U_2\in L^\infty_{\mathrm{sym}}([0,1]^2)$ supported in $\Omega_\gamma(W)$
+such that the matrix
+\begin{equation*}
   \Gamma_W(U_1,U_2):=
   \begin{pmatrix}
     \int U_1 & \int U_2\\[1mm]
-    \int\mathcal D_WU_1 & \int\mathcal D_WU_2
+    \int\mathcal D_{H,W}U_1 & \int\mathcal D_{H,W}U_2
   \end{pmatrix}
-\end{equation}
+\end{equation*}
 is invertible.  Otherwise we call $W$ \emph{degenerate}.
 \end{defn}
 
-The rows of $\Gamma_W(U_1,U_2)$ are the first variations of $e$ and
-$t(H,\cdot)$ at $W$ in the directions $U_1$ and $U_2$.  Thus the constraint
-qualification says that the derivative of $V\mapsto(e(V),t(H,V))$ at $W$ is
-surjective onto $\RR^2$, as required in Lemma~\ref{lem:lagrange}, even when
-restricted to bounded perturbations supported where $W$ is bounded away from
-$0$ and $1$.  The support condition ensures that small corrections along
-$U_1,U_2$ keep the graphon inside $[0,1]$.
-
-\subsection{Monotonicity and positive multipliers}
-
-\begin{lemma}[Monotonicity]\label{lem:fixed-monotone}
-The function $\tau\mapsto\Psi_\eps(\tau)$ is strictly increasing on
-$(\eps^m,\tau_{\max}(\eps))$.  Moreover, a minimizer of~\eqref{eq:fixed-problem}
-at $\tau$ also minimizes $I_\eps$ over all graphons $U$ with $e(U)=\eps$ and
-$t(H,U)\ge\tau$.
-\end{lemma}
-
-\begin{proof}
-Let $\eps^m<\tau_1<\tau_2<\tau_{\max}(\eps)$, and let $W_2$ be a minimizer at
-$\tau_2$.  The graphons $W_\theta:=\eps+\theta(W_2-\eps)$ have edge density
-$\eps$, and $\theta\mapsto t(H,W_\theta)$ is continuous with values $\eps^m$ and
-$\tau_2$ at $\theta=0,1$; hence $t(H,W_{\theta_0})=\tau_1$ for some
-$\theta_0\in(0,1)$.  By strict convexity of $J_\eps$ and $J_\eps(\eps)=0$,
-$\Psi_\eps(\tau_1)\le I_\eps(W_{\theta_0})<\theta_0I_\eps(W_2)\le\Psi_\eps(\tau_2)$.
-For the second claim, if $e(U)=\eps$ and $t(H,U)>\tau$, the same interpolation
-between $\eps$ and $U$ produces a graphon with $H$-density $\tau$ and cost
-strictly less than $I_\eps(U)$; hence $I_\eps(U)>\Psi_\eps(\tau)$.
-\end{proof}
-
-\begin{lemma}[Interiority]\label{lem:fixed-interior}
-Every minimizer $W$ of~\eqref{eq:fixed-problem} that satisfies the constraint
-qualification satisfies $\gamma\le W\le1-\gamma$ for some $\gamma>0$.
-\end{lemma}
-
-\begin{proof}
-Fix $\eta$, $U_1$, $U_2$ as in Definition~\ref{def:constraint-qualification}, and
-write $\mathbf C(V):=(e(V),t(H,V))$.  Suppose that $W$ is not essentially
-bounded away from $0$.  For large $\Lambda>0$ with $e^{-\Lambda}<\eta$, the symmetric set
-$E:=\{W<e^{-\Lambda}\}$ has positive measure and is disjoint from the supports of
-$U_1,U_2$.  Choose $(c_1,c_2)$ with
-$\Gamma_W(U_1,U_2)(c_1,c_2)^\top=-D\mathbf C(W)[\mathbf 1_E]$.  Since
-$0\le\mathcal D_W\le m$, we have $|c_1|+|c_2|\le C|E|$ with $C$ independent of
-$\Lambda$, and $Z:=\mathbf 1_E+c_1U_1+c_2U_2$ satisfies $D\mathbf C(W)[Z]=0$.  The map
-$(\theta,\xi_1,\xi_2)\mapsto\mathbf C(W+\theta Z+\xi_1U_1+\xi_2U_2)$ is
-polynomial with invertible derivative in $(\xi_1,\xi_2)$ at the origin, so the
-implicit function theorem gives $\xi_i(\theta)=O_\Lambda(\theta^2)$ with
-$\mathbf C(V_\theta)=\mathbf C(W)$ for
-$V_\theta:=W+\theta Z+\xi_1(\theta)U_1+\xi_2(\theta)U_2$.  For small $\theta>0$,
-$V_\theta$ is a graphon.  If $0\le z<e^{-\Lambda}$ and $0<\theta<e^{-\Lambda}$, then
-$J_\eps(z+\theta)-J_\eps(z)\le-\theta(\Lambda-C_\eps)$ for a constant $C_\eps$
-independent of $\Lambda$, while $J_\eps'$ is bounded on $[\eta/2,1-\eta/2]$.
-Therefore
+The columns of $\Gamma_W(U_1,U_2)$ record the first-order effects of the
+directions $U_1,U_2$:
+\begin{align*}
+  e(W+\xi_1U_1+\xi_2U_2)-e(W)
+    &=\xi_1\int U_1+\xi_2\int U_2,\\
+  t(H,W+\xi_1U_1+\xi_2U_2)-t(H,W)
+    &=\xi_1\int\mathcal D_{H,W}U_1
+      +\xi_2\int\mathcal D_{H,W}U_2+O(|\xi|^2).
+\end{align*}
+For the initial perturbation $\theta V$, the parameters $\xi_1,\xi_2$ must
+therefore solve
 \[
-  I_\eps(V_\theta)-I_\eps(W)\le-\theta(\Lambda-C_\eps)|E|+C'\theta(|c_1|+|c_2|)+O_\Lambda(\theta^2)
-  \le-\theta(\Lambda-C'')|E|+O_\Lambda(\theta^2),
+  \mathbf C(W+\theta V+\xi_1U_1+\xi_2U_2)=(\eps,\tau).
 \]
-which is negative for $\Lambda$ large and then $\theta>0$ small, contradicting
-minimality.  The case of values near $1$ is analogous, with $E:=\{W>1-e^{-\Lambda}\}$
-and $-\mathbf 1_E$ in place of $\mathbf1_E$.
-\end{proof}
+At $(\theta,\xi_1,\xi_2)=(0,0,0)$, this equation holds, and the derivative
+of its left side in $(\xi_1,\xi_2)$ is $\Gamma_W(U_1,U_2)$.
+Since this matrix is invertible and the densities are polynomial in
+these parameters, the implicit function theorem gives analytic functions
+$\xi_1(\theta),\xi_2(\theta)$ with $\xi_i(0)=0$ that satisfy this equation
+exactly. If $W+\theta V$ is a graphon, the support condition ensures that the
+resulting kernel is also a graphon for sufficiently small $\theta$, since
+$U_1$ and $U_2$ vanish where $W$ is close to $0$ or $1$.
+By minimality of $W$, this graphon must therefore have entropy
+cost at least $I_\eps(W)$.
 
-\begin{lemma}[Positive multiplier]\label{lem:fixed-multiplier}
-Let $W$ be a minimizer of~\eqref{eq:fixed-problem} that satisfies the
-constraint qualification.  There are $\alpha\in\RR$ and $\mu>0$ such that
-\begin{equation}\label{eq:fixed-el}
-  J_\eps'\bigl(W(x,y)\bigr)=\alpha+\mu\,\mathcal D_W(x,y)
-  \qquad\text{for almost every }(x,y).
-\end{equation}
+The constraint qualification holds exactly when the derivative kernel
+$\mathcal D_{H,W}$ is not essentially constant on some
+$\Omega_\gamma(W)$ of positive measure.
+If $\Omega_\gamma(W)$ has positive measure, take
+\[
+  U_1=\mathbf1_{\Omega_\gamma(W)},\qquad U_2=\mathcal D_{H,W}\mathbf1_{\Omega_\gamma(W)}.
+\]
+Then
+\[
+  \det\Gamma_W(U_1,U_2)
+  =\nu(\Omega_\gamma(W))\int_{\Omega_\gamma(W)}\mathcal D_{H,W}^2
+    -\left(\int_{\Omega_\gamma(W)}\mathcal D_{H,W}\right)^2,
+\]
+which is positive exactly when $\mathcal D_{H,W}$ is not essentially constant
+on $\Omega_\gamma(W)$. Conversely, if $\mathcal D_{H,W}=\kappa$ almost everywhere
+on this region, every bounded symmetric perturbation $V$ supported there
+satisfies
+\[
+  Dt(H,W)[V]=\int\mathcal D_{H,W}V=\kappa\int V=\kappa\,De(W)[V].
+\]
+In particular, preserving edge density also preserves $H$-density to first order,
+so perturbations along two directions $U_1,U_2$ supported in this region
+may not suffice to restore both densities.
+
+\subsection{Interiority}\label{sec:fixed-interiority}
+
+The following lemma proves interiority using a perturbation argument
+similar to that in \Cref{lem:upper-tail-basic}.
+
+\begin{lemma}\label{lem:fixed-interior}
+Every minimizer $W$ of~\eqref{eq:fixed-problem} that satisfies the constraint
+qualification satisfies $\gamma\le W\le1-\gamma$ almost everywhere
+for some $\gamma>0$.
 \end{lemma}
 
 \begin{proof}
-By Lemma~\ref{lem:fixed-interior}, $I_\eps$ is continuously differentiable on a
-small $L^\infty$-ball around $W$ consisting of graphons, and the constraint
-qualification says that $D\mathbf C(W)$ is surjective onto $\RR^2$.
-Lemma~\ref{lem:lagrange} gives $\alpha,\mu\in\RR$ with
-$DI_\eps(W)=\alpha\,De(W)+\mu\,Dt(H,W)$, and~\eqref{eq:fixed-el} follows as in
-the proof of Lemma~\ref{lem:upper-tail-multiplier}.  Since the rows of
-$\Gamma_W(U_1,U_2)$ are linearly independent, some linear combination $V$ of
-$U_1,U_2$ satisfies $\int V=0$ and $\int\mathcal D_WV>0$.  Then $e(W+\theta V)=\eps$
-and $t(H,W+\theta V)>\tau$ for small $\theta>0$, so
-Lemma~\ref{lem:fixed-monotone} gives $DI_\eps(W)[V]\ge0$, that is,
-$\mu\int\mathcal D_WV\ge0$ and $\mu\ge0$.  If $\mu=0$, then $J_\eps'(W)$ is
-constant, so $W$ is constant; the edge constraint forces $W\equiv\eps$, which
-contradicts $\tau>\eps^m$.
+Fix $\gamma_0$, $U_1$, $U_2$ as in \Cref{def:constraint-qualification}.
+Suppose that $W$ is not essentially bounded away from $0$.  Fix a large
+$\Lambda>0$ with $e^{-\Lambda}<\gamma_0$ and put
+\[
+  E:=\{W<e^{-\Lambda}\}.
+\]
+This set has positive measure and is disjoint from the supports of $U_1,U_2$.
+Increasing $W$ on $E$ lowers its entropy cost because $J_\eps'$ is large
+and negative there.  We compensate for the density changes on
+$\Omega_{\gamma_0}(W)$, where the entropy derivative is bounded.
+The construction above, with $V=\mathbf1_E$, gives analytic
+functions $\xi_i(\theta)$ with $\xi_i(0)=0$ such that
+\[
+  V_\theta:=W+\theta\mathbf1_E+\xi_1(\theta)U_1+\xi_2(\theta)U_2,
+  \qquad \mathbf C(V_\theta)=(\eps,\tau).
+\]
+Differentiating the constraints at zero gives the linear system
+\[
+  \begin{pmatrix}
+    \int U_1 & \int U_2\\[1mm]
+    \int\mathcal D_{H,W}U_1 & \int\mathcal D_{H,W}U_2
+  \end{pmatrix}
+  \begin{pmatrix}\xi_1'(0)\\\xi_2'(0)\end{pmatrix}
+  =-\begin{pmatrix}\nu(E)\\\int_E\mathcal D_{H,W}\end{pmatrix}.
+\]
+The coefficient matrix is $\Gamma_W(U_1,U_2)$, which is invertible by
+the constraint qualification.  Thus the system has the unique solution
+\[
+  \begin{pmatrix}\xi_1'(0)\\\xi_2'(0)\end{pmatrix}
+  =-\Gamma_W(U_1,U_2)^{-1}
+    \begin{pmatrix}\nu(E)\\\int_E\mathcal D_{H,W}\end{pmatrix}.
+\]
+Since $\Gamma_W(U_1,U_2)$ is independent of $\Lambda$, its inverse has
+finite operator norm independent of $\Lambda$.
+Using $0\le\mathcal D_{H,W}\le m$ in this formula gives
+\[
+  |\xi_1'(0)|+|\xi_2'(0)|
+  \le C\left(\nu(E)+\int_E\mathcal D_{H,W}\right)
+  \le C(1+m)\nu(E).
+\]
+Taylor expansion therefore gives, after enlarging $C$,
+\[
+  |\xi_1(\theta)|+|\xi_2(\theta)|
+  \le C\theta\nu(E)+O_\Lambda(\theta^2),
+\]
+where $C$ is independent of $\Lambda$.
+
+We now verify that $V_\theta$ takes values in $[0,1]$.
+Choose $\Lambda$ large enough that $2e^{-\Lambda}\le1/2$.
+Since $\xi_i(\theta)\to0$ as $\theta\to0$ and the $U_i$ are bounded,
+we can choose $0<\theta<e^{-\Lambda}$ small enough that
+\[
+  \left\|\sum_{i=1}^2\xi_i(\theta)U_i\right\|_\infty
+  \le\sum_{i=1}^2|\xi_i(\theta)|\,\|U_i\|_\infty
+  \le\frac{\gamma_0}{2}.
+\]
+On $E$, both $U_1$ and $U_2$ vanish, and $0\le W<e^{-\Lambda}$.
+Thus only the increase by $\theta$ remains:
+\[
+  0\le V_\theta=W+\theta<2e^{-\Lambda}\le\frac12.
+\]
+On $\Omega_{\gamma_0}(W)$, the term $\theta\mathbf1_E$ vanishes because
+this set is disjoint from $E$.  Here $\gamma_0<W<1-\gamma_0$, so the
+bound on $\sum_{i=1}^2\xi_i(\theta)U_i$ gives
+\[
+  \frac{\gamma_0}{2}\le W-\frac{\gamma_0}{2}
+  \le V_\theta\le W+\frac{\gamma_0}{2}\le1-\frac{\gamma_0}{2}.
+\]
+Outside $E\cup\Omega_{\gamma_0}(W)$, we have $V_\theta=W\in[0,1]$.
+Hence $V_\theta$ is a graphon, and the two
+density constraints hold exactly by construction.
+
+It remains to compare the costs.  We first estimate the saving on $E$,
+where $V_\theta=W+\theta$.  For $0\le z<e^{-\Lambda}$ and
+$z<q\le z+\theta$, we have
+\[
+  J_\eps'(q)=\log\frac q{1-q}-\lo(\eps)
+  \le-\Lambda+\log4-\lo(\eps)\le-\Lambda+C_\eps,
+\]
+where we may take $C_\eps:=\log4+|\lo(\eps)|$.
+Integrating over $[z,z+\theta]$ gives
+\[
+  J_\eps(z+\theta)-J_\eps(z)
+  =\int_z^{z+\theta}J_\eps'(q)\dd q
+  \le-\theta(\Lambda-C_\eps).
+\]
+At $z=0$, the same bound follows by continuity of $J_\eps$.
+Applying it pointwise on $E$ and integrating yields
+\[
+  \int_E\bigl(J_\eps(V_\theta)-J_\eps(W)\bigr)
+  \le-\theta(\Lambda-C_\eps)\nu(E).
+\]
+
+On $\Omega_{\gamma_0}(W)$, both $W$ and $V_\theta$ lie in
+$[\gamma_0/2,1-\gamma_0/2]$.  Let $C$ bound $|J_\eps'|$ on this interval.
+Since $\mathbf1_E=0$ here, the mean value theorem gives
+\[
+  |J_\eps(V_\theta)-J_\eps(W)|
+  \le C|V_\theta-W|
+  =C\left|\sum_{i=1}^2\xi_i(\theta)U_i\right|.
+\]
+Each $U_i$ vanishes outside $\Omega_{\gamma_0}(W)$, so
+$\int_{\Omega_{\gamma_0}(W)}|U_i|=\|U_i\|_1$.
+Integrating and applying the triangle inequality, followed by the bound
+on $|\xi_1(\theta)|+|\xi_2(\theta)|$, yields, after enlarging $C$,
+\begin{align*}
+  \left|\int_{\Omega_{\gamma_0}(W)}\bigl(J_\eps(V_\theta)-J_\eps(W)\bigr)\right|
+  &\le C\int_{\Omega_{\gamma_0}(W)}\left|\sum_{i=1}^2\xi_i(\theta)U_i\right|\\
+  &\le C\sum_{i=1}^2|\xi_i(\theta)|\,\|U_i\|_1\\
+  &\le C\theta\nu(E)+O_\Lambda(\theta^2).
+\end{align*}
+Since $V_\theta=W$ outside $E\cup\Omega_{\gamma_0}(W)$, combining the
+two contributions gives
+\begin{align*}
+  I_\eps(V_\theta)-I_\eps(W)
+  &=\int_E\bigl(J_\eps(V_\theta)-J_\eps(W)\bigr)
+    +\int_{\Omega_{\gamma_0}(W)}\bigl(J_\eps(V_\theta)-J_\eps(W)\bigr)\\
+  &\le-\theta(\Lambda-C_\eps)\nu(E)
+    +C\theta\nu(E)+O_\Lambda(\theta^2)\\
+  &=-\theta(\Lambda-C_\eps-C)\nu(E)+O_\Lambda(\theta^2).
+\end{align*}
+The constants $C_\eps$ and $C$ are independent of $\Lambda$.
+Choose $\Lambda>C_\eps+C$ large enough to satisfy the preceding conditions.
+By the initial assumption that $\nu(E)>0$, the right-hand side is negative for sufficiently small $\theta>0$.
+Thus $I_\eps(V_\theta)<I_\eps(W)$, contradicting minimality.
+
+To exclude values arbitrarily close to $1$, repeat the argument with
+$E:=\{W>1-e^{-\Lambda}\}$ and direction $-\mathbf1_E$.
+The derivatives $\xi_i'(0)$ change sign, but the same bounds on
+$|\xi_i(\theta)|$ and the entropy change over $\Omega_{\gamma_0}(W)$ apply.
+By~\eqref{eq:entropy-endpoint-limits},
+$J_\eps'(z)\to+\infty$ as $z\uparrow1$, so lowering $W$ on $E$ yields the same entropy saving
+estimate and hence the same contradiction.
+\end{proof}
+ 
+\subsection{Lagrange multipliers}\label{sec:fixed-multipliers}
+
+\begin{lemma}\label{lem:fixed-monotonicity}
+The value function $\Psi_\eps$ is strictly increasing on
+$(\eps^m,\tau_{\max}(\eps))$.
+More precisely, for every $\tau$ in this interval and every graphon $U$
+with $e(U)=\eps$ and $t(H,U)\ge\tau$,
+\[
+  I_\eps(U)\ge\Psi_\eps(\tau),
+\]
+with strict inequality if $t(H,U)>\tau$.
+\end{lemma}
+
+\begin{proof}
+Fix $\tau$ and $U$ as above. If $t(H,U)=\tau$, the comparison follows
+from the definition of $\Psi_\eps(\tau)$.
+If $t(H,U)>\tau$, the graphons $U_\theta:=\eps+\theta(U-\eps)$ have edge
+density $\eps$, and $\theta\mapsto t(H,U_\theta)$ is continuous with values
+$t(H,U_0)=\eps^m<\tau$ and $t(H,U_1)>\tau$.
+Thus $t(H,U_{\theta_0})=\tau$ for some $\theta_0\in(0,1)$.
+By strict convexity of $J_\eps$ and $J_\eps(\eps)=0$,
+\[
+  \Psi_\eps(\tau)\le I_\eps(U_{\theta_0})
+  <\theta_0I_\eps(U)\le I_\eps(U),
+\]
+which proves the strict inequality.
+
+To obtain strict monotonicity, take
+$\eps^m<\tau_1<\tau_2<\tau_{\max}(\eps)$ and let $U$ attain
+$\Psi_\eps(\tau_2)$. The comparison just proved gives
+\[
+  \Psi_\eps(\tau_1)<I_\eps(U)=\Psi_\eps(\tau_2).
+\]
 \end{proof}
 
-\subsection{Inserting a block of vertices}
+For a graphon $W$ with $\mathbf C(W)=(\eps,\tau)$ and a measurable
+row $u:[0,1]\to[0,1]$, write
+\[
+  a_e(u):=2\Bigl(\int_0^1u-\eps\Bigr), \qquad
+  a_H(u):=\mathcal R_{H,W}(u)-N\tau, \qquad
+  b_\eps(u):=2\bigl(I_\eps(u)-I_\eps(W)\bigr).
+\]
+These are the first-order changes in edge density, $H$-density, and
+entropy cost caused by inserting $u$, as in \eqref{eq:insertion-rates}.
 
-\begin{lemma}[Insertion inequality]\label{lem:fixed-insertion}
+\begin{lemma}[Lagrange multipliers]\label{lem:fixed-multiplier}
+Let $W$ be a minimizer of~\eqref{eq:fixed-problem} that satisfies the
+constraint qualification. There are multipliers $\alpha,\mu\in\RR$
+such that
+\begin{enumerate}[label=(\roman*)]
+  \item $J_\eps'(W(x,y))=\alpha+\mu\,\mathcal D_{H,W}(x,y) \quad\text{for almost every }(x,y)\in[0,1]^2$,
+  \item $b_\eps(u)-\alpha a_e(u)-\mu a_H(u)\ge0 \quad\text{for every measurable }u:[0,1]\to[0,1]$,
+  \item $\mu>0$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Fix $\gamma,U_1,U_2$ as in \Cref{def:constraint-qualification}.
+By \Cref{lem:fixed-interior}, $W$ is bounded away from $0$ and $1$, so
+$I_\eps$ is continuously differentiable on a small
+$L^\infty_{\mathrm{sym}}([0,1]^2)$-ball around $W$ consisting of graphons.
+Since $\Gamma_W(U_1,U_2)$ is invertible, there are unique real numbers
+$\alpha,\mu$ satisfying
+\[
+  (\alpha,\mu)\Gamma_W(U_1,U_2)
+  =\bigl(DI_\eps(W)[U_1],DI_\eps(W)[U_2]\bigr).
+\]
+These multipliers express the first-order entropy change along
+$U_1,U_2$ in terms of the corresponding density changes.
+
+For any $V\in L^\infty_{\mathrm{sym}}([0,1]^2)$, applying the implicit function
+theorem as in \Cref{sec:constraint-qualification} gives
+analytic functions $\xi_i(\theta)$ with $\xi_i(0)=0$ such that
+\[
+  V_\theta:=W+\theta V+\xi_1(\theta)U_1+\xi_2(\theta)U_2,
+  \qquad \mathbf C(V_\theta)=(\eps,\tau).
+\]
+Interiority ensures that $V_\theta$ is a graphon for all sufficiently
+small $\theta$ of either sign. Differentiating the constraints gives
+\[
+  \Gamma_W(U_1,U_2)
+  \begin{pmatrix}\xi_1'(0)\\\xi_2'(0)\end{pmatrix}
+  =-\begin{pmatrix}De(W)[V]\\Dt(H,W)[V]\end{pmatrix}.
+\]
+Combining the two identities involving $\Gamma_W(U_1,U_2)$ gives
+\begin{align*}
+  (\alpha,\mu) \Gamma_W(U_1,U_2)
+  \begin{pmatrix}\xi_1'(0)\\\xi_2'(0)\end{pmatrix}
+  &=\xi_1'(0)\,DI_\eps(W)[U_1]+\xi_2'(0)\,DI_\eps(W)[U_2]\\
+  &=-\alpha De(W)[V]-\mu Dt(H,W)[V].
+\end{align*}
+Since $I_\eps(V_\theta)$ attains a minimum at $\theta=0$, its derivative
+vanishes:
+\begin{align}
+  0&=\left.\frac{\dd}{\dd\theta}I_\eps(V_\theta)\right|_{\theta=0}\notag\\
+   &=DI_\eps(W)[V]+\sum_{i=1}^2\xi_i'(0)\,DI_\eps(W)[U_i]\notag\\
+   &=DI_\eps(W)[V]-\alpha\,De(W)[V]-\mu\,Dt(H,W)[V].
+   \label{eq:fixed-stationarity}
+\end{align}
+Thus, for every bounded symmetric $V$,
+\[
+  \int_{[0,1]^2}J_\eps'(W)V
+  -\alpha\int_{[0,1]^2}V
+  -\mu\int_{[0,1]^2}\mathcal D_{H,W}V
+  =0.
+\]
+Testing this identity against the bounded symmetric kernel
+$V=J_\eps'(W)-\alpha-\mu\mathcal D_{H,W}$ gives
+\[
+  \int_{[0,1]^2}\bigl|J_\eps'(W)-\alpha-\mu\mathcal D_{H,W}\bigr|^2=0,
+\]
+which proves part~\textit{(i)}.
+
+We next insert an arbitrary measurable row $u:[0,1]\to[0,1]$ and use the
+same directions $U_1,U_2$ to restore the densities.
+In the construction~\eqref{eq:vertex-insertion}, replace $p$ by $\eps$
+and the old graphon $W$ by $W+\xi_1U_1+\xi_2U_2$.
+Denote the result by $W_{\theta,\xi}$, where
+$\xi=(\xi_1,\xi_2)\in\RR^2$ varies near $0$ independently of the
+insertion mass $\theta$.
+At $\xi=0$, the edge density and the $H$-density satisfy
+\[
+  e(W_{\theta,0})=\eps+\theta a_e(u) - \theta^2 a_e(u),\qquad
+  t(H,W_{\theta,0})=\tau+\theta a_H(u)+O(\theta^2).
+\]
+Replacing $W$ by $W+\xi_1U_1+\xi_2U_2$ makes each coefficient polynomial
+in $\xi$. Thus both densities extend to polynomials in $(\theta,\xi)$,
+and their derivative in $\xi$ at the origin is
+\[
+  \left.\frac{\partial\mathbf C(W_{\theta,\xi})}{\partial(\xi_1,\xi_2)}
+  \right|_{(\theta,\xi)=(0,0)}
+  =
+  \begin{pmatrix}
+    \int U_1 & \int U_2\\
+    \int\mathcal D_{H,W}U_1 & \int\mathcal D_{H,W}U_2
+  \end{pmatrix}
+  =\Gamma_W(U_1,U_2).
+\]
+Applying the implicit function theorem to these polynomial extensions
+gives an analytic map $\theta\mapsto\xi(\theta)$ with
+$\xi(0)=0$ such that
+\[
+  W_\theta:=W_{\theta,\xi(\theta)},\qquad
+  \mathbf C(W_\theta)=(\eps,\tau).
+\]
+Differentiating the constraints at zero now gives
+\[
+  \Gamma_W(U_1,U_2)
+  \begin{pmatrix}\xi_1'(0)\\\xi_2'(0)\end{pmatrix}
+  =-\begin{pmatrix}a_e(u)\\a_H(u)\end{pmatrix}.
+\]
+Combining this system with the defining equation for $(\alpha,\mu)$ gives
+\begin{align*}
+  (\alpha,\mu)\Gamma_W(U_1,U_2)
+  \begin{pmatrix}\xi_1'(0)\\\xi_2'(0)\end{pmatrix}
+  &=\xi_1'(0)\,DI_\eps(W)[U_1]+\xi_2'(0)\,DI_\eps(W)[U_2] \\
+  &=-\alpha a_e(u)-\mu a_H(u).
+\end{align*}
+Thus $-\alpha a_e(u)-\mu a_H(u)$ is the first-order entropy change
+caused by perturbing the old graphon along $U_1,U_2$.
+For small $\theta>0$, $W_\theta$ is a graphon because $U_1,U_2$
+are supported where $\gamma<W<1-\gamma$.
+The contributions from the old graphon and the two mixed rectangles give
+\[
+  I_\eps(W_\theta)
+  =(1-\theta)^2I_\eps\bigl(W+\xi_1(\theta)U_1+\xi_2(\theta)U_2\bigr)
+  +2\theta(1-\theta)I_\eps(u).
+\]
+The right derivative combines the change $b_\eps(u)$ from inserting $u$
+with the change $-\alpha a_e(u)-\mu a_H(u)$ from perturbing the old graphon.
+Since $\theta\ge0$,
+minimality makes this derivative nonnegative:
+\begin{align*}
+  0\le\left.\frac{\dd}{\dd\theta}I_\eps(W_\theta)\right|_{\theta=0^+}
+  &=b_\eps(u)+\sum_{i=1}^2\xi_i'(0)\,DI_\eps(W)[U_i]\\
+  &=b_\eps(u)-\alpha a_e(u)-\mu a_H(u).
+\end{align*}
+This proves part~\textit{(ii)}.
+
+Finally, to prove part~\textit{(iii)}, let $V_\theta:=W+\theta V$,
+where $V:=(c_1U_1+c_2U_2)$ and $c_1,c_2\in\RR$ will be chosen below.
+Since $\Gamma_W(U_1,U_2)$ is invertible,
+we can choose $c_1,c_2$ to satisfy
+\[
+  \begin{pmatrix} \int V\\[1mm] \int\mathcal D_{H,W}V \end{pmatrix}
+  =\left.\frac{\dd}{\dd\theta} \binom{e(V_\theta)}{t(H,V_\theta)}\right|_{\theta=0}
+  =\Gamma_W(U_1,U_2)\binom{c_1}{c_2}=\binom{0}{1}.
+\]
+For this choice of $V$, we have
+\[
+  e(V_\theta)=\eps,
+  \qquad t(H,V_\theta)=\tau+\theta+O(\theta^2)>\tau
+\]
+for small $\theta>0$. The graphon comparison in
+\Cref{lem:fixed-monotonicity} gives
+\[
+  I_\eps(V_\theta)>\Psi_\eps(\tau)=I_\eps(W).
+\]
+The multiplier identity~\eqref{eq:fixed-stationarity} and the choice of $V$ give
+\[
+  DI_\eps(W)[V]=\alpha\,De(W)[V]+\mu\,Dt(H,W)[V]
+  =\alpha\cdot0+\mu\cdot1=\mu.
+\]
+Taylor expansion therefore yields
+\[
+  0\le I_\eps(V_\theta)-I_\eps(W)
+    =\theta DI_\eps(W)[V]+O(\theta^2)
+    =\theta\mu+O(\theta^2).
+\]
+Dividing by $\theta$ and letting $\theta\downarrow0$ proves $\mu\ge0$.
+If $\mu=0$, part~\textit{(i)} gives
+\[
+  J_\eps'(W)=\lo(W)-\lo(\eps)=\alpha
+  \quad\Longrightarrow\quad
+  W=\sigma\bigl(\lo(\eps)+\alpha\bigr)
+  \quad\text{almost everywhere}.
+\]
+Thus $W$ is constant almost everywhere.
+The edge constraint forces $W=\eps$, which contradicts
+$\tau>\eps^m$. Hence $\mu>0$, proving part~\textit{(iii)}.
+\end{proof}
+
+\subsection{Global row minimality and multipodality}\label{sec:fixed-row-minimality}
+
+For a minimizer $W$ of~\eqref{eq:fixed-problem} satisfying the constraint qualification, take
+$\alpha,\mu$ from \Cref{lem:fixed-multiplier}.
+The corresponding row functional for the problem with fixed densities is
+\begin{equation}\label{eq:fixed-row-functional}
+  \mathcal F_{W,\eps,\tau}(u):=b_\eps(u)-\alpha a_e(u)-\mu a_H(u)
+  =2\bigl(I_\eps(u)-I_\eps(W)\bigr)
+  -2\alpha\Bigl(\int_0^1u-\eps\Bigr)
+  -\mu\Bigl(\mathcal R_{H,W}(u)-N\tau\Bigr).
+\end{equation}
+In the proof of \Cref{lem:fixed-multiplier}, we inserted $u$ and perturbed
+the old graphon along $U_1,U_2$ to preserve both densities. Along that
+path, the entropy expansion is
+\[
+  I_\eps(W_{\theta,\xi(\theta)})-I_\eps(W)
+  =\theta\mathcal F_{W,\eps,\tau}(u)+o(\theta).
+\]
+A negative value of $\mathcal F_{W,\eps,\tau}(u)$ would therefore lower the
+entropy cost while preserving both prescribed densities.
+
+\begin{lemma}[Global row minimality]\label{lem:fixed-insertion}
 Let $W$ be a minimizer of~\eqref{eq:fixed-problem} that satisfies the
 constraint qualification, and let $\alpha,\mu$ be as in
-Lemma~\ref{lem:fixed-multiplier}.  Let $\mathcal F_W$ be the row
-functional~\eqref{eq:row-functional} with $q=\eps$.  Then
+\Cref{lem:fixed-multiplier}. Then $\mathcal F_{W,\eps,\tau}$
+in~\eqref{eq:fixed-row-functional} satisfies
 \[
-  \mathcal F_W(u)\ge c_W:=2I_\eps(W)-2\alpha\eps-\mu N\tau
+  \mathcal F_{W,\eps,\tau}(u)\ge0
   \qquad\text{for every measurable }u:[0,1]\to[0,1],
 \]
-and $\mathcal F_W(W_x)=c_W$ for almost every $x\in[0,1]$.
+and $\mathcal F_{W,\eps,\tau}(W_x)=0$ for almost every $x\in[0,1]$.
 \end{lemma}
 
 \begin{proof}
-Fix $u$, and insert a block of measure $\theta$ with row $u$ as in the proof of
-Lemma~\ref{lem:upper-tail-insertion}, with the value $\eps$ on the new block
-and with the old values replaced by $W+\xi_1U_1+\xi_2U_2$, where $U_1,U_2$ are
-as in Definition~\ref{def:constraint-qualification}.  Call the result
-$W_{\theta,\xi}$.  Its edge density and $H$-density are polynomials in
-$(\theta,\xi_1,\xi_2)$, with
+Part~\textit{(ii)} of \Cref{lem:fixed-multiplier} gives
+$\mathcal F_{W,\eps,\tau}(u)\ge0$ for every measurable $u:[0,1]\to[0,1]$.
+For existing rows, Fubini's theorem and~\eqref{eq:rooted-average} give
 \[
-  \partial_\theta e(W_{\theta,0})\big|_{\theta=0}=2\Bigl(\int_0^1u-\eps\Bigr),
-  \qquad
-  \partial_\theta t(H,W_{\theta,0})\big|_{\theta=0}=\mathcal R_W(u)-N\tau,
+  \int_0^1a_e(W_x)\dd x=0,\qquad
+  \int_0^1a_H(W_x)\dd x=0,\qquad
+  \int_0^1b_\eps(W_x)\dd x=0.
 \]
-and their derivative in $(\xi_1,\xi_2)$ at the origin is
-$\Gamma_W(U_1,U_2)$.  The implicit function theorem gives
-$\xi(\theta)$ with $\xi(0)=0$ such that $W_\theta:=W_{\theta,\xi(\theta)}$
-satisfies $e(W_\theta)=\eps$ and $t(H,W_\theta)=\tau$, and
+Consequently,
 \[
-  De(W)[\xi_1'(0)U_1+\xi_2'(0)U_2]=-2\Bigl(\int_0^1u-\eps\Bigr),
-  \qquad
-  Dt(H,W)[\xi_1'(0)U_1+\xi_2'(0)U_2]=-\bigl(\mathcal R_W(u)-N\tau\bigr).
+  \int_0^1\mathcal F_{W,\eps,\tau}(W_x)\dd x=0.
 \]
-For small $\theta>0$, $W_\theta$ is a graphon because the $U_i$ are supported
-where $\eta<W<1-\eta$.  As before,
-\[
-  I_\eps(W_\theta)=(1-\theta)^2\int J_\eps\bigl(W+\xi_1(\theta)U_1+\xi_2(\theta)U_2\bigr)
-  +2\theta(1-\theta)\int_0^1J_\eps(u)+\theta^2J_\eps(\eps),
-\]
-and using $DI_\eps(W)=\alpha\,De(W)+\mu\,Dt(H,W)$ we obtain
-\[
-  0\le\frac{\dd}{\dd\theta}\Big|_{\theta=0^+}I_\eps(W_\theta)
-  =2\int_0^1J_\eps(u)-2I_\eps(W)-2\alpha\Bigl(\int_0^1u-\eps\Bigr)
-  -\mu\bigl(\mathcal R_W(u)-N\tau\bigr)
-  =\mathcal F_W(u)-c_W.
-\]
-Finally, $\int_0^1\int_0^1J_\eps(W_x(y))\dd y\dd x=I_\eps(W)$,
-$\int_0^1\int_0^1W_x(y)\dd y\dd x=\eps$, and~\eqref{eq:rooted-average} give
-$\int_0^1\mathcal F_W(W_x)\dd x=c_W$, so equality holds for almost every $x$.
+Since $\mathcal F_{W,\eps,\tau}(W_x)\ge0$, its zero integral
+forces equality for almost every $x$.
 \end{proof}
 
-\begin{proof}[Proof of Theorem~\ref{thm:fixed-densities}]
-Let $W$ be a maximizer of~\eqref{eq:entropy-maximization} that satisfies the
-constraint qualification; equivalently, a minimizer of~\eqref{eq:fixed-problem}.
-Apply Theorem~\ref{thm:row-criterion} with $q=\eps$, $\omega=\gamma$ from
-Lemma~\ref{lem:fixed-interior}, and $\alpha,\mu$ from
-Lemma~\ref{lem:fixed-multiplier}; its hypotheses are provided by
-Lemma~\ref{lem:fixed-insertion}.
-\end{proof}
-
-\subsection{Degenerate maximizers occur only for a null set of values}
-
-\begin{lemma}\label{lem:degenerate-forms}
-Let $W$ be a degenerate minimizer of~\eqref{eq:fixed-problem}.  Then either
-the set $\{W=0\}\cup\{W=1\}$ has positive measure, or $0<W<1$ almost everywhere
-and $\mathcal D_W$ is almost everywhere equal to a constant.
-\end{lemma}
+\begin{prop}\label{prop:nondegenerate-multipodality}
+Let $\eps\in(0,1)$ and $\eps^m<\tau<\tau_{\max}(\eps)$.  Every maximizer graphon $W$
+of~\eqref{eq:entropy-maximization} that satisfies the constraint qualification
+is multipodal and has an ordered structure.
+\end{prop}
 
 \begin{proof}
-Suppose that $0<W<1$ almost everywhere, and let $\eta>0$ be such that
-$A:=\Omega_\eta(W)$ has positive measure.  With $\bar D:=|A|^{-1}\int_A\mathcal D_W$,
-$U_1:=\mathbf 1_A$, and $U_2:=(\mathcal D_W-\bar D)\mathbf 1_A$, we have
-$\det\Gamma_W(U_1,U_2)=|A|\int_A(\mathcal D_W-\bar D)^2$.  Degeneracy forces
-this determinant to vanish, so $\mathcal D_W$ is constant on $\Omega_\eta(W)$.
-Letting $\eta\downarrow0$, $\mathcal D_W$ is constant almost everywhere.
-\end{proof}
-
-\begin{lemma}\label{lem:degenerate-slope}
-If~\eqref{eq:fixed-problem} has a degenerate minimizer at
-$\tau\in(\eps^m,\tau_{\max}(\eps))$, then
+Let $W$ be such an optimizer and choose $\alpha,\mu$ as above.
+To express $\mathcal F_{W,\eps,\tau}$ in the form~\eqref{eq:row-functional},
+choose the entropy reference
 \[
-  \limsup_{\tau'\uparrow\tau}\frac{\Psi_\eps(\tau)-\Psi_\eps(\tau')}{\tau-\tau'}=\infty.
+  p:=\sigma\bigl(\lo(\eps)+\alpha\bigr)\in(0,1).
 \]
-\end{lemma}
-
-\begin{proof}
-Let $W$ be a degenerate minimizer at $\tau$ and put $W_\theta:=(1-\theta)W+\theta\eps$
-for $\theta\in[0,1]$.  Then $e(W_\theta)=\eps$ and $I_\eps(W_\theta)<I_\eps(W)$
-for $\theta\in(0,1)$, so the second claim of Lemma~\ref{lem:fixed-monotone} gives
-$\tau_\theta:=t(H,W_\theta)<\tau$.  Since $\tau_\theta\to\tau$ as
-$\theta\downarrow0$,
+The reference change formula~\eqref{eq:entropy-reference-change} gives
 \[
-  \frac{\Psi_\eps(\tau)-\Psi_\eps(\tau_\theta)}{\tau-\tau_\theta}
-  \ge\frac{I_\eps(W)-I_\eps(W_\theta)}{\tau-\tau_\theta},
+  J_p(z)=J_\eps(z)-\alpha z+\log\frac{1-\eps}{1-p}.
 \]
-and it suffices to show that the right-hand side tends to infinity along
-$\theta\downarrow0$.  By convexity,
-$J_\eps((1-\theta)z+\theta\eps)\le(1-\theta)J_\eps(z)$ for every $z$.
-
-If $\{W=0\}\cup\{W=1\}$ has positive measure, then, since
-$J_\eps(0)-J_\eps(\theta\eps)$ and $J_\eps(1)-J_\eps(1-\theta(1-\eps))$ are both at
-least $c\,\theta\log(1/\theta)$ for small $\theta$ and some $c>0$, we get
-$I_\eps(W)-I_\eps(W_\theta)\ge c'\theta\log(1/\theta)$, while
-$\tau-\tau_\theta\le C\theta$ because $\theta\mapsto\tau_\theta$ is a polynomial.
-Otherwise, by Lemma~\ref{lem:degenerate-forms}, $\mathcal D_W$ is a constant
-$c_0$, so
-$\frac{\dd}{\dd\theta}\tau_\theta\big|_{\theta=0}=\int\mathcal D_W(\eps-W)=c_0(\eps-e(W))=0$,
-and hence $\tau-\tau_\theta\le C\theta^2$, while
-$I_\eps(W)-I_\eps(W_\theta)\ge\theta I_\eps(W)$ with $I_\eps(W)>0$.  In both cases
-the ratio tends to infinity.
-\end{proof}
-
-\begin{proof}[Proof of Corollary~\ref{cor:almost-every-tau}]
-By Lemma~\ref{lem:fixed-monotone}, $\Psi_\eps$ is monotone on
-$(\eps^m,\tau_{\max}(\eps))$, so by Lebesgue's theorem it is differentiable with a
-finite derivative at almost every point.  At such a point, the left difference
-quotients converge to the finite derivative, so by
-Lemma~\ref{lem:degenerate-slope} no degenerate minimizer exists there.  Hence
-the set of values $\tau$ admitting a degenerate maximizer has measure zero, and
-for every other $\tau$ Theorem~\ref{thm:fixed-densities} applies to every
-maximizer.
+Since $e(W)=\eps$, the constant terms cancel in the normalized entropy
+contribution, giving
+\begin{align*}
+  \mathcal F_{W,\eps,\tau}(u)
+  &=b_\eps(u)-\alpha a_e(u)-\mu a_H(u)\\
+  &=2\bigl(I_p(u)-I_p(W)\bigr)
+  -\mu\Bigl(\mathcal R_{H,W}(u)-N\tau\Bigr),
+\end{align*}
+which is exactly the form of
+\eqref{eq:row-functional} with $s=1$, $H_1=H$, and $\mu_1=\mu$.
+Part~\textit{(i)} of
+\Cref{lem:fixed-multiplier} gives
+\[
+  J_p'(W)=J_\eps'(W)-\alpha=\mu\mathcal D_{H,W}\ge0
+  \qquad\text{almost everywhere}.
+\]
+Since $J_p'$ is strictly increasing and $J_p'(p)=0$, we have $W\ge p$
+almost everywhere. The ordering and finiteness arguments in the proof of
+\Cref{thm:row-criterion} therefore apply to $\mathcal F_{W,\eps,\tau}$:
+we have $W\ge p>0$, $\mu>0$, and $\Delta(H)\ge2$.
+The global minimizers of $\mathcal F_{W,\eps,\tau}$ form a finite totally ordered set, and almost every
+row of $W$ belongs to this set by \Cref{lem:fixed-insertion}.
+Grouping equal rows and using the symmetry of $W$, as in
+\Cref{sec:row-multipodality}, shows that $W$ is multipodal and has an
+ordered structure.
 \end{proof}

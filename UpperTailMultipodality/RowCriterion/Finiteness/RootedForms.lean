@@ -15,7 +15,7 @@ multilinear map with values in bounded measurable functions of `y`,
 `G_{v,z₀}(φ)(y) = ∫ ∏_{z ∈ N_H(v)} φ_z((ξ[z₀ ↦ y])_z) · ∏_{ab} W(...) dξ`,
 
 whose value at `φ = u, …, u, 1 (slot z₀), u, …, u` is the gradient term `G_{v,z₀}(u)`,
-`eq:rooted-gradient`.  This file constructs both maps on `BddMeas` (`rootedForm`, `gradForm`)
+`eq:rooted-gradient-kernel`.  This file constructs both maps on `BddMeas` (`rootedForm`, `gradForm`)
 and proves the pairing identity `∫ G_{v,z₀}(φ) b = M_v(φ with φ_{z₀} b in slot z₀)`.
 -/
 
@@ -29,20 +29,6 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 abbrev Nbr (H : SimpleGraph V) [DecidableRel H.Adj] (v : V) : Type _ := ↥(H.neighborFinset v)
 
 section Pointwise
-
-/-- The avoiding product takes values in `[0,1]`. -/
-theorem avoidingProduct_mem_Icc (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon) (v : V)
-    (ξ : V → ℝ) : avoidingProduct H W v ξ ∈ Set.Icc (0:ℝ) 1 := by
-  unfold avoidingProduct
-  refine ⟨Finset.prod_nonneg fun e _ => (liftEdge_mem_Icc W ξ e).1, ?_⟩
-  exact Finset.prod_le_one (fun e _ => (liftEdge_mem_Icc W ξ e).1)
-    (fun e _ => (liftEdge_mem_Icc W ξ e).2)
-
-/-- The avoiding product is measurable. -/
-theorem measurable_avoidingProduct (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon)
-    (v : V) : Measurable (avoidingProduct H W v) := by
-  unfold avoidingProduct
-  exact Finset.measurable_prod _ fun e _ => measurable_liftEdge W e
 
 /-- If every edge factor is at least `ω ∈ (0,1]`, the avoiding product is at least `ω^m`. -/
 theorem avoidingProduct_ge (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon) (v : V)
@@ -260,7 +246,7 @@ theorem prod_univ_erase_nbr (v : V) (z₀ : Nbr H v) (f : V → ℝ) :
   exact Finset.prod_erase_attach f z₀
 
 /-- **The pinned rooted form with `1` in the pinned slot is the gradient term**
-`G_{v,z₀}(u)`, `eq:rooted-gradient`. -/
+`G_{v,z₀}(u)`, `eq:rooted-gradient-kernel`. -/
 theorem gradForm_update_one (v : V) (z₀ : Nbr H v) (u : BddMeas) (y : ℝ) :
     gradForm H W v z₀ (Function.update (fun _ => u) z₀ 1) y
       = rootedGradientTerm H W v z₀ u y := by

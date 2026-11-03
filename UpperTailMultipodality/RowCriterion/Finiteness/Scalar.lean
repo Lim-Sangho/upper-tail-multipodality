@@ -60,6 +60,14 @@ theorem mul_one_sub_ge_of_mem_Icc (hc : 0 < c) (hd : d < 1) {x : ℝ} (hx : x �
     c * (1 - d) ≤ x * (1 - x) :=
   mul_le_mul hx.1 (by linarith [hx.2]) (by linarith [hx.2.trans hd.le]) (hc.le.trans hx.1)
 
+/-- **The entropy curvature is at least `4`** on `(0,1)`, which is the first inequality of
+`eq:row-entropy-curvature`: since `x(1-x) ≤ 1/4`, one has `J_q''(x) = 1/(x(1-x)) ≥ 4`. -/
+theorem four_le_Jp'' {x : ℝ} (hx0 : 0 < x) (hx1 : x < 1) : 4 ≤ Jp'' x := by
+  have hxx : 0 < x * (1 - x) := mul_pos hx0 (by linarith)
+  have hle : x * (1 - x) ≤ 1 / 4 := by nlinarith [sq_nonneg (x - 1 / 2)]
+  rw [Jp'', le_div_iff₀ hxx]
+  linarith
+
 /-- Bounds for `J_q''` on a compact subinterval of `(0,1)`. -/
 theorem Jp''_mem_of_mem_Icc (hc : 0 < c) (hd : d < 1) {x : ℝ} (hx : x ∈ Set.Icc c d) :
     0 < Jp'' x ∧ Jp'' x ≤ 1 / (c * (1 - d)) := by

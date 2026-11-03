@@ -3,12 +3,11 @@ import UpperTailMultipodality.Preliminaries.Graphons.JpConvexity
 /-!
 # Scalar bounds for the binomial relative entropy `J_p`
 
-Elementary estimates on `J_p` used in `sec:fixed-densities`:
+Elementary estimates on `J_p` used in `sec:fixed-densities` and `sec:degenerate-optimizers`:
 
 * `Jp'_lipschitz_box`, `Jp_taylor_box` — Lipschitz bound for `J_p'` and the first-order Taylor
   bound for `J_p` on `[β, 1-β]`;
 * `Jp'_bdd_box` — `J_p'` is bounded on `[β, 1-β]`;
-* `Jp'_strictMonoOn` — `J_p'` is strictly increasing on `(0,1)`;
 * `Jp_add_sub_le`, `Jp_sub_sub_le` — secant bounds by the derivative at the far endpoint;
 * `Jp'_le_neg_of_small`, `Jp'_ge_of_near_one` — `J_p' → ∓∞` at `0` and `1`;
 * `Jp_mix_le` — `J_p((1-θ)z + θp) ≤ (1-θ)J_p(z)`;
@@ -91,17 +90,6 @@ theorem Jp'_bdd_box {β p : ℝ} (hβ : 0 < β) (hp0 : 0 < p) (hp1 : p < 1) :
   obtain ⟨L, hL⟩ := isCompact_Icc.exists_bound_of_continuousOn hcont
   exact ⟨max L 0, le_max_right _ _, fun u hu => by
     have := hL u hu; rw [Real.norm_eq_abs] at this; exact this.trans (le_max_left _ _)⟩
-
-/-- `J_p'` is strictly increasing on `(0,1)`. -/
-theorem Jp'_strictMonoOn {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
-    StrictMonoOn (Jp' p) (Ioo 0 1) := by
-  refine strictMonoOn_of_deriv_pos (convex_Ioo 0 1) ?_ ?_
-  · intro t ht
-    exact (hasDerivAt_Jp' hp0 hp1 ht.1 ht.2).continuousAt.continuousWithinAt
-  · intro t ht
-    rw [interior_Ioo] at ht
-    rw [(hasDerivAt_Jp' hp0 hp1 ht.1 ht.2).deriv]
-    exact Jp''_pos ht.1 ht.2
 
 /-- **Secant bound, moving up.**  For `0 ≤ z`, `θ > 0` and `z + θ < 1`,
 `J_p(z+θ) - J_p(z) ≤ θ J_p'(z+θ)`. -/

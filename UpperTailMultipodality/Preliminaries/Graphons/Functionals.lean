@@ -5,7 +5,7 @@ import UpperTailMultipodality.Preliminaries.Graphons.JpConvexity
 
 * `edgeDensity_nonneg`, `edgeDensity_le_one` — `e(W) ∈ [0,1]`.
 * `edgeDensity_ae_const` — the edge density of an a.e.-constant graphon.
-* `Ip_nonneg` — `I_p(W) ≥ 0`.
+* `Ip_nonneg` — `I_p(W) ≥ 0`, with `ae_eq_of_Ip_eq_zero` for the case of equality.
 * `entropy_le` — the binary-entropy bound `s(W) ≤ ½ log 2`.
 * `Ip_jensen` — **Jensen's inequality** `J_p(e(W)) ≤ I_p(W)` (from convexity of `J_p`).
 * `Ip_sub_eq`, `abs_Ip_sub_le` — the exact dependence of `I_p(W)` on `p` and the resulting
@@ -104,5 +104,14 @@ theorem abs_Ip_sub_le (W : Graphon) {p q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (hq0
         rw [abs_of_nonneg he0]; exact he1
     _ = |Real.log (1 - p) - Real.log (1 - q)|
           + |Real.log ((1 - p) / p) - Real.log ((1 - q) / q)| := by rw [one_mul]
+
+/-- If `I_p(W) = 0`, then `W = p` almost everywhere: `J_p` vanishes only at `p`. -/
+theorem ae_eq_of_Ip_eq_zero {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) {W : Graphon}
+    (h : W.Ip p = 0) : ∀ᵐ z ∂gμ, W.toFun z.1 z.2 = p := by
+  have hint := W.integrable_comp (measurable_Jp p) (continuousOn_Jp_Icc hp0 hp1)
+  have hae0 := (integral_eq_zero_iff_of_nonneg
+    (fun z : ℝ × ℝ => Jp_nonneg_of_mem hp0 hp1 (W.nonneg' z.1 z.2) (W.le_one' z.1 z.2)) hint).mp h
+  filter_upwards [hae0] with z hz
+  exact Jp_eq_zero_imp hp0 hp1 (W.nonneg' z.1 z.2) (W.le_one' z.1 z.2) hz
 
 end UpperTailMultipodality

@@ -9,7 +9,7 @@ function theorem gives `ξ₁(θ), ξ₂(θ)` with `ξᵢ(0) = 0` such that
 `W + θZ + ξ₁(θ)U₁ + ξ₂(θ)U₂` has the same edge density and `H`-density as `W` for small `θ`.
 The derivative `(ξ₁'(0), ξ₂'(0))` solves `Γ_W(U₁,U₂) ξ'(0) = -(∫Z, ∫𝒟_W Z)`.
 
-This replaces the Banach-space Lagrange multiplier rule (`lem:lagrange`) in the proofs of
+This replaces the Banach-space Lagrange multiplier rule in the proofs of
 `lem:fixed-interior` and `lem:fixed-multiplier`: only finitely many directions are needed.
 -/
 

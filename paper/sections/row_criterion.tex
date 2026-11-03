@@ -1,292 +1,636 @@
-\section{A criterion for finitely many row types}\label{sec:row-criterion}
+\section{Finiteness of ordered row minimizers}\label{sec:row-criterion}
 
-This section contains the common core of the proofs of
-Theorems~\ref{thm:upper-tail} and~\ref{thm:fixed-densities}.  It is stated
-without reference to either variational problem.  The input is a functional on
-rows whose global minimum is attained by the rows of a graphon $W$; the output
-is that $W$ is multipodal with ordered blocks.
-
-Throughout this section, we fix a graph $H$ with $\Delta(H)\ge2$, a graphon
-$W$, and numbers $q\in(0,1)$, $\alpha\in\RR$, $\mu>0$, and $\omega>0$ such that
-\begin{equation}\label{eq:positive-base}
-  W\ge\omega\qquad\text{almost everywhere}.
-\end{equation}
-For measurable $u:[0,1]\to[0,1]$, define the \emph{row functional}
-\begin{equation}\label{eq:row-functional}
-  \mathcal F_W(u):=2\int_0^1J_q\bigl(u(y)\bigr)\dd y-2\alpha\int_0^1u(y)\dd y
-  -\mu\,\mathcal R_W(u).
-\end{equation}
-Assume that there is $c_W\in\RR$ such that
-\begin{equation}\label{eq:row-lower-bound}
-  \mathcal F_W(u)\ge c_W\qquad\text{for every measurable }u:[0,1]\to[0,1],
-\end{equation}
-and let
+Throughout this section, fix a minimizer $W$ of~\eqref{eq:joint-variational-problem}
+and the multipliers from \Cref{lem:upper-tail-multiplier}.
+We vary the row $u$ in $\mathcal F_W(u)$ while keeping $W$ and these
+multipliers fixed. Let
 \[
-  \mathcal M_W:=\bigl\{u\in L^\infty([0,1]):0\le u\le1,\ \mathcal F_W(u)=c_W\bigr\}
+  \mathcal M_W:=\{ u\in L^\infty([0,1]) : \mathcal F_W(u)=0,\ 0\le u\le 1\}.
 \]
-be the set of global minimizers of $\mathcal F_W$ attaining this bound.
+By \Cref{lem:global-row-minimality}, $\mathcal M_W$ is the set of global minimizers of $\mathcal F_W$,
+and almost every row $u=W_x$ lies in $\mathcal M_W$.
 
-\begin{theorem}[Finitely many row types]\label{thm:row-criterion}
-Under the assumptions above, the set $\mathcal M_W$ is finite, and any two of
+\begin{theorem}[Finite ordered row minimizers]\label{thm:row-criterion}
+The set $\mathcal M_W$ is finite, and any two of
 its elements $u_1,u_2$ satisfy $u_1\le u_2$ or $u_2\le u_1$ almost everywhere.
-If, in addition,
-\begin{equation}\label{eq:rows-attain}
-  W_x\in\mathcal M_W\qquad\text{for almost every }x\in[0,1],
-\end{equation}
-then $W$ is multipodal and its blocks are ordered.
 \end{theorem}
 
-The proof has three steps.  First, the singularities of $J_q'$ at $0$ and $1$
-confine all minimizers to a common interval $[\delta,1-\delta]$, where they
-satisfy an Euler--Lagrange equation.  Second, strict supermodularity of
-$\mathcal R_W$ shows that two minimizers cannot cross, so $\mathcal M_W$ is
-totally ordered.  Third, compactness and an analysis of the second variation
-of $\mathcal F_W$ show that a totally ordered set of minimizers cannot contain
-a continuum, and is therefore finite.  The assumption~\eqref{eq:positive-base}
-is used only in the strict inequalities of the second and third steps.
+We prove the total ordering in \Cref{prop:row-ordering} and finiteness in
+\Cref{lem:row-finite} below. Together with the symmetry of $W$, these
+properties yield the block structure in \Cref{thm:joint-upper-tail}.
 
-\subsection{Interiority and the Euler--Lagrange equation}
+\subsection{Total Ordering}\label{sec:row-ordering}
 
-\begin{lemma}[Interiority]\label{lem:row-interior}
-There is $\delta\in(0,1/2)$ such that every $u\in\mathcal M_W$ satisfies
-$\delta\le u\le1-\delta$.  Moreover, every $u\in\mathcal M_W$ satisfies
+\begin{lemma}\label{lem:row-interior}
+There is $\gamma\in(0,1/2)$ such that every $u\in\mathcal M_W$ satisfies
+$\gamma\le u\le1-\gamma$ almost everywhere.  Moreover, every $u\in\mathcal M_W$
+satisfies the following identities almost everywhere:
 \begin{equation}\label{eq:row-euler}
-  2J_q'(u)-2\alpha=\mu\nabla\mathcal R_W(u),
-  \qquad\text{equivalently}\qquad
-  u=\sigma\Bigl(\lo(q)+\alpha+\frac\mu2\nabla\mathcal R_W(u)\Bigr).
+  2J_p'(u)=\sum_{j=1}^s\mu_j\nabla\mathcal R_{H_j,W}(u),\qquad u=\sigma\Bigl(\lo(p)+\tfrac12\sum_{j=1}^s\mu_j\nabla\mathcal R_{H_j,W}(u)\Bigr).
 \end{equation}
 \end{lemma}
 
 \begin{proof}
-Choose $\delta\in(0,1/2)$ so small that $2J_q'(z)-2\alpha+2m\mu<0$ for
-$0<z<\delta$ and $2J_q'(z)-2\alpha-2m\mu>0$ for $1-\delta<z<1$.  Let
-$u\in\mathcal M_W$ and suppose that $A:=\{u<\delta\}$ has positive measure.
-Put $\tilde u:=\max(u,\delta)$.  By~\eqref{eq:rooted-lipschitz},
+By~\eqref{eq:rooted-lipschitz} and $\mu_j\ge0$,
+\begin{equation}\label{eq:combined-lipschitz}
+  \left|\sum_j\mu_j\bigl(\mathcal R_{H_j,W}(u)-\mathcal R_{H_j,W}(u')\bigr)\right|
+  \le2\Bigl(\sum_j\mu_jm_j\Bigr)\|u-u'\|_1.
+\end{equation}
+Since $J'_p(z)$ diverges at $0$ and $1$, we can choose $\gamma\in(0,1/2)$ so small that
+\[
+  2J_p'(z)+2\sum_j\mu_jm_j<0\quad(0<z<\gamma),\qquad
+  2J_p'(z)-2\sum_j\mu_jm_j>0\quad(1-\gamma<z<1).
+\]
+Let
+$u\in\mathcal M_W$ and suppose that $A:=\{u<\gamma\}$ has positive measure.
+Put $\tilde u:=\max(u,\gamma)$.  By~\eqref{eq:combined-lipschitz},
+\begin{align*}
+  \mathcal F_W(\tilde u)-\mathcal F_W(u)
+  &\le\int_A\Bigl(2\bigl(J_p(\gamma)-J_p(u)\bigr)
+       +2\sum_j\mu_jm_j(\gamma-u)\Bigr)\\
+  &=\int_A\int_u^\gamma\Bigl(2J_p'(z)+2\sum_j\mu_jm_j\Bigr)\dd z<0,
+\end{align*}
+contradicting the minimality of $u$.  For the upper endpoint, put
+$A:=\{u>1-\gamma\}$ with positive measure and $\tilde u:=\min(u,1-\gamma)$.
+The same Lipschitz bound gives
 \[
   \mathcal F_W(\tilde u)-\mathcal F_W(u)
-  \le\int_A\Bigl(2\bigl(J_q(\delta)-J_q(u)\bigr)-2\alpha(\delta-u)
-  +2m\mu(\delta-u)\Bigr)
-  =\int_A\int_u^\delta\bigl(2J_q'(z)-2\alpha+2m\mu\bigr)\dd z<0,
+  \le-\int_A\int_{1-\gamma}^{u}
+       \Bigl(2J_p'(z)-2\sum_j\mu_jm_j\Bigr)\dd z<0,
 \]
-contradicting~\eqref{eq:row-lower-bound}.  The case $\{u>1-\delta\}$ is
-analogous, with $\tilde u:=\min(u,1-\delta)$.  Since every $u\in\mathcal M_W$
-takes values in $[\delta,1-\delta]$, the functions $u+th$ with bounded $h$ and
-small $|t|$ are admissible, so the first variation of $\mathcal F_W$ at $u$
-vanishes in every bounded direction.  This gives~\eqref{eq:row-euler}.
+which is again a contradiction.
+Thus every $u\in \mathcal M_W$ takes values in $[\gamma,1-\gamma]$ almost everywhere.
+For bounded $h$, both signs of $t$ are now admissible in $u+th$, so
+\[
+  0=\left.\frac{\dd}{\dd t}\mathcal F_W(u+th)\right|_{t=0}
+   =\int_0^1\bigl(2J_p'(u)
+       -\sum_j\mu_j\nabla\mathcal R_{H_j,W}(u)\bigr)h.
+\]
+Since this holds for every bounded $h$, the coefficient of $h$ vanishes
+almost everywhere, which gives~\eqref{eq:row-euler}.
 \end{proof}
 
-\subsection{Minimizers cannot cross}
-
-\begin{lemma}[Strict supermodularity]\label{lem:strict-supermodular}
-Let $u_1,u_2\in\mathcal M_W$.  Then
+For rows $u_1,u_2$, define their pointwise minimum and maximum by
 \[
-  \mathcal R_W(u_1\wedge u_2)+\mathcal R_W(u_1\vee u_2)
-  \ge\mathcal R_W(u_1)+\mathcal R_W(u_2),
+  (u_1\wedge u_2)(x):=\min\{u_1(x),u_2(x)\},\qquad
+  (u_1\vee u_2)(x):=\max\{u_1(x),u_2(x)\}.
 \]
-and the inequality is strict if $u_1$ and $u_2$ cross, that is, if both
-$\{u_1>u_2\}$ and $\{u_2>u_1\}$ have positive measure.
-\end{lemma}
 
-\begin{proof}
-Put $g:=u_1\wedge u_2$, $h_1:=(u_1-u_2)_+$, and $h_2:=(u_2-u_1)_+$, so that
-$u_1=g+h_1$, $u_2=g+h_2$, and $u_1\vee u_2=g+h_1+h_2$.  Expanding the products
-in~\eqref{eq:rooted-density}, the difference of the two sides is a sum of
-integrals of nonnegative kernels against products containing at least one
-factor $h_1$ and at least one factor $h_2$.  This proves the weak inequality.
-For strictness, choose a vertex $v_0$ with degree $d_0\ge2$.  Among the terms
-of $\mathcal R_{v_0,W}$, keep only those with exactly one factor $h_1$, exactly
-one factor $h_2$, and $d_0-2$ factors $g$.  Each edge factor not incident to
-$v_0$ is at least $\omega$ by~\eqref{eq:positive-base}, and $g\ge\delta$ by
-Lemma~\ref{lem:row-interior}, so
-\[
-  \mathcal R_W(u_1\wedge u_2)+\mathcal R_W(u_1\vee u_2)
-  -\mathcal R_W(u_1)-\mathcal R_W(u_2)
-  \ge d_0(d_0-1)\,\omega^{m-d_0}\delta^{d_0-2}
-  \int_0^1h_1\int_0^1h_2,
-\]
-which is positive when $u_1$ and $u_2$ cross.
-\end{proof}
-
-\begin{prop}[Total order]\label{prop:row-chain}
-For all $u_1,u_2\in\mathcal M_W$, either $u_1\le u_2$ or $u_2\le u_1$ almost
-everywhere.
+\begin{prop}\label{prop:row-ordering}
+For all $u_1,u_2\in\mathcal M_W$, either $u_1\le u_2$ or $u_2\le u_1$ almost everywhere.
 \end{prop}
 
 \begin{proof}
-Pointwise, the two numbers $(u_1\wedge u_2)(y)$ and $(u_1\vee u_2)(y)$ are
-$u_1(y)$ and $u_2(y)$ in some order.  Hence the sum of the first two terms
-of~\eqref{eq:row-functional} over the pair $u_1\wedge u_2$, $u_1\vee u_2$ equals
-the corresponding sum over the pair $u_1$, $u_2$.  If $u_1$ and $u_2$ crossed,
-Lemma~\ref{lem:strict-supermodular} and $\mu>0$ would give
+Suppose that $u_1,u_2\in\mathcal M_W$ cross, so both
+$\{u_1>u_2\}$ and $\{u_2>u_1\}$ have positive measure.  We will show that
 \[
   \mathcal F_W(u_1\wedge u_2)+\mathcal F_W(u_1\vee u_2)
-  <\mathcal F_W(u_1)+\mathcal F_W(u_2)=2c_W,
+  <\mathcal F_W(u_1)+\mathcal F_W(u_2).
 \]
-contradicting~\eqref{eq:row-lower-bound} applied to $u_1\wedge u_2$ and
-$u_1\vee u_2$.
+Since $u_1\wedge u_2$ and $u_1\vee u_2$ are admissible rows, this would
+contradict the global minimality of $u_1$ and $u_2$.
+
+The entropy terms are unchanged in this comparison, by the pointwise identity
+\[
+  J_p(u_1\wedge u_2)+J_p(u_1\vee u_2)=J_p(u_1)+J_p(u_2).
+\]
+The constants in $a_j$ and $b$ also cancel.  Since the weighted rooted
+densities are present in $\mathcal F_W$ with a minus sign, it remains to show that
+their sum strictly increases when we replace $u_1,u_2$ by
+$u_1\wedge u_2,u_1\vee u_2$:
+\[
+  \sum_j\mu_j\mathcal R_{H_j,W}(u_1\wedge u_2)
+  +\sum_j\mu_j\mathcal R_{H_j,W}(u_1\vee u_2)
+  >\sum_j\mu_j\mathcal R_{H_j,W}(u_1)+\sum_j\mu_j\mathcal R_{H_j,W}(u_2).
+\]
+
+If every $H_j$ with $\mu_j>0$ is a matching, the
+weighted rooted density is affine in $u$ and $\mathcal F_W$ is strictly convex:
+\begin{align*}
+  \mathcal R_{H_j,W}(u)
+    &=N_je(W)^{m_j-1}\int_0^1u\qquad(\mu_j>0,\ H_j \text{ is a matching}),\\
+  \mathcal F_W(u)
+    &=2\bigl(I_p(u)-I_p(W)\bigr)
+      -\sum_{j=1}^s\mu_jN_je(W)^{m_j-1}
+        \Bigl(\int_0^1u-e(W)\Bigr).
+\end{align*}
+Then $\mathcal M_W$ has a single element, contradicting the
+crossing assumption.  We may therefore choose an index $j_0$ with
+$\mu_{j_0}>0$ and $\Delta(H_{j_0})\ge2$, and a vertex $v_0$ of
+$H_{j_0}$ with degree $d_0\ge2$.
+
+Write the two rows as their common minimum plus their respective excesses:
+\[
+  g:=u_1\wedge u_2,\qquad h_1:=u_1-g,\qquad h_2:=u_2-g.
+\]
+Then $u_1=g+h_1$, $u_2=g+h_2$, and $u_1\vee u_2=g+h_1+h_2$.  Fix a vertex $v\in V(H_j)$.
+Expand the product of $(g+h_1+h_2)(x_z)$ over $z\in N_{H_j}(v)$
+by taking the $h_1$ factor at vertices in $S$, the $h_2$ factor at vertices in $T$,
+and the $g$ factor at the remaining vertices:
+\begin{align*}
+  \prod_{z\in N_{H_j}(v)}(g+h_1+h_2)(x_z)
+  =\sum_{\substack{S,T\subseteq N_{H_j}(v)\\S\cap T=\varnothing}}
+    \left( \prod_{z\in S}h_1(x_z)\prod_{z\in T}h_2(x_z)
+    \prod_{z\in N_{H_j}(v)\setminus(S\cup T)}g(x_z) \right).
+\end{align*}
+Summing the terms with $S=\emptyset$ gives the product of $(g+h_2)(x_z)$,
+while summing those with $T=\emptyset$ gives the product of $(g+h_1)(x_z)$.
+The term with $S=T=\emptyset$ is the product of $g(x_z)$.
+Thus, the inclusion--exclusion principle extracts the terms with $S\ne\emptyset$ and $T\ne\emptyset$:
+\begin{align*}
+    &\prod_{z\in N_{H_j}(v)}(g+h_1+h_2)(x_z)
+       -\prod_{z\in N_{H_j}(v)}(g+h_1)(x_z)-\prod_{z\in N_{H_j}(v)}(g+h_2)(x_z)
+       +\prod_{z\in N_{H_j}(v)}g(x_z)\\
+    &=\sum_{\substack{S,T\subseteq N_{H_j}(v)\\S\cap T=\varnothing\\S\ne\emptyset,T\ne\emptyset}}
+      \left( \prod_{z\in S}h_1(x_z)\prod_{z\in T}h_2(x_z)
+      \prod_{z\in N_{H_j}(v)\setminus(S\cup T)}g(x_z) \right) \ge0.
+\end{align*}
+By the definitions in \eqref{eq:rooted-density} and \eqref{eq:total-rooted-density},
+multiplying by the edge probabilities, integrating over the variables,
+and summing over the roots and the indices $j$ gives
+\[
+\sum_j\mu_j\mathcal R_{H_j,W}(u_1\vee u_2)-\sum_j\mu_j\mathcal R_{H_j,W}(u_1)
+-\sum_j\mu_j\mathcal R_{H_j,W}(u_2)+\sum_j\mu_j\mathcal R_{H_j,W}(u_1\wedge u_2)\ge0.
+\]
+To make this inequality strict, consider the contribution from $v_0$.
+In the expansion of
+$\mathcal R_{H_{j_0},W}^{v_0}(g+h_1+h_2)$, retain the terms with
+exactly one factor $h_1$, exactly one factor $h_2$, and $d_0-2$ factors $g$.
+There are $d_0(d_0-1)$ such terms.
+Each edge factor of $H_{j_0}$ not incident to $v_0$ is at least $p$
+by~\Cref{lem:upper-tail-basic}, while $g\ge\gamma$ by \Cref{lem:row-interior}.
+Therefore,
+\begin{align*}
+  &\sum_j\mu_j\bigl(\mathcal R_{H_j,W}(u_1\wedge u_2)
+       +\mathcal R_{H_j,W}(u_1\vee u_2)
+       -\mathcal R_{H_j,W}(u_1)-\mathcal R_{H_j,W}(u_2)\bigr)\\
+  &\qquad\ge\mu_{j_0}d_0(d_0-1)\,p^{m_{j_0}-d_0}\gamma^{d_0-2}
+       \int_0^1h_1\int_0^1h_2,
+\end{align*}
+whose right-hand side is strictly positive because the crossing assumption
+gives $\int_0^1h_1>0$ and $\int_0^1h_2>0$.
+Together with the unchanged entropy terms, this proves the strict
+inequality for $\mathcal F_W$.
 \end{proof}
 
-\subsection{Compactness and the second variation}
+\subsection{Compactness and finiteness}\label{sec:row-finiteness}
 
-\begin{lemma}[Compactness]\label{lem:row-compact}
+\begin{lemma}\label{lem:row-compact}
 The set $\mathcal M_W$ is compact in $L^\infty([0,1])$.
 \end{lemma}
 
 \begin{proof}
-Each term~\eqref{eq:rooted-gradient} of $\nabla\mathcal R_W(u)$ has the form
-$y\mapsto\int K(y,z_1,\dots,z_k)\prod_{i=1}^ku(z_i)\dd z$ with a measurable
-kernel $0\le K\le1$.  Such a kernel defines a Hilbert--Schmidt, hence compact,
-operator from $L^2([0,1]^k)$ to $L^2([0,1])$, and the functions
-$u^{\otimes k}$ with $0\le u\le1$ form a bounded subset of $L^2([0,1]^k)$.
-Hence $\{\nabla\mathcal R_W(u):0\le u\le1\}$ is relatively compact in $L^2$.
-Moreover, expanding the difference of products telescopically gives
-\begin{equation}\label{eq:gradient-lipschitz}
-  \|\nabla\mathcal R_W(u)-\nabla\mathcal R_W(u')\|_\infty\le C_H\|u-u'\|_1.
-\end{equation}
-Now let $(u_j)\subseteq\mathcal M_W$.  After passing to a subsequence,
-$\nabla\mathcal R_W(u_j)\to g$ in $L^2$.  Since $\sigma$ is Lipschitz, the
-fixed-point form of~\eqref{eq:row-euler} gives
-$u_j\to u:=\sigma(\lo(q)+\alpha+\frac\mu2g)$ in $L^2$.
-By~\eqref{eq:gradient-lipschitz}, $\nabla\mathcal R_W(u_j)\to\nabla\mathcal R_W(u)$
-uniformly, so $g=\nabla\mathcal R_W(u)$, and~\eqref{eq:row-euler} now gives
-$u_j\to u$ uniformly.  Since $\mathcal F_W$ is continuous under uniform
-convergence, $u\in\mathcal M_W$.
+Fix a term $G_{v,z_0}(u)$ in~\eqref{eq:rooted-gradient-kernel} for $H=H_j$.
+Its defining formula is
+\[
+  G_{v,z_0}(u)(y)=\int_{[0,1]^{V(H)\setminus\{v,z_0\}}}
+  \prod_{z\in N_H(v)\setminus\{z_0\}}u(x_z)
+  \prod_{\substack{ab\in E(H)\\a,b\ne v}}W(x_a,x_b)
+  \prod_{z\in V(H)\setminus\{v,z_0\}}\dd x_z,
+  \qquad x_{z_0}=y.
+\]
+Let $k:=|N_H(v)|-1$ be the number of factors of $u$, and enumerate
+the neighbors other than $z_0$ as
+$N_H(v)\setminus\{z_0\}=\{v_1,\dots,v_k\}$.
+Define a kernel by integrating the factors independent of $u$:
+\[
+  K(y,x_{v_1},\dots,x_{v_k}):=
+  \int_{[0,1]^{V(H)\setminus(\{v\}\cup N_H(v))}}
+  \prod_{\substack{ab\in E(H)\\a,b\ne v}}W(x_a,x_b)
+  \prod_{w\in V(H)\setminus(\{v\}\cup N_H(v))}\dd x_w,
+  \qquad x_{z_0}=y.
+\]
+The resulting kernel $K$ is independent of $u$ and satisfies $0\le K\le1$.
+Fubini's theorem gives, integrating over the remaining variables,
+\[
+  G_{v,z_0}(u)(y)=\int_{[0,1]^k}K(y,x_{v_1},\dots,x_{v_k})
+                   \prod_{i=1}^ku(x_{v_i})\dd x_{v_1}\cdots\dd x_{v_k}.
+\]
+The $k=0$ terms are independent of $u$.  For $k\ge1$, the kernel $K$ defines
+a compact Hilbert--Schmidt operator from $L^2([0,1]^k)$ to $L^2([0,1])$:
+\[
+  (T_Kf)(y):=\int_{[0,1]^k}K(y,x_{v_1},\dots,x_{v_k})
+    f(x_{v_1},\dots,x_{v_k})\dd x_{v_1}\cdots\dd x_{v_k},
+\]
+and $G_{v,z_0}(u)=T_K(u^{\otimes k})$.
+The family $\{u^{\otimes k}:0\le u\le1\}$ lies in the unit ball of
+$L^2([0,1]^k)$.  Its image under the compact operator $T_K$,
+$\{G_{v,z_0}(u):0\le u\le1\}$, is therefore relatively compact in $L^2([0,1])$.
+Hence the family
+\[
+  \left\{\sum_j\mu_j\nabla\mathcal R_{H_j,W}(u):
+  0\le u\le1\right\}
+\]
+is relatively compact in $L^2([0,1])$, since each gradient is a finite sum of these terms.
+
+For any sequence $(u_i)\subseteq\mathcal M_W$, relative compactness of the
+weighted gradients allows us to pass to a subsequence, still denoted $(u_i)$,
+whose weighted gradients $g_i$ converge to some $g$ in $L^2([0,1])$:
+\[
+  g_i:=\sum_j\mu_j\nabla\mathcal R_{H_j,W}(u_i)\longrightarrow g\qquad\text{in }L^2([0,1]).
+\]
+Since each $u_i$ is a minimizer of $\mathcal F_W$,
+the fixed-point form of~\eqref{eq:row-euler} gives
+\[
+  u_i=\sigma\Bigl(\lo(p)+\frac12g_i\Bigr).
+\]
+Set $u:=\sigma(\lo(p)+\frac12g)$.  The bound~\eqref{eq:logistic-derivative} gives
+\[
+  \|u_i-u\|_2
+  =\left\|\sigma\Bigl(\lo(p)+\frac12g_i\Bigr)-\sigma\Bigl(\lo(p)+\frac12g\Bigr)\right\|_2
+  \le \frac{1}{8}\|g_i-g\|_2 \longrightarrow 0,
+\]
+so $u_i\to u$ in $L^2([0,1])$ and hence also in $L^1([0,1])$.
+Applying \eqref{eq:gradient-lipschitz} to each $H_j$ and summing with weights $\mu_j$ gives
+\[
+  \left\|\sum_j\mu_j\nabla\mathcal R_{H_j,W}(u_i)
+       -\sum_j\mu_j\nabla\mathcal R_{H_j,W}(u)\right\|_\infty
+  \le C\|u_i-u\|_1\longrightarrow0,
+\]
+where $C:=2\sum_j\mu_jm_j(\Delta(H_j)-1)$.
+By uniqueness of the $L^2([0,1])$ limit, the second sum equals $g$ almost everywhere.
+Using $|\sigma'| \le 1/4$ again in~\eqref{eq:row-euler}, we obtain
+\[
+  \|u_i-u\|_\infty\le \frac{1}{8}\|g_i-g\|_\infty
+  \le \frac C8\|u_i-u\|_1\longrightarrow0,
+\]
+so $u_i\to u$ in $L^\infty([0,1])$.
+The continuity of $\mathcal F_W$ in the $L^\infty([0,1])$ norm gives
+\[
+  \mathcal F_W(u)=\lim_{i\to\infty}\mathcal F_W(u_i)=0,
+\]
+so $u\in\mathcal M_W$.
+Since every sequence in $\mathcal M_W$ has a subsequence converging in $L^\infty([0,1])$ to an element of $\mathcal M_W$,
+the set $\mathcal M_W$ is compact.
 \end{proof}
 
-For $u\in\mathcal M_W$, consider the second variation
+Since $\mathcal M_W$ is totally ordered by \Cref{prop:row-ordering},
+the mean distinguishes its elements.  The mean map is continuous in the
+$L^\infty([0,1])$ norm, and a continuous bijection from a compact space to a
+Hausdorff space has a continuous inverse.  Thus \Cref{lem:row-compact}
+implies that the mean map is a homeomorphism from $\mathcal M_W$ onto the compact set
 \[
-  Q_u(h):=2\int_0^1J_q''(u)\,h^2-\mu\,D^2\mathcal R_W(u)[h,h],
-  \qquad h\in L^2([0,1]).
+  \mathcal S:=\left\{\int_0^1u:u\in\mathcal M_W\right\}\subseteq\RR.
 \]
-The bilinear form $D^2\mathcal R_W(u)$ is given by a bounded symmetric kernel,
-so it is represented by a compact self-adjoint operator $B_u$ on
-$L^2([0,1])$.  By Lemma~\ref{lem:row-interior}, multiplication by
-$2J_q''(u)=2/(u(1-u))$ is a bounded operator $A_u$ with $A_u\ge8$ and bounded
-inverse.  Thus $Q_u(h)=\langle h,\mathcal L_uh\rangle$ with
-$\mathcal L_u:=A_u-\mu B_u$.
+To study minimizers near a given mean $a$, consider
+\begin{equation}\label{eq:row-prescribed-mean}
+  2J_p'(u)-\sum_j\mu_j\nabla\mathcal R_{H_j,W}(u)=\lambda\mathbf1,
+  \qquad \int_0^1u=a.
+\end{equation}
+By \Cref{lem:row-interior}, every minimizer solves this system with $\lambda=0$.
+We will apply the implicit function theorem to solve for $(u,\lambda)$
+in terms of $a$.  The required invertibility follows from positivity
+of the second variation on directions with zero mean.
 
-\begin{lemma}[Coercivity on mean-zero functions]\label{lem:coercive}
+For bounded $h,k:[0,1]\to\RR$, write
+\[
+  D^2\mathcal R_{H,W}(u)[h,k]
+  :=\left.\frac{\partial^2}{\partial s\,\partial t}
+    \mathcal R_{H,W}(u+sh+tk)\right|_{s=t=0}.
+\]
+For $u\in\mathcal M_W$, the second variation of $\mathcal F_W$ is define by
+\[
+  Q_u(h):=2\int_0^1J_p''(u)\,h^2-\sum_j\mu_jD^2\mathcal R_{H_j,W}(u)[h,h],
+  \qquad h\in L^\infty([0,1]).
+\]
+Differentiating the rooted density formula twice gives
+\[
+  D^2\mathcal R_{H,W}^v(u)[h,k]
+  =\sum_{\substack{z_1,z_2\in N_H(v)\\z_1\ne z_2}}
+  \int_{[0,1]^{V(H)\setminus\{v\}}}
+  h(x_{z_1})k(x_{z_2})
+  \prod_{z\in N_H(v)\setminus\{z_1,z_2\}}u(x_z)
+  \prod_{\substack{ab\in E(H)\\a,b\ne v}}W(x_a,x_b)
+  \prod_{z\ne v}\dd x_z.
+\]
+Fixing the coordinates of the two differentiated factors and integrating
+the remaining coordinates defines the kernel
+\begin{align*}
+  K_u(y,z)
+  &:=\sum_{j=1}^s\mu_j\sum_{v\in V(H_j)}
+    \sum_{\substack{z_1,z_2\in N_{H_j}(v)\\z_1\ne z_2}}
+    \int_{[0,1]^{V(H_j)\setminus\{v,z_1,z_2\}}}
+    \prod_{w\in N_{H_j}(v)\setminus\{z_1,z_2\}}u(x_w)\\
+  &\qquad{}\times
+    \prod_{\substack{ab\in E(H_j)\\a,b\ne v}}W(x_a,x_b)
+    \prod_{w\in V(H_j)\setminus\{v,z_1,z_2\}}\dd x_w,
+    \qquad x_{z_1}=y,\quad x_{z_2}=z.
+\end{align*}
+The sum over $z_1,z_2$ iterates over ordered pairs of distinct neighbors.
+Fubini's theorem gives the integral operator representation
+\[
+  (T_{K_u}k)(y):=\int_0^1K_u(y,z)k(z)\dd z,
+  \qquad \langle h,T_{K_u}k\rangle=\sum_j\mu_jD^2\mathcal R_{H_j,W}(u)[h,k].
+\]
+Exchanging $z_1$ and $z_2$ shows that $K_u$ is symmetric.
+Each integral in its definition lies in $[0,1]$, so
+\[
+  0\le K_u\le2\sum_j\mu_jm_j\bigl(\Delta(H_j)-1\bigr).
+\]
+This representation extends the second derivatives to bounded bilinear
+forms on $L^2([0,1])$, and $T_{K_u}$ is compact and self-adjoint there.
+The quadratic form $Q_u$ therefore extends continuously to $L^2([0,1])$.
+Writing
+\[
+  Q_u(h)=\langle h,\mathcal L_uh\rangle,
+  \qquad
+  \mathcal L_uh:=2J_p''(u)h-T_{K_u}h,
+\]
+we obtain the derivative $\mathcal L_u$ of the left side of the first
+equation in~\eqref{eq:row-prescribed-mean}.
+Combining \Cref{lem:row-interior} with~\eqref{eq:entropy-derivatives} gives
+\begin{equation}\label{eq:row-entropy-curvature}
+  8\le2J_p''(u)=\frac{2}{u(1-u)}\le\frac{2}{\gamma(1-\gamma)}.
+\end{equation}
+Together with the bound on $K_u$, this gives the operator norm estimate
+on $L^2([0,1])$:
+\[
+  \|\mathcal L_u\|_{\mathrm{op}}\le\frac{2}{\gamma(1-\gamma)}+\|K_u\|_\infty<\infty.
+\]
+
+\begin{lemma}\label{lem:row-lower-bound}
 For every $u\in\mathcal M_W$, there is $c_u>0$ such that
 $Q_u(h)\ge c_u\|h\|_2^2$ for every $h\in L^2([0,1])$ with $\int_0^1h=0$.
 \end{lemma}
 
 \begin{proof}
-Since $u$ is a global minimizer and takes values in $[\delta,1-\delta]$, the
-second variation is nonnegative: $Q_u(h)\ge0$ for bounded $h$, and by density
-for all $h\in L^2$.  Let $h\ne0$ have mean zero, and write $h=h_+-h_-$ with
-$h_\pm\ge0$ of disjoint supports; both are nonzero.  Choosing a vertex $v_0$ of
-degree $d_0\ge2$ as in the proof of Lemma~\ref{lem:strict-supermodular}, we get
-$D^2\mathcal R_W(u)[h_+,h_-]\ge d_0(d_0-1)\omega^{m-d_0}\delta^{d_0-2}
-\|h_+\|_1\|h_-\|_1>0$.  Since $h_+$ and $h_-$ have disjoint supports,
+For bounded $h$, interiority and stationarity of $u$ give
+\begin{align*}
+  0&\le\mathcal F_W(u+th)-\mathcal F_W(u) \\
+  &=tD\mathcal F_W(u)[h]+\frac{t^2}{2}D^2\mathcal F_W(u)[h,h]+o(t^2) \\
+  &=\frac{t^2}{2}Q_u(h)+o(t^2).
+\end{align*}
+Thus $Q_u(h)\ge0$ for bounded $h$. For an arbitrary $h\in L^2([0,1])$, the
+truncations $h_n:=h\mathbf1_{\{|h|\le n\}}$ are bounded and satisfy
+$h_n\to h$ in $L^2$ norm.
+Since $Q_u$ is continuous on $L^2([0,1])$, it follows that
 \[
-  Q_u(h)=Q_u(h_+)+Q_u(h_-)+2\mu\,D^2\mathcal R_W(u)[h_+,h_-]>0.
+  Q_u(h)=\lim_{n\to\infty}Q_u(h_n)\ge0 \qquad (h\in L^2([0,1])).
 \]
-Suppose that the quantitative bound fails.  Then there are $h_j$ with mean
-zero, $\|h_j\|_2=1$, and $Q_u(h_j)\to0$.  Passing to a subsequence,
-$h_j\rightharpoonup h$ weakly in $L^2$, and $h$ has mean zero.  Compactness of
-$B_u$ gives $\langle h_j,B_uh_j\rangle\to\langle h,B_uh\rangle$.  If $h=0$, then
-$Q_u(h_j)\ge8-\mu\langle h_j,B_uh_j\rangle\to8$, a contradiction.  If $h\ne0$,
-then weak lower semicontinuity of $h\mapsto\langle h,A_uh\rangle$ gives
-$Q_u(h)\le\liminf Q_u(h_j)=0$, contradicting strict positivity.
+If every $H_j$ with $\mu_j>0$ is a matching, then $T_{K_u}=0$ and
+$Q_u(h)=2\int_0^1J_p''(u)h^2\ge8\|h\|_2^2$
+by~\eqref{eq:row-entropy-curvature}, proving the claim.
+We may therefore assume that $\mu_{j_0}>0$ and $\Delta(H_{j_0})\ge2$
+for some $j_0$.
+Let $h\ne0$ have mean zero, and write $h=h_+-h_-$ with
+$h_\pm\ge0$ of disjoint supports; both are nonzero.  Keeping only the index
+$j_0$ and the vertex $v_0$ as in the proof of
+\Cref{prop:row-ordering}, we get
+\[
+  \sum_j\mu_jD^2\mathcal R_{H_j,W}(u)[h_+,h_-]
+  \ge\mu_{j_0}d_0(d_0-1)p^{m_{j_0}-d_0}\gamma^{d_0-2}
+       \|h_+\|_1\|h_-\|_1>0.
+\]
+Since $h_+h_-=0$, we have $h^2=h_+^2+h_-^2$, so the entropy term
+in $Q_u$ splits into the two corresponding terms. By symmetry and bilinearity,
+the subtracted term in $Q_u$ also splits:
+\[
+  D^2\mathcal R_{H_j,W}(u)[h,h]
+  =D^2\mathcal R_{H_j,W}(u)[h_+,h_+]
+    +D^2\mathcal R_{H_j,W}(u)[h_-,h_-]
+  -2D^2\mathcal R_{H_j,W}(u)[h_+,h_-].
+\]
+Using $Q_u(h_\pm)\ge0$ and the preceding strict bound, we obtain
+\[
+  Q_u(h)=Q_u(h_+)+Q_u(h_-)
+    +2\sum_j\mu_jD^2\mathcal R_{H_j,W}(u)[h_+,h_-]>0
+    \qquad (h\in L^2([0,1]),\ \int_0^1h=0,\ h\ne0).
+\]
+To obtain a uniform lower bound on unit vectors with mean zero, suppose
+there is a sequence satisfying
+\[
+  \int_0^1h_i=0,\qquad \|h_i\|_2=1,\qquad Q_u(h_i)\longrightarrow0.
+\]
+Passing to a subsequence,
+$h_i\rightharpoonup h$ weakly in $L^2([0,1])$ for some $h\in L^2([0,1])$,
+and $h$ has mean zero.  Compactness of $T_{K_u}$ gives convergence of the compact part:
+\[
+  \langle h_i,T_{K_u}h_i\rangle\longrightarrow\langle h,T_{K_u}h\rangle.
+\]
+If $h=0$, then~\eqref{eq:row-entropy-curvature} and $\|h_i\|_2=1$ give
+\[
+  Q_u(h_i)=\langle h_i,2J_p''(u)h_i\rangle-\langle h_i,T_{K_u}h_i\rangle
+  \ge8-\langle h_i,T_{K_u}h_i\rangle\longrightarrow8,
+\]
+a contradiction.  If $h\ne0$, weak lower semicontinuity of the weighted
+integral $2\int_0^1J_p''(u)h^2$ instead gives
+\[
+  Q_u(h)\le\liminf_i Q_u(h_i)=0,
+\]
+contradicting strict positivity.
 \end{proof}
 
-\begin{lemma}[Bordered second variation]\label{lem:bordered}
-For every $u\in\mathcal M_W$, the operator
-$(h,\lambda)\mapsto\bigl(\mathcal L_uh-\lambda\mathbf 1,\int_0^1h\bigr)$ is a
-bounded isomorphism of $L^2([0,1])\times\RR$ onto itself and of
-$L^\infty([0,1])\times\RR$ onto itself.
+For $u$ bounded away from $0$ and $1$, define
+\[
+  \mathcal G_a(u,\lambda):=
+  \left(2J_p'(u)-\sum_{j=1}^s\mu_j\nabla\mathcal R_{H_j,W}(u)
+    -\lambda\mathbf1,\ \int_0^1u-a\right).
+\]
+The system~\eqref{eq:row-prescribed-mean} is therefore
+$\mathcal G_a(u,\lambda)=0$.
+Holding $a$ fixed, substituting $(u+th,\lambda+t\eta)$ and differentiating
+at $t=0$ gives
+\[
+  D\mathcal G_a(u,\lambda)[h,\eta]
+  =\left(\mathcal L_uh-\eta\mathbf1,\ \int_0^1h\right)
+  =:\mathcal T_u(h,\eta).
+\]
+The next lemma verifies the derivative condition needed to solve
+$\mathcal G_a(u,\lambda)=0$ locally as $a$ varies.
+
+\begin{lemma}\label{lem:bordered}
+For every $u\in\mathcal M_W$, put $a:=\int_0^1u$.
+The derivative $D\mathcal G_a(u,0)=\mathcal T_u$ is invertible on
+$L^\infty([0,1])\times\RR$, and its inverse has finite operator norm.
 \end{lemma}
 
 \begin{proof}
-Let $L^2_0$ be the space of mean-zero functions and $P_0$ the orthogonal
-projection onto it.  By Lemma~\ref{lem:coercive} and the Lax--Milgram theorem,
-$P_0\mathcal L_u$ restricted to $L^2_0$ is invertible.  Given
-$(g,\beta)\in L^2\times\RR$, write $h=\beta\mathbf1+k$ with $k\in L^2_0$, solve
-$P_0\mathcal L_uk=P_0(g-\mathcal L_u(\beta\mathbf 1))$, and put
-$\lambda:=\int_0^1(\mathcal L_uh-g)$; then $\mathcal L_uh-\lambda\mathbf1=g$.  If
-$(h,\lambda)$ is in the kernel, then $h\in L^2_0$ and
-$Q_u(h)=\lambda\int h=0$, so $h=0$ and $\lambda=0$.  This proves the claim on
-$L^2\times\RR$.  If $g\in L^\infty$, then
-$h=A_u^{-1}(g+\lambda\mathbf1+\mu B_uh)$, and $B_u$ maps $L^2$ boundedly into
-$L^\infty$ because its kernel is bounded; hence $h\in L^\infty$ with a
-corresponding norm bound.
+Fix $(g,b)\in L^\infty([0,1])\times\RR$. To invert
+$D\mathcal G_a(u,0)=\mathcal T_u$, we seek a unique bounded solution to
+\[
+  \mathcal L_uh-\eta\mathbf1=g,\qquad \int_0^1h=b.
+\]
+To satisfy the mean constraint, write $h=b\mathbf1+k$ with $\int_0^1k=0$.
+We construct $k$ by minimizing the quadratic functional
+\[
+  \mathcal E(k):=\frac12Q_u(k)-\langle g-b\mathcal L_u\mathbf1,k\rangle
+  \qquad\left(k\in L^2([0,1]),\ \int_0^1k=0\right).
+\]
+By \Cref{lem:row-lower-bound},
+\[
+  \mathcal E(k)\ge\frac{c_u}{2}\|k\|_2^2
+  -\|g-b\mathcal L_u\mathbf1\|_2\|k\|_2,
+\]
+so the infimum over these functions is finite. Let $(k_n)$ be a minimizing
+sequence. Its midpoints also have mean zero, and the quadratic identity gives
+\begin{align*}
+  \frac{c_u}{8}\|k_n-k_m\|_2^2
+  &\le\frac18Q_u(k_n-k_m)\\
+  &=\frac{\mathcal E(k_n)+\mathcal E(k_m)}2
+    -\mathcal E\left(\frac{k_n+k_m}2\right)\\
+  &\le\frac{\mathcal E(k_n)+\mathcal E(k_m)}2
+    -\inf\mathcal E\longrightarrow0.
+\end{align*}
+Thus $(k_n)$ is Cauchy in $L^2([0,1])$. Its limit $k$ has mean zero and,
+by continuity of $\mathcal E$, attains the infimum.
+
+For every $\ell\in L^2([0,1])$ of mean zero, $k+t\ell$ remains admissible.
+Differentiating at the minimum gives
+\[
+  0=\left.\frac{\dd}{\dd t}\mathcal E(k+t\ell)\right|_{t=0}
+  =\langle\mathcal L_uk-g+b\mathcal L_u\mathbf1,\ell\rangle.
+\]
+For $h=b\mathbf1+k$, the last inner product is
+$\langle\mathcal L_uh-g,\ell\rangle$. It remains to choose $\eta$ so that
+$\mathcal L_uh-g=\eta\mathbf1$. Choose $\eta$ to be the mean of
+$\mathcal L_uh-g$ and let $\ell$ denote the remaining error:
+\[
+  \eta:=\int_0^1(\mathcal L_uh-g),
+  \qquad \ell:=\mathcal L_uh-g-\eta\mathbf1.
+\]
+This choice of $\eta$ ensures that $\int_0^1\ell=0$, so the minimum condition gives
+\[
+  0=\langle\mathcal L_uh-g,\ell\rangle
+  =\|\ell\|_2^2+\eta\int_0^1\ell=\|\ell\|_2^2.
+\]
+Thus the error $\ell$ vanishes. By its definition,
+\[
+  \mathcal L_uh-g-\eta\mathbf1=0,
+  \qquad\text{hence}\qquad \mathcal L_uh-\eta\mathbf1=g.
+\]
+The constructed pair $(h,\eta)$ therefore satisfies the first equation as well.
+
+To prove uniqueness, suppose $(h_1,\eta_1)$ and $(h_2,\eta_2)$ solve the
+system for the same $(g,b)$. Subtracting their equations gives
+\[
+  \mathcal L_u(h_1-h_2)=(\eta_1-\eta_2)\mathbf1,
+  \qquad \int_0^1(h_1-h_2)=0.
+\]
+By \Cref{lem:row-lower-bound},
+\[
+  c_u\|h_1-h_2\|_2^2\le Q_u(h_1-h_2)
+  =(\eta_1-\eta_2)\int_0^1(h_1-h_2)=0.
+\]
+Hence $h_1=h_2$, and the first equation then gives $\eta_1=\eta_2$.
+
+We now bound the solution in terms of $(g,b)$. Taking $\ell=k$ in the
+minimum condition and using \Cref{lem:row-lower-bound} yields,
+\[
+  c_u\|k\|_2^2\le Q_u(k)
+  =\langle \mathcal L_uk,k\rangle
+  =\langle g-b\mathcal L_u\mathbf1,k\rangle
+  \le\|g-b\mathcal L_u\mathbf1\|_2\|k\|_2.
+\]
+Since $h=b\mathbf1+k$, it follows that
+\[
+  \|h\|_2\le |b|+c_u^{-1}\|g-b\mathcal L_u\mathbf1\|_2
+  \le C_u(\|g\|_\infty+|b|).
+\]
+The definition of $\eta$ and the bounded kernel $K_u$ give
+\[
+  |\eta|\le\|\mathcal L_u\|_{\mathrm{op}}\,\|h\|_2+\|g\|_\infty \le C_u(\|g\|_\infty+|b|),
+  \qquad \|T_{K_u}h\|_\infty\le\|K_u\|_\infty\|h\|_2 \le C_u(\|g\|_\infty+|b|),
+\]
+after absorbing constants into $C_u$.
+Substituting the definition of $\mathcal L_u$ into
+$\mathcal L_uh-\eta\mathbf1=g$ gives $2J_p''(u)h-T_{K_u}h-\eta\mathbf1=g$, thus
+\[
+  h=\frac{g+\eta\mathbf1+T_{K_u}h}{2J_p''(u)},
+\]
+whose denominator is at least $8$ by~\eqref{eq:row-entropy-curvature}.
+Thus $h\in L^\infty([0,1])$ and, after enlarging $C_u$,
+\[
+  \|h\|_\infty+|\eta|\le C_u(\|g\|_\infty+|b|).
+\]
+In the product norm $\|(h,\eta)\|:=\|h\|_\infty+|\eta|$, this gives
+$\|\mathcal T_u^{-1}\|_{\mathrm{op}}\le C_u$.
 \end{proof}
 
-\subsection{Finiteness}
-
-\begin{lemma}[Finiteness]\label{lem:row-finite}
+\begin{lemma}\label{lem:row-finite}
 The set $\mathcal M_W$ is finite.
 \end{lemma}
 
 \begin{proof}
-We may assume $\mathcal M_W\ne\emptyset$.  By Proposition~\ref{prop:row-chain},
-distinct elements of $\mathcal M_W$ differ on a set of positive measure with a
-fixed sign, so they have distinct means.  Hence the map
-$\mathfrak m(u):=\int_0^1u$ is injective on $\mathcal M_W$, and by
-Lemma~\ref{lem:row-compact} it is a homeomorphism from $\mathcal M_W$ onto the
-compact set $\mathcal A:=\mathfrak m(\mathcal M_W)\subseteq\RR$.
-
-Fix $u_*\in\mathcal M_W$ and put $a_*:=\mathfrak m(u_*)$.  Consider the map
+The claim is immediate if $\mathcal M_W$ is empty.
+Otherwise fix $u_*\in\mathcal M_W$ and put $a_*:=\int_0^1u_*$.
+Let $\gamma$ be the constant from \Cref{lem:row-interior}.
+On the $L^\infty([0,1])$-ball of radius $\gamma/2$ around $u_*$,
+$u\mapsto J_p'(u)$ is analytic, and the rooted density gradients are
+polynomial in $u$.  Thus $(a,u,\lambda)\mapsto\mathcal G_a(u,\lambda)$
+is real-analytic near $(a_*,u_*,0)$.  By~\eqref{eq:row-euler},
 \[
-  \Xi(a;u,\lambda):=\Bigl(2J_q'(u)-2\alpha-\mu\nabla\mathcal R_W(u)-\lambda\mathbf1,\
-  \int_0^1u-a\Bigr),
+  \mathcal G_{a_*}(u_*,0)=0,\qquad
+  D\mathcal G_{a_*}(u_*,0)=\mathcal T_{u_*}.
 \]
-defined for $a\in\RR$, $\lambda\in\RR$, and $u$ in the open $L^\infty$-ball of
-radius $\delta/2$ around $u_*$.  It is real-analytic with values in
-$L^\infty\times\RR$: the map $u\mapsto J_q'(u)$ is analytic on this ball, and
-$u\mapsto\nabla\mathcal R_W(u)$ is polynomial.  We have $\Xi(a_*;u_*,0)=0$ by
-\eqref{eq:row-euler}, and the derivative of $\Xi$ in $(u,\lambda)$ is the
-isomorphism of Lemma~\ref{lem:bordered}.  By Lemma~\ref{lem:analytic-ift},
-there are an open interval $I_*\ni a_*$, a neighborhood of $(u_*,0)$, and
-analytic maps $a\mapsto u_*(a)$ and $a\mapsto\lambda_*(a)$ on $I_*$ such that,
-in this neighborhood, $\Xi(a;u,\lambda)=0$ if and only if
-$(u,\lambda)=(u_*(a),\lambda_*(a))$.
-
-Suppose that $a_*$ is an accumulation point of $\mathcal A$, and choose distinct
-$a_j\in\mathcal A$ with $a_j\to a_*$ and $u_j\in\mathcal M_W$ with
-$\mathfrak m(u_j)=a_j$.  Then $u_j\to u_*$ in $L^\infty$, and each $u_j$ satisfies
-$\Xi(a_j;u_j,0)=0$ by~\eqref{eq:row-euler}.  By local uniqueness,
-$\lambda_*(a_j)=0$ for all large $j$.  The analytic function $\lambda_*$ has
-zeros accumulating at $a_*$, so $\lambda_*\equiv0$ near $a_*$.  Along the
-branch, differentiating $\int u_*(a)=a$ gives
+By \Cref{lem:bordered}, this derivative in $(u,\lambda)$ is invertible
+on $L^\infty([0,1])\times\RR$, and its inverse has finite operator norm.
+The analytic implicit function theorem in Banach spaces~\cite{Whittlesey1965}
+therefore gives a unique local analytic branch
 \[
-  \frac{\dd}{\dd a}\mathcal F_W\bigl(u_*(a)\bigr)
-  =\int_0^1\bigl(2J_q'(u_*(a))-2\alpha-\mu\nabla\mathcal R_W(u_*(a))\bigr)u_*'(a)
-  =\lambda_*(a)=0.
+  a\longmapsto\bigl(u(a),\lambda(a)\bigr),
+  \qquad \mathcal G_a\bigl(u(a),\lambda(a)\bigr)=0,
 \]
-Hence $\mathcal F_W(u_*(a))=c_W$ near $a_*$, so $u_*(a)\in\mathcal M_W$ and a
-whole open interval around $a_*$ lies in $\mathcal A$.
+with $u(a_*)=u_*$ and $\lambda(a_*)=0$.
+Every solution of $\mathcal G_a(u,\lambda)=0$ sufficiently close to
+$(a_*,u_*,0)$ lies on this branch.
 
-We have shown that every accumulation point of $\mathcal A$ is an interior
-point of $\mathcal A$.  If $\mathcal A$ were infinite, its set $\mathcal A'$ of
-accumulation points would be nonempty and compact.  By what we have shown,
-every point of $\mathcal A'$ has a neighborhood contained in $\mathcal A$, all
-of whose points are accumulation points; hence $\mathcal A'$ is open.  A
-nonempty subset of $\RR$ cannot be both open and compact, so $\mathcal A$, and
-therefore $\mathcal M_W$, is finite.
+Suppose that $a_*$ is an accumulation point of $\mathcal S$, and choose distinct
+$a_i\in\mathcal S$ with $a_i\to a_*$ and $u_i\in\mathcal M_W$ with
+$\int_0^1u_i=a_i$.  Continuity of the inverse mean map gives
+$u_i\to u_*$ in $L^\infty([0,1])$.  Since $\mathcal G_{a_i}(u_i,0)=0$,
+local uniqueness gives
+\[
+  \bigl(u(a_i),\lambda(a_i)\bigr)=(u_i,0)
+\]
+for all large $i$.  Thus the zeros $\lambda(a_i)=0$ accumulate at $a_*$,
+so analyticity implies
+$\lambda\equiv0$ near $a_*$.  Along the branch, by \eqref{eq:row-prescribed-mean},
+\begin{align*}
+  \frac{\dd}{\dd a}\mathcal F_W\bigl(u(a)\bigr)
+  &=D\mathcal F_W\bigl(u(a)\bigr)[u'(a)]\\
+  &=\int_0^1\bigl(2J_p'(u(a))-\sum_j\mu_j\nabla\mathcal R_{H_j,W}(u(a))\bigr)u'(a)\\
+  &=\lambda(a)\int_0^1u'(a)=0,
+\end{align*}
+thus $\mathcal F_W(u(a))$ is constant along the branch.
+Since the branch passes through $u_*$, its constant value is
+$\mathcal F_W(u_*)=0$.
+Consequently $u(a)\in\mathcal M_W$ near $a_*$, and an open interval
+around $a_*$ lies in $\mathcal S$.
+
+If $\mathcal S$ were infinite, its accumulation points would form a
+nonempty compact set.  Let $a_*$ be the least accumulation point.
+The preceding argument puts an interval around $a_*$ inside $\mathcal S$.
+Every point of that interval is then an accumulation point, contradicting
+the choice of $a_*$.  Thus $\mathcal S$, and hence $\mathcal M_W$, is finite.
 \end{proof}
 
-\begin{proof}[Proof of Theorem~\ref{thm:row-criterion}]
-Proposition~\ref{prop:row-chain} and Lemma~\ref{lem:row-finite} show that
+\subsection{Multipodality}\label{sec:row-multipodality}
+
+\begin{proof}[Proof of \Cref{thm:joint-upper-tail}]
+Let $W$ be a minimizer of~\eqref{eq:joint-variational-problem}, and choose
+the multipliers from \Cref{lem:upper-tail-multiplier}.
+By \Cref{thm:row-criterion},
 $\mathcal M_W=\{g_1,\dots,g_M\}$ is a finite totally ordered set; label its
-elements so that $g_1\le\dots\le g_M$.  Assume~\eqref{eq:rows-attain}, and let
-$A_i:=\{x\in[0,1]:W_x=g_i\text{ almost everywhere}\}$.  These sets are
-measurable, pairwise disjoint, and cover $[0,1]$ up to a null set; we discard
+elements so that $g_1\le\dots\le g_M$.  By
+\Cref{lem:global-row-minimality}, almost every row of $W$ belongs to
+$\mathcal M_W$.  On the full-measure set where rows are measurable, put
+\[
+  A_i:=\{x:W_x=g_i\text{ almost everywhere}\}
+      =\left\{x:\int_0^1|W(x,y)-g_i(y)|\dd y=0\right\}.
+\]
+Fubini's theorem shows that $A_1,\dots,A_M$ are measurable.  They are pairwise
+disjoint and cover $[0,1]$ up to a null set; we discard
 the null sets among them and add the remaining null set to one of the others.
-For almost every $(x,y)\in A_i\times A_j$, the row identities and the symmetry
-of $W$ give $g_i(y)=W(x,y)=W(y,x)=g_j(x)$.  A function of $y$ that agrees almost
-everywhere on $A_i\times A_j$ with a function of $x$ is almost everywhere
-constant, so $W=b_{ij}$ almost everywhere on $A_i\times A_j$ for some constant
-$b_{ij}=b_{ji}$.  Thus $W$ is multipodal.  Finally, $g_i=b_{ij}$ on $A_j$, so
-$g_i\le g_{i'}$ for $i\le i'$ is exactly~\eqref{eq:ordered-blocks}.
+Using the symmetry of $W$, for almost every $(x,y)\in A_i\times A_j$,
+\[
+  g_i(y)=W(x,y)=W(y,x)=g_j(x).
+\]
+Averaging in $x\in A_i$ gives
+\[
+  g_i(y)=\frac1{\nu(A_i)}\int_{A_i}g_j(x)\dd x=:b_{ij}
+  \qquad\text{for almost every }y\in A_j.
+\]
+Thus $W=b_{ij}$ almost everywhere on $A_i\times A_j$,
+with $b_{ij}=b_{ji}$, and $g_i\le g_{i'}$ for $i\le i'$.
+This is exactly~\eqref{eq:ordered-blocks}.
 \end{proof}
-
-\begin{rmk}\label{rmk:criterion-input}
-Theorem~\ref{thm:row-criterion} does not use that $W$ solves any graphon
-variational problem, nor an Euler--Lagrange equation for $W$ itself.  All
-information about the ambient problem enters through the global lower
-bound~\eqref{eq:row-lower-bound}, the sign $\mu>0$, the lower
-bound~\eqref{eq:positive-base}, and the property~\eqref{eq:rows-attain}.  In
-Sections~\ref{sec:upper-tail} and~\ref{sec:fixed-densities}, these hypotheses
-are supplied by inserting a small block of vertices into an optimizer.
-\end{rmk}

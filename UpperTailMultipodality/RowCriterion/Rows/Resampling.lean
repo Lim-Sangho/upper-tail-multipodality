@@ -155,18 +155,6 @@ theorem edgeVal_mem_Icc (W : Graphon) (ξ : V → ℝ) (e : Sym2 V) :
     edgeVal W.toFun W.symm' ξ e ∈ Set.Icc (0:ℝ) 1 :=
   liftEdge_mem_Icc W ξ e
 
-/-- `avoidingProduct` is measurable. -/
-theorem measurable_avoidingProduct (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon)
-    (v : V) : Measurable (avoidingProduct H W v) :=
-  Finset.measurable_prod _ fun e _ => measurable_edgeVal W e
-
-/-- `avoidingProduct` lies in `[0,1]`. -/
-theorem avoidingProduct_mem_Icc (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon)
-    (v : V) (ξ : V → ℝ) : avoidingProduct H W v ξ ∈ Set.Icc (0:ℝ) 1 :=
-  ⟨Finset.prod_nonneg fun e _ => (edgeVal_mem_Icc W ξ e).1,
-    Finset.prod_le_one (fun e _ => (edgeVal_mem_Icc W ξ e).1)
-      (fun e _ => (edgeVal_mem_Icc W ξ e).2)⟩
-
 /-- If `W ≥ ω` almost everywhere, then `avoidingProduct ≥ ω^k` almost everywhere, where `k` is
 the number of edges avoiding `v`. -/
 theorem avoidingProduct_ge (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon)
@@ -263,5 +251,37 @@ theorem rootedGradient_mem_Icc (H : SimpleGraph V) [DecidableRel H.Adj] (W : Gra
       ≤ ∑ _z₀ ∈ H.neighborFinset v, (1:ℝ) :=
         Finset.sum_le_sum fun z₀ _ => (rootedGradientTerm_mem_Icc H W v z₀ hu y).2
     _ = (H.neighborFinset v).card := by simp
+
+/-! ## The combined gradient -/
+
+section Combined
+
+variable {ι : Type*} [Fintype ι]
+
+/-- `∇𝒫_W(u)` is measurable for measurable `u`. -/
+theorem measurable_combinedRootedGradient (Hs : ι → SimpleGraph V)
+    [∀ j, DecidableRel (Hs j).Adj] (W : Graphon) (μ : ι → ℝ) {u : ℝ → ℝ}
+    (hu : Measurable u) : Measurable (combinedRootedGradient Hs W μ u) := by
+  unfold combinedRootedGradient
+  exact Finset.measurable_sum _ fun j _ =>
+    (measurable_rootedGradient (Hs j) W hu).const_mul _
+
+/-- **`eq:combined-lipschitz`**: `0 ≤ ∇𝒫_W(u) ≤ 2M_*` for a row `u` and weights `μ ≥ 0`. -/
+theorem combinedRootedGradient_mem_Icc (Hs : ι → SimpleGraph V)
+    [∀ j, DecidableRel (Hs j).Adj] (W : Graphon) {μ : ι → ℝ} (hμ : ∀ j, 0 ≤ μ j)
+    {u : ℝ → ℝ} (hu : ∀ y, u y ∈ Set.Icc (0:ℝ) 1) (y : ℝ) :
+    combinedRootedGradient Hs W μ u y ∈ Set.Icc (0:ℝ) (2 * combinedEdgeCard Hs μ) := by
+  unfold combinedRootedGradient
+  refine ⟨Finset.sum_nonneg fun j _ =>
+    mul_nonneg (hμ j) (rootedGradient_mem_Icc (Hs j) W hu y).1, ?_⟩
+  rw [combinedEdgeCard, Finset.mul_sum]
+  refine Finset.sum_le_sum fun j _ => ?_
+  have h := (rootedGradient_mem_Icc (Hs j) W hu y).2
+  rw [sum_card_neighborFinset] at h
+  calc μ j * rootedGradient (Hs j) W u y
+      ≤ μ j * (2 * (Hs j).edgeFinset.card) := mul_le_mul_of_nonneg_left h (hμ j)
+    _ = 2 * (μ j * (Hs j).edgeFinset.card) := by ring
+
+end Combined
 
 end UpperTailMultipodality.Rows

@@ -20,11 +20,6 @@ open MeasureTheory Filter Topology Set
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- `J_p'` is measurable. -/
-theorem measurable_Jp' (p : ℝ) : Measurable (Jp' p) := by
-  unfold Jp'
-  fun_prop
-
 /-- The little-o form of `HasDerivAt f v 0`. -/
 theorem eventually_abs_sub_le_of_hasDerivAt {f : ℝ → ℝ} {v : ℝ} (h : HasDerivAt f v 0)
     {δ : ℝ} (hδ : 0 < δ) : ∀ᶠ θ in 𝓝 0, |f θ - f 0 - θ * v| ≤ δ * |θ| := by
@@ -80,15 +75,6 @@ theorem ae_abs_Jp'_le (W : Graphon) {ε γ : ℝ} (hε0 : 0 < ε) (hε1 : ε < 1
     ∃ L : ℝ, 0 ≤ L ∧ ∀ᵐ z ∂gμ, |Jp' ε (W.toFun z.1 z.2)| ≤ L := by
   obtain ⟨L, hL0, hL⟩ := Jp'_bdd_box hγ hε0 hε1
   exact ⟨L, hL0, hW.mono fun z hz => hL _ ⟨hz.1, hz.2⟩⟩
-
-/-- `J_ε'(W) · K` is integrable for a bounded kernel `K` when `W ∈ [γ, 1-γ]` a.e. -/
-theorem integrable_Jp'_mul (W : Graphon) {ε γ : ℝ} (hε0 : 0 < ε) (hε1 : ε < 1) (hγ : 0 < γ)
-    (hW : ∀ᵐ z ∂gμ, γ ≤ W.toFun z.1 z.2 ∧ W.toFun z.1 z.2 ≤ 1 - γ) (K : Kernel) :
-    Integrable (fun z : ℝ × ℝ => Jp' ε (W.toFun z.1 z.2) * K.toFun z.1 z.2) gμ := by
-  obtain ⟨L, -, hL⟩ := ae_abs_Jp'_le W hε0 hε1 hγ hW
-  obtain ⟨C, -, hC⟩ := kernel_bound K
-  exact integrable_mul_of_ae_bdd ((measurable_Jp' ε).comp W.meas') K.meas' hL
-    (ae_of_all _ fun z => hC z.1 z.2)
 
 /-- **First-order Taylor bound for `I_ε`.**  If `γ ≤ W ≤ 1-γ` almost everywhere and the kernel
 `K` satisfies `|K - W| ≤ q ≤ γ/2` everywhere, then `K` agrees almost everywhere with a graphon

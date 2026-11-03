@@ -13,7 +13,8 @@ unique zero of `F · p` in `S`.
 
 The proof is the Φ-trick: `Φ(z,p) = (F z p, p)` has a block upper-triangular invertible strict
 derivative, so the analytic inverse function theorem applies to it, and its injectivity clause
-is the local uniqueness.  This is `lem:analytic-ift` of `paper/paper.tex`; the development is
+is the local uniqueness.  This is the analytic implicit function theorem cited in the proof of
+`lem:row-finite`; the development is
 taken from the companion formalization `UpperTailOptimizers.LZBoundary.AnalyticIFT`.
 -/
 
@@ -66,10 +67,7 @@ uniqueness clause: for `p ∈ T`, the point `z p` is the *only* `w ∈ S` with `
 
 The proof is the Φ-trick of `analytic_implicit` — `Φ (z, p) = (F z p, p)` has block
 upper-triangular invertible strict derivative, so `analytic_inverse` applies to it — but it
-keeps the `Set.InjOn Φ` clause that `analytic_implicit` discards.
-
-Used by `lem:rank-one-kkt-family` to force the `h ↦ -h` symmetries of the
-coalescing scalar family. -/
+keeps the `Set.InjOn Φ` clause that `analytic_implicit` discards. -/
 theorem analytic_implicit_unique {E P : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     [NormedAddCommGroup P] [NormedSpace ℝ P] [CompleteSpace P]

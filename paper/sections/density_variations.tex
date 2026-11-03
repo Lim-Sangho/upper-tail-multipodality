@@ -1,0 +1,305 @@
+\section{Variations of subgraph densities and relative entropy}\label{sec:density-variations}
+
+We first express the first-order changes in subgraph densities through
+their derivative kernels.  Bounds on these kernels allow us to
+construct feasible perturbations and prove that every upper-tail minimizer
+satisfies $p\le W\le1-\gamma$ for some $\gamma>0$.  With this interiority,
+we can then differentiate the relative entropy in any bounded symmetric direction.
+
+\subsection{Derivative kernels of subgraph densities}\label{sec:derivatives}
+
+Let $W$ be a graphon and $V\in L^\infty_{\mathrm{sym}}([0,1]^2)$.
+The integral formulas in~\eqref{eq:graphon-quantities} extend $e$ and
+$t(H,\cdot)$ to $L^\infty_{\mathrm{sym}}([0,1]^2)$ as linear and
+polynomial functionals, respectively. In particular, $t(H,W+\zeta V)$
+is polynomial in $\zeta\in\RR$, even when $W+\zeta V$ is not a graphon.
+We therefore define
+the \emph{directional derivative} of $t(H,\cdot)$
+at $W$ in the direction $V$ by
+\[
+  Dt(H,W)[V]:=
+  \left.\frac{\dd}{\dd\zeta}t(H,W+\zeta V)\right|_{\zeta=0}.
+\]
+This derivative describes the first-order change in the $H$-density under the
+perturbation $W+\zeta V$.  In the integral defining $t(H,W+\zeta V)$,
+each edge $ij$ contributes the factor
+$W(x_i,x_j)+\zeta V(x_i,x_j)$.  The product rule therefore gives
+\[
+  Dt(H,W)[V]
+  =\sum_{ab\in E(H)}
+    \int_{[0,1]^{V(H)}}V(x_a,x_b)
+    \prod_{ij\in E(H)\setminus\{ab\}}W(x_i,x_j)
+    \prod_{i\in V(H)}\dd x_i.
+\]
+
+For each edge $ab$ of $H$, choose an ordering $(a,b)$ of its endpoints
+and fix $x_a=x$ and $x_b=y$, where $x,y\in[0,1]$.  Integrating the remaining
+edge factors over all other vertex labels defines
+\[
+  K_{ab,W}(x,y):=\int_{[0,1]^{V(H)\setminus\{a,b\}}}
+  \prod_{ij\in E(H)\setminus\{ab\}}W(x_i,x_j)
+  \prod_{i\in V(H)\setminus\{a,b\}}\dd x_i,
+  \qquad x_a=x,\ x_b=y.
+\]
+The derivative then takes the form
+\[
+  Dt(H,W)[V]=\sum_{ab\in E(H)}
+  \int_{[0,1]^2}K_{ab,W}(x,y)V(x,y)\dd x\dd y.
+\]
+Reversing the endpoint order gives $K_{ba,W}(x,y)=K_{ab,W}(y,x)$.
+Since $V$ is symmetric, exchanging the integration variables shows that
+the contribution from each edge is independent of its orientation.
+Averaging over the two orientations gives the symmetric kernel
+\begin{equation}\label{eq:derivative-kernel}
+  \mathcal D_{H,W}(x,y):=\frac12\sum_{ab\in E(H)}\bigl(K_{ab,W}(x,y)+K_{ab,W}(y,x)\bigr),
+\end{equation}
+called the \emph{derivative kernel} of the $H$-density at $W$.
+For every $V\in L^\infty_{\mathrm{sym}}([0,1]^2)$, it satisfies
+\begin{equation}\label{eq:density-derivative}
+  Dt(H,W)[V]=\int_{[0,1]^2}\mathcal D_{H,W}(x,y)\,V(x,y)\dd x\dd y.
+\end{equation}
+Since each $K_{ab,W}$ takes values in $[0,1]$, we have
+$0\le\mathcal D_{H,W}\le m$.
+If, in addition, $W\ge\omega>0$ almost everywhere, then
+$\mathcal D_{H,W}\ge m\omega^{m-1}$.
+
+For graphons $V,W$, apply~\eqref{eq:product-difference} to the $m-1$
+edge factors defining $K_{ab,V}$ and $K_{ab,W}$. All other factors lie
+in $[0,1]$, so integrating over all vertex labels bounds each summand's
+contribution to the $L^1([0,1]^2)$ norm by $\|V-W\|_1$. Thus
+\[
+  \|K_{ab,V}-K_{ab,W}\|_1\le(m-1)\|V-W\|_1.
+\]
+Summing over the $m$ edges and averaging over their two orientations
+in~\eqref{eq:derivative-kernel} gives
+\begin{equation}\label{eq:derivative-kernel-lipschitz}
+  \|\mathcal D_{H,V}-\mathcal D_{H,W}\|_1
+  \le m(m-1)\|V-W\|_1.
+\end{equation}
+
+\begin{expl}\label{expl:triangle-derivative}
+Let $H=K_3$ have vertices $1,2,3$.  For the edge $12$, fixing
+$x_1=x$ and $x_2=y$ leaves the factors $W(x,x_3)W(y,x_3)$.
+The other two edges give the same kernel, so
+\[
+  K_{12,W}(x,y)=K_{13,W}(x,y)=K_{23,W}(x,y)
+  =\int_0^1W(x,z)W(y,z)\dd z.
+\]
+This kernel is symmetric in $x,y$.  Summing the three edge contributions
+in~\eqref{eq:derivative-kernel} therefore gives
+\[
+  \mathcal D_{K_3,W}(x,y)=3\int_0^1W(x,z)W(y,z)\dd z.
+\]
+\end{expl}
+
+\begin{expl}\label{expl:path-derivative}
+Let $H=P_3$ have vertices $1,2,3$ and edges $12,23$.
+Choosing the endpoint orders $(1,2)$ and $(2,3)$ gives
+\[
+  K_{12,W}(x,y)=\int_0^1W(y,z)\dd z=d_W(y),\qquad
+  K_{23,W}(x,y)=\int_0^1W(z,x)\dd z=d_W(x).
+\]
+For each edge, averaging over its two orientations gives
+$\tfrac12(d_W(x)+d_W(y))$.  The two edges therefore contribute
+\[
+  \mathcal D_{P_3,W}(x,y)=d_W(x)+d_W(y).
+\]
+\end{expl}
+
+\subsection{Interiority and entropy derivatives}\label{sec:upper-tail-interiority}
+
+Fix $p$, $H_1,\dots,H_s$, and $r_1,\dots,r_s$ as in
+\Cref{thm:joint-upper-tail}, write $t_j(U):=t(H_j,U)$ for every
+$U\in L^\infty_{\mathrm{sym}}([0,1]^2)$,
+and let $W$ minimize~\eqref{eq:joint-variational-problem}.
+An index $j$ is \emph{active} if $t_j(W)=r_j^{m_j}$,
+and denote by $\mathcal A$ the set of active indices.
+
+\begin{lemma}\label{lem:upper-tail-basic}
+Let $W$ be a minimizer of~\eqref{eq:joint-variational-problem}.
+If the constant graphon $p$ is not feasible, the active set $\mathcal A$
+is nonempty.
+In all cases, there is $\gamma>0$ such that $p\le W\le1-\gamma$ almost everywhere.
+\end{lemma}
+
+\begin{proof}
+If the constant graphon $p$ is feasible, it is the unique minimizer,
+and the claimed bounds hold with $\gamma=1-p$.  We may therefore assume
+that $p$ is not feasible, so $W\not\equiv p$ and $I_p(W)>0$.
+
+We first show that $\mathcal A$ is nonempty. If it were empty, then
+$t_j(W)>r_j^{m_j}$ for every $j$.
+Put $W_\lambda:=p+\lambda(W-p)$.  Each $\lambda\mapsto t_j(W_\lambda)$ is continuous,
+so we can choose $\lambda<1$ arbitrarily close to $1$ such that $t_j(W_\lambda)>r_j^{m_j}$ for every $j$.
+Convexity of $J_p$ and $J_p(p)=0$ then give a contradiction to the minimality of $W$:
+\[
+  I_p(W_\lambda)\le \lambda I_p(W)+(1-\lambda)J_p(p)= \lambda I_p(W)<I_p(W).
+\]
+Thus at least one constraint is active.
+
+We next prove the lower bound $W\ge p$. Put $W^+:=\max(W,p)$.
+Then $t_j(W^+)\ge t_j(W)$ for every $j$, so $W^+$ is
+feasible.  Since $J_p$ is strictly decreasing on $[0,p]$, we have
+$I_p(W^+)\le I_p(W)$, with equality if and only if $W\ge p$ almost everywhere.
+Since $W$ is a minimizer, it follows that $W\ge p$.
+
+It remains to show that $W$ is essentially bounded away from $1$;
+we first outline the competitor construction for this upper bound.
+The graphon $W$ cannot equal $1$ almost everywhere: otherwise every density
+would equal $1>r_j^{m_j}$, contradicting the existence of an active
+constraint.  We can therefore fix $\gamma_0>0$ and a symmetric set $A$
+of positive measure on which $p\le W\le1-\gamma_0$.  Suppose, for a
+contradiction, that $W$ is not essentially bounded away from $1$.
+For any sufficiently large $\Lambda$ with
+$e^{-\Lambda}<\min\{\gamma_0,1-p\}$, the symmetric set
+\[
+  E:=\{W>1-e^{-\Lambda}\}
+\]
+has positive measure and is disjoint from $A$. We will lower $W$ on $E$
+and compensate by raising it on $A$ so that every density constraint
+remains satisfied. Lowering $W$ on $E$ gives a large entropy saving per
+unit decrease, since $J_p'$ diverges at $1$. On $A$, the entropy cost per
+unit increase stays bounded. We will choose the perturbation so that
+the saving on $E$ outweighs the cost on $A$.
+
+We now choose the compensating increase on $A$ and verify that the
+resulting perturbation is feasible.
+Since $W\ge p>0$ and both $E$ and $A$ have positive measure, the
+integrals of each derivative kernel over these sets are positive.
+Choose
+\[
+  c:=2\max_{1\le j\le s}
+       \frac{\int_E\mathcal D_{H_j,W}}{\int_A\mathcal D_{H_j,W}}>0,
+  \qquad
+  Z:=-\mathbf1_E+c\mathbf1_A.
+\]
+The derivative formula~\eqref{eq:density-derivative} for the $H_j$-density gives
+\[
+    Dt_j(W)[Z]
+    =-\int_E\mathcal D_{H_j,W}+c\int_A\mathcal D_{H_j,W}
+    \ge\int_E\mathcal D_{H_j,W}>0
+    \qquad(1\le j\le s).
+\]
+Using this direction, define the competitor for small $\theta>0$ by
+\[
+  V_\theta:=W+\theta Z
+  =
+  \begin{cases}
+    W-\theta, & \text{on }E,\\
+    W+\theta c, & \text{on }A,\\
+    W, & \text{outside }A\cup E.
+  \end{cases}
+\]
+For fixed $\Lambda$, each density is polynomial in $\theta$, and its
+strictly positive first derivative gives
+\[
+  t_j(V_\theta)
+  =t_j(W)+\theta\,Dt_j(W)[Z]+O_\Lambda(\theta^2)>t_j(W)
+\]
+for all sufficiently small $\theta>0$.  Since there are only finitely
+many constraints, each of them holds for the same sufficiently small
+$\theta$.
+
+We next check that $V_\theta$ takes values in $[0,1]$.  Shrink $\theta$
+further so that
+\[
+  0<\theta\le1-e^{-\Lambda}-p,
+  \qquad
+  \theta c\le\gamma_0/2.
+\]
+These conditions are possible because $\Lambda$ and $c$ are fixed
+and $1-e^{-\Lambda}>p$.  They give the following bounds
+on the indicated sets:
+\[
+  p\le1-e^{-\Lambda}-\theta<W-\theta\le1\quad\text{on }E,\qquad
+  p\le W+\theta c\le1-\gamma_0/2\quad\text{on }A.
+\]
+Outside $A\cup E$, the values are unchanged.  Since the sets and the
+perturbation are symmetric, $V_\theta$ is a graphon and hence a
+feasible competitor.
+
+With feasibility established, it remains to prove $I_p(V_\theta)<I_p(W)$
+by comparing the contributions from $E$ and $A$. On $E$, we have
+$V_\theta=W-\theta$. We may shrink $\theta$ further to ensure that
+$0<\theta\le e^{-\Lambda}/2$.  For $1-e^{-\Lambda}\le z\le1$ and $q\in[z-\theta,z)$, we have
+\[
+  q\ge z-\theta\ge1-e^{-\Lambda}-\theta\ge p,
+  \qquad
+  1-q\le1-z+\theta\le\tfrac32e^{-\Lambda}.
+\]
+Consequently, \eqref{eq:entropy-derivatives} gives
+\[
+    J_p'(q)
+    =\log\frac qp+\log\frac{1-p}{1-q}
+    \ge\log\frac{2(1-p)}{3e^{-\Lambda}}
+    =\Lambda-C_p,
+    \qquad C_p:=\log\frac{3}{2(1-p)}.
+\]
+Integrating over $[z-\theta,z]$ gives
+\[
+  J_p(z-\theta)-J_p(z)
+  =-\int_{z-\theta}^zJ_p'(q)\dd q
+  \le-\theta(\Lambda-C_p).
+\]
+The endpoint case $z=1$ follows by continuity of $J_p$.  Applying this
+bound pointwise on $E$ yields
+\[
+  \int_E\bigl(J_p(V_\theta)-J_p(W)\bigr)
+  \le-\theta(\Lambda-C_p)\nu(E).
+\]
+Thus, relative to $\theta\nu(E)$, the cost saving on $E$ grows without bound
+as $\Lambda$ increases.
+
+On $A$, both $W$ and $V_\theta$ take values in the fixed interval
+$[p,1-\gamma_0/2]$.  Let $C$ bound $|J_p'|$ on this interval;
+$C$ depends only on $p$ and $\gamma_0$.
+To control the total cost on $A$, we bound $c\nu(A)$ in terms of $\nu(E)$.
+Since $W\ge p$, we have
+\[
+  m_jp^{m_j-1}\le\mathcal D_{H_j,W}\le m_j.
+\]
+It follows that
+\[
+  \frac{\int_E\mathcal D_{H_j,W}}{\int_A\mathcal D_{H_j,W}}
+  \le\frac{m_j\nu(E)}{m_jp^{m_j-1}\nu(A)}
+  =p^{1-m_j}\frac{\nu(E)}{\nu(A)}.
+\]
+By taking the maximum over $j$, we obtain
+\[
+  c\nu(A)\le2p^{1-\max_jm_j}\nu(E).
+\]
+Integrating along the increase on $A$ and using this bound gives
+\[
+    \int_A\bigl(J_p(V_\theta)-J_p(W)\bigr)
+    =\int_A\int_W^{W+\theta c}J_p'(q)\dd q
+    \le C\theta c\nu(A)
+    \le2C\theta p^{1-\max_jm_j}\nu(E),
+\]
+so the cost increase on $A$ is bounded by a constant multiple of
+$\theta\nu(E)$, independently of $\Lambda$.
+
+Combining the two contributions gives
+\begin{align*}
+  I_p(V_\theta)-I_p(W)
+  &=\int_E\bigl(J_p(V_\theta)-J_p(W)\bigr)
+    +\int_A\bigl(J_p(V_\theta)-J_p(W)\bigr)\\
+  &\le-\theta\bigl(\Lambda-C_p-2Cp^{1-\max_jm_j}\bigr)\nu(E).
+\end{align*}
+The constants $C_p$ and $C$ are independent of $\Lambda$.  Choose
+$\Lambda$ large enough to make the coefficient in parentheses
+positive, then take $\theta>0$ sufficiently small to satisfy all
+the preceding feasibility conditions.  Since $\nu(E)>0$, the resulting
+feasible graphon $V_\theta$ has strictly smaller cost, contradicting
+the minimality of $W$.
+\end{proof}
+
+By \Cref{lem:upper-tail-basic}, $W$ takes values in a compact subinterval
+of $(0,1)$.  For every bounded symmetric direction $V$, the function
+$W+\zeta V$ is therefore a graphon for sufficiently small $|\zeta|$,
+and differentiating the entropy under the integral gives
+\begin{align*}
+  DI_p(W)[V]
+  &:=\left.\frac{\dd}{\dd\zeta}I_p(W+\zeta V)\right|_{\zeta=0} \\
+  &=\int_{[0,1]^2}\left.\frac{\dd}{\dd\zeta}J_p\bigl(W(x,y)+\zeta V(x,y)\bigr)\right|_{\zeta=0}\dd x\dd y \\
+  &=\int_{[0,1]^2}J_p'(W(x,y))V(x,y)\dd x\dd y.
+\end{align*}

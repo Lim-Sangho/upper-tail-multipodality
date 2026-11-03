@@ -11,7 +11,7 @@ avoids the Banach-space Lagrange rule:
 * applying this to `cU + t·1` for all real `c, t` gives `∫∫ J_p'(W) U = μ ∫∫ 𝒟_W U` with
   `μ = ∫∫ J_p'(W) / ∫∫ 𝒟_W` (`integral_Jp'_mul_eq`);
 * taking `U = J_p'(W) - μ𝒟_W` (with a pointwise bounded representative) gives
-  `∫∫ U² = 0`, hence `eq:upper-tail-el` (`multiplier_of_bounds`).
+  `∫∫ U² = 0`, hence `lem:upper-tail-multiplier`(i) (`multiplier_of_bounds`).
 -/
 
 namespace UpperTailMultipodality
@@ -21,10 +21,6 @@ namespace UpperTailSupport
 open MeasureTheory Filter Set
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
-
-/-- `J_p'` is measurable. -/
-theorem measurable_Jp' (p : ℝ) : Measurable (Jp' p) := by
-  unfold Jp'; fun_prop
 
 /-- On `[p,b] ⊆ (0,1)`, `|J_p'| ≤ J_p'(b)`. -/
 theorem abs_Jp'_le {p b w : ℝ} (hp0 : 0 < p) (hb1 : b < 1) (hw : w ∈ Icc p b) :
@@ -53,19 +49,6 @@ theorem integrable_derivKernel_mul (H : SimpleGraph V) [DecidableRel H.Adj] (W :
   have hD := derivKernel_mem_Icc H W z.1 z.2
   rw [abs_mul, abs_of_nonneg hD.1]
   exact mul_le_mul hD.2 (hC z.1 z.2) (abs_nonneg _) (by positivity)
-
-/-- `J_p'(W) U` is integrable when `W ∈ [p,b] ⊆ (0,1)` almost everywhere. -/
-theorem integrable_Jp'_mul {p b : ℝ} (hp0 : 0 < p) (hb1 : b < 1) {W : Graphon}
-    (hmem : ∀ᵐ z ∂gμ, W.toFun z.1 z.2 ∈ Icc p b) (U : Kernel) :
-    Integrable (fun z : ℝ × ℝ => Jp' p (W.toFun z.1 z.2) * U.toFun z.1 z.2) gμ := by
-  obtain ⟨C, hC⟩ := U.bdd'
-  refine Integrable.of_bound
-    (((measurable_Jp' p).comp W.measurable_uncurry).mul U.meas').aestronglyMeasurable
-    (Jp' p b * C) ?_
-  filter_upwards [hmem] with z hz
-  rw [Real.norm_eq_abs, abs_mul]
-  exact mul_le_mul (abs_Jp'_le hp0 hb1 hz) (hC z.1 z.2) (abs_nonneg _)
-    ((abs_nonneg _).trans (abs_Jp'_le hp0 hb1 hz))
 
 /-- **First-order condition.**  If `∫∫ 𝒟_W U > 0`, then `∫∫ J_p'(W) U ≥ 0`. -/
 theorem first_order_condition (H : SimpleGraph V) [DecidableRel H.Adj] {p r b : ℝ}
@@ -140,7 +123,7 @@ theorem first_order_affine (H : SimpleGraph V) [DecidableRel H.Adj] {p r b : ℝ
     simp only [oneKernel_apply, mul_one] at h
     exact h
   have hJ1 : Integrable (fun z : ℝ × ℝ => Jp' p (W.toFun z.1 z.2)) gμ := by
-    have h := integrable_Jp'_mul hp0 hb1 hmem oneKernel
+    have h := integrable_Jp'_mul W oneKernel hp0 (hpb.trans_lt hb1) hp0 hb1 hmem
     simp only [oneKernel_apply, mul_one] at h
     exact h
   have hkey := first_order_condition H hp0 hpb hb1 hmin hact hmem (c • U + t • oneKernel)
@@ -153,7 +136,8 @@ theorem first_order_affine (H : SimpleGraph V) [DecidableRel H.Adj] {p r b : ℝ
     integral_const_mul, integral_const_mul] at hkey
   have hkey' := hkey h
   rw [e1 (fun z => Jp' p (W.toFun z.1 z.2)),
-    integral_add ((integrable_Jp'_mul hp0 hb1 hmem U).const_mul c) (hJ1.const_mul t),
+    integral_add ((integrable_Jp'_mul W U hp0 (hpb.trans_lt hb1) hp0 hb1 hmem).const_mul c)
+      (hJ1.const_mul t),
     integral_const_mul, integral_const_mul] at hkey'
   exact hkey'
 
@@ -216,7 +200,8 @@ theorem integrable_kernel_mul (U U' : Kernel) :
   rw [abs_mul]
   exact mul_le_mul (hC z.1 z.2) (hC' z.1 z.2) (abs_nonneg _) ((abs_nonneg _).trans (hC 0 0))
 
-/-- **`lem:upper-tail-multiplier` from the bounds of `lem:upper-tail-basic`.** -/
+/-- **The multiplier of `lem:upper-tail-multiplier` from the bounds of
+`lem:upper-tail-basic`.** -/
 theorem multiplier_of_bounds (H : SimpleGraph V) [DecidableRel H.Adj]
     (hm : 1 ≤ H.edgeFinset.card) {p r : ℝ} (hp0 : 0 < p) (hpr : p < r) (hr1 : r < 1)
     {W : Graphon} (hmin : W.Ip p = phiVar H p r)
@@ -278,7 +263,7 @@ theorem multiplier_of_bounds (H : SimpleGraph V) [DecidableRel H.Adj]
       filter_upwards [hW'ae] with z hz
       rw [hGapply z, hz]
       ring
-    rw [hcongr, integral_sub (integrable_Jp'_mul hp0 hb1 hmem G)
+    rw [hcongr, integral_sub (integrable_Jp'_mul W G hp0 (hpb.trans_lt hb1) hp0 hb1 hmem)
       ((integrable_derivKernel_mul H W G).const_mul μ), integral_const_mul, hlin G, sub_self]
   have hG0 : ∀ᵐ z ∂gμ, G.toFun z.1 z.2 * G.toFun z.1 z.2 = 0 :=
     (integral_eq_zero_iff_of_nonneg (fun z => mul_self_nonneg _)

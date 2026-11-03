@@ -13,7 +13,7 @@ over the edges of `H` other than `ab`, with `x_a = x` and `x_b = y`.  The deriva
 
 written here as `½` times the sum over ordered adjacent pairs `(a,b)`, since
 `K_{ba,W}(x,y) = K_{ab,W}(y,x)`.  It represents the first variation of `t(H,·)`,
-`eq:first-variation`.
+`eq:density-derivative`.
 -/
 
 namespace UpperTailMultipodality
@@ -198,7 +198,7 @@ theorem edgeRemovedDensity_ge (W : Graphon) {ω : ℝ} (hω : 0 ≤ ω)
 
 end Pinned
 
-/-- **`eq:first-variation`.**  For every bounded symmetric kernel `U`,
+/-- **`eq:density-derivative`.**  For every bounded symmetric kernel `U`,
 `d/dξ t(H, W + ξU)|_{ξ=0} = ∫∫ 𝒟_W U`. -/
 theorem first_variation (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon) (U : Kernel) :
     HasDerivAt (fun ξ : ℝ => (Kernel.ofGraphon W + ξ • U).tDensity H)
@@ -259,5 +259,78 @@ theorem derivKernel_ge (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon) {�
         gcongr with a _ b hb
         exact edgeRemovedDensity_ge H W hω hW ((H.mem_neighborFinset a b).mp hb) hz.1 hz.2
 
+/-! ### Symmetry, measurability, and almost-everywhere invariance -/
+
+/-- **`𝒟_W` is measurable.** -/
+theorem measurable_derivKernel (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon) :
+    Measurable fun z : ℝ × ℝ => derivKernel H W z.1 z.2 := by
+  unfold derivKernel
+  refine Measurable.const_mul (Finset.measurable_sum _ fun a _ =>
+    Finset.measurable_sum _ fun b _ => ?_) _
+  by_cases hab : H.Adj a b
+  · simp only [hab, if_true]; exact measurable_edgeRemovedDensity H W a b
+  · simp only [hab, if_false]; exact measurable_const
+
+/-- Swapping the roles of the two pinned endpoints. -/
+theorem edgeRemovedDensity_swap (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon)
+    {a b : V} (hab : a ≠ b) (x y : ℝ) :
+    edgeRemovedDensity H W a b x y = edgeRemovedDensity H W b a y x := by
+  unfold edgeRemovedDensity pin
+  rw [Sym2.eq_swap]
+  congr 1
+  funext ξ
+  rw [Function.update_comm hab]
+
+/-- **`𝒟_W` is symmetric.** -/
+theorem derivKernel_symm (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon) (x y : ℝ) :
+    derivKernel H W x y = derivKernel H W y x := by
+  unfold derivKernel
+  congr 1
+  have h1 : ∀ a b : V, (if H.Adj a b then edgeRemovedDensity H W a b x y else 0)
+      = if H.Adj b a then edgeRemovedDensity H W b a y x else 0 := by
+    intro a b
+    by_cases hab : H.Adj a b
+    · rw [if_pos hab, if_pos hab.symm, edgeRemovedDensity_swap H W hab.ne]
+    · rw [if_neg hab, if_neg fun h => hab h.symm]
+  simp_rw [h1]
+  exact Finset.sum_comm
+
+/-- `𝒟_W U` is integrable. -/
+theorem integrable_derivKernel_mul (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon)
+    (U : Kernel) :
+    Integrable (fun z : ℝ × ℝ => derivKernel H W z.1 z.2 * U.toFun z.1 z.2) gμ := by
+  obtain ⟨C, hC⟩ := U.bdd'
+  refine integrable_of_abs_le ((measurable_derivKernel H W).mul U.meas') (H.edgeFinset.card * C)
+    fun z => ?_
+  have hD := derivKernel_mem_Icc H W z.1 z.2
+  rw [abs_mul, abs_of_nonneg hD.1]
+  exact mul_le_mul hD.2 (hC z.1 z.2) (abs_nonneg _) (by positivity)
+
+/-- **`t(H,·)` of a kernel depends only on its a.e. class.** -/
+theorem kernel_tDensity_congr_ae (H : SimpleGraph V) [DecidableRel H.Adj] {K L : Kernel}
+    (hae : ∀ᵐ z ∂gμ, K.toFun z.1 z.2 = L.toFun z.1 z.2) :
+    K.tDensity H = L.tDensity H := by
+  have hedge : ∀ e ∈ H.edgeFinset, ∀ᵐ x ∂(Measure.pi fun _ : V => unitμ),
+      edgeVal K.toFun K.symm' x e = edgeVal L.toFun L.symm' x e := by
+    refine Sym2.ind (fun a b => ?_)
+    intro he
+    have hadj : H.Adj a b := by rwa [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] at he
+    have hpe := (measurePreserving_pair (V := V) hadj.ne).quasiMeasurePreserving.ae_eq hae
+    filter_upwards [hpe] with x hx
+    exact hx
+  have hall := (Filter.eventually_all_finset _).mpr hedge
+  unfold Kernel.tDensity
+  exact integral_congr_ae (hall.mono fun x hx => Finset.prod_congr rfl fun e he => hx e he)
+
+/-- **`t(H,·)` of a graphon depends only on its a.e. class.** -/
+theorem graphon_tDensity_congr_ae (H : SimpleGraph V) [DecidableRel H.Adj] {W W' : Graphon}
+    (hae : ∀ᵐ z ∂gμ, W.toFun z.1 z.2 = W'.toFun z.1 z.2) :
+    W.tDensity H = W'.tDensity H :=
+  kernel_tDensity_congr_ae H (K := Kernel.ofGraphon W) (L := Kernel.ofGraphon W') hae
+
+/-- `I_p` of a graphon depends only on its a.e. class. -/
+theorem graphon_Ip_congr_ae {W W' : Graphon} (p : ℝ)
+    (hae : ∀ᵐ z ∂gμ, W.toFun z.1 z.2 = W'.toFun z.1 z.2) : W.Ip p = W'.Ip p :=
+  integral_congr_ae (hae.mono fun z hz => by simp only [hz])
 
 end UpperTailMultipodality

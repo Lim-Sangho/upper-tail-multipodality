@@ -284,6 +284,23 @@ theorem tDensity_line_isBigO_sq (H : SimpleGraph V) [DecidableRel H.Adj] (W : Gr
   rw [← hfy, ← hf0]
   simpa [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg y), sq_abs] using hy
 
+/-- **`θ ↦ t(H, W + θU)` is continuous.**  It is a polynomial in `θ`, by
+`analyticOnNhd_tDensity_lincomb`.  Only continuity is needed, to hit every value slightly below
+`t(H,W)` by the intermediate value theorem. -/
+theorem continuous_tDensity_line (H : SimpleGraph V) [DecidableRel H.Adj] (W : Graphon)
+    (U : Kernel) :
+    Continuous fun θ : ℝ => (Kernel.ofGraphon W + θ • U).tDensity H := by
+  obtain ⟨L1, hL1⟩ : ∃ L1 : ℝ →L[ℝ] (Fin 1 → ℝ), ∀ θ : ℝ, L1 θ = fun _ : Fin 1 => θ :=
+    ⟨ContinuousLinearMap.pi fun _ => ContinuousLinearMap.id ℝ ℝ, fun θ => rfl⟩
+  have hg : Continuous fun s : Fin 1 → ℝ =>
+      ((Kernel.ofGraphon W).lincomb ![U] s).tDensity H :=
+    continuousOn_univ.mp
+      (analyticOnNhd_tDensity_lincomb H (Kernel.ofGraphon W) ![U]).continuousOn
+  refine (hg.comp L1.continuous).congr fun θ => ?_
+  rw [Function.comp_apply, hL1]
+  refine kernel_tDensity_congr H fun x y => ?_
+  simp [Kernel.lincomb]
+
 end FixedDensities
 
 end UpperTailMultipodality

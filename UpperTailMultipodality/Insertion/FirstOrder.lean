@@ -6,7 +6,7 @@ import UpperTailMultipodality.Preliminaries.Perturbation
 
 The old vertices of the inserted graphon carry `W + g(θ) Z` for a bounded symmetric direction
 `Z` supported where `η < W < 1 - η`, and a reparametrization `g` with `g(0) = 0`.  This file
-computes the one-sided derivatives at `θ = 0` used in `lem:upper-tail-insertion` and
+computes the one-sided derivatives at `θ = 0` used in `lem:insertion-first-order` and
 `lem:fixed-insertion`:
 
 * `hasDerivAt_insertionPoly` — the polynomial expansion `Q(θ)` of `t(H, W_θ)` has derivative
@@ -296,22 +296,6 @@ theorem hasDerivAt_insertion_Ip (W : Graphon) (Z : Kernel) {p a b : ℝ} (hp0 : 
 section EulerLagrange
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
-
-/-- `J_p'(W) Z` is integrable when `W` takes values in a compact subinterval of `(0,1)`. -/
-theorem integrable_Jp'_mul (W : Graphon) (Z : Kernel) {p a b : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
-    (ha : 0 < a) (hb : b < 1) (hW : ∀ᵐ z ∂gμ, W.toFun z.1 z.2 ∈ Set.Icc a b) :
-    Integrable (fun z : ℝ × ℝ => Jp' p (W.toFun z.1 z.2) * Z.toFun z.1 z.2) gμ := by
-  have hcont : ContinuousOn (Jp' p) (Set.Icc a b) := fun t ht =>
-    (hasDerivAt_Jp' hp0 hp1 (ha.trans_le ht.1)
-      (ht.2.trans_lt hb)).continuousAt.continuousWithinAt
-  obtain ⟨C, hC⟩ := isCompact_Icc.exists_bound_of_continuousOn hcont
-  obtain ⟨D, hD⟩ := Z.bdd'
-  have hmeas : Measurable (Jp' p) := by unfold Jp'; fun_prop
-  refine Integrable.of_bound ((hmeas.comp W.meas').mul Z.meas').aestronglyMeasurable (C * D) ?_
-  filter_upwards [hW] with z hz
-  rw [norm_mul]
-  exact mul_le_mul (hC _ hz) (by simpa [Real.norm_eq_abs] using hD z.1 z.2) (norm_nonneg _)
-    ((norm_nonneg _).trans (hC _ hz))
 
 /-- **Integrating the Euler–Lagrange equation against a direction.**  If
 `J_p'(W) = α + μ𝒟_W` almost everywhere with `μ ≠ 0`, then `𝒟_W Z` is integrable and
