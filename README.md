@@ -68,5 +68,5 @@ For definitions, the proof overview, detailed theorem correspondence and exact
 assumptions, read [FORMALIZATION.md](FORMALIZATION.md).
 
 <!-- Paper citations link to the corresponding source labels. -->
-[thm:joint-upper-tail]: paper/sections/intro.tex#L167
-[thm:fixed-densities]: paper/sections/intro.tex#L264
+[thm:joint-upper-tail]: paper/sections/intro.tex#L172
+[thm:fixed-densities]: paper/sections/intro.tex#L278
