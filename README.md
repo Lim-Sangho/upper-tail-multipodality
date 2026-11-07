@@ -1,8 +1,8 @@
-# Lean formalization of *Ordered multipodal structure of optimizers in the upper-tail variational problem*
+# Lean formalization of *Multipodal structure in upper-tail problems for subgraph counts*
 
 This repository formalizes in Lean 4 and Mathlib the graphon results of
 Sangho Lim, Seonghyuk Im, Taeyoung Kim, Kyeongsik Nam, and Hongseok Yang,
-*Ordered multipodal structure of optimizers in the upper-tail variational problem*.
+*Multipodal structure in upper-tail problems for subgraph counts*.
 Its LaTeX source is also included in this repository, as [paper/paper.tex](paper/paper.tex).
 
 ## Main results
