@@ -15,7 +15,7 @@ The proof is the Φ-trick: `Φ(z,p) = (F z p, p)` has a block upper-triangular i
 derivative, so the analytic inverse function theorem applies to it, and its injectivity clause
 is the local uniqueness.  This is the analytic implicit function theorem cited in the proof of
 `lem:row-finite`; the development is
-taken from the companion formalization `UpperTailOptimizers.LZBoundary.AnalyticIFT`.
+taken from the companion formalization `UpperTailRegularBipodality.LZBoundary.AnalyticIFT`.
 -/
 
 open Filter Topology
